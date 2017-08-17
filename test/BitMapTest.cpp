@@ -31,11 +31,81 @@ namespace {
 
 	TEST(BitMap, FirstOne)
 	{
-		ASSERT_EQ( BitMap(0).firstOne(), tSquare::A1); // sure?? machine dependant??
+		//ASSERT_EQ( BitMap(0).firstOne(), tSquare::A1); // sure?? machine dependant??
 		ASSERT_EQ( BitMap(1).firstOne(), tSquare::A1);
 		ASSERT_EQ( BitMap(0x803000100C803008ull).firstOne(), tSquare::D1);
 		ASSERT_EQ( BitMap(3458769736543240192ull).firstOne(), tSquare::D3);
 		ASSERT_EQ( BitMap(0xFFFFFFFFFFFFFFFFull).firstOne(), tSquare::A1);
+	}
+
+	TEST(BitMap, moreThanOneBit)
+	{
+		ASSERT_FALSE( BitMap(0).moreThanOneBit());
+		ASSERT_FALSE( BitMap(1).moreThanOneBit());
+		ASSERT_TRUE( BitMap(3).moreThanOneBit());
+		ASSERT_TRUE( BitMap(0x803000100C803008ull).moreThanOneBit());
+		ASSERT_TRUE( BitMap(3458769736543240192ull).moreThanOneBit());
+		ASSERT_TRUE( BitMap(0xFFFFFFFFFFFFFFFFull).moreThanOneBit());
+		ASSERT_TRUE( BitMap(0x0000001000010000ull).moreThanOneBit());
+		ASSERT_FALSE( BitMap(0x0000004000000000ull).moreThanOneBit());
+	}
+
+	TEST(BitMap, getBitmapFromSquare)
+	{
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::A3 ), BitMap(0x10000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::H8 ), BitMap(0x8000000000000000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::A1 ), BitMap(0x0000000000000001ull));
+
+	}
+
+	TEST(BitMap, getBitmapFromSquare2)
+	{
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::A, tRank::three ), BitMap(0x10000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::H, tRank::eight ), BitMap(0x8000000000000000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::A, tRank::one ), BitMap(0x0000000000000001ull));
+	}
+
+	TEST(BitMap, isSquareSet)
+	{
+		BitMap b(3458769736543240192ull);
+		ASSERT_FALSE( b.isSquareSet( tSquare::A1 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::C3 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::D3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::E3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::A5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::F5 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::G5 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::H5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B6 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::C6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::D6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::E7 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B8 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::E8 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::H8 ) );
+
+
+	}
+
+	TEST(BitMap, isSquareSet2)
+	{
+		BitMap b(3458769736543240192ull);
+		ASSERT_FALSE( b.isSquareSet( tFile::A, tRank::one ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::C, tRank::three ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::D, tRank::three ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::E, tRank::three ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::A, tRank::five ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::F, tRank::five ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::G, tRank::five ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::H, tRank::five ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::B, tRank::six ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::C, tRank::six ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::D, tRank::six ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::E, tRank::seven ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::B, tRank::eight ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::E, tRank::eight ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::H, tRank::eight ) );
+
 
 	}
 

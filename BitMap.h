@@ -54,18 +54,65 @@ public:
 		return (tSquare)__builtin_ctzll( b ) ;
 	}
 
-
-
-/*	inline tSquare firstOne(void) const
+	/*	\brief return true if the bitmap has more than one bit set
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	inline bool moreThanOneBit() const
 	{
-		assert(b);
-		return ((tSquare)__builtin_ctzll(b));
+		return bitCnt() > 1;
 	}
 
 
+	std::string to_string() const;
 
-	std::string displayBitmap(void)const;
-*/
+	/*	\brief return a BitMap with the nth bit set
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	static inline BitMap getBitmapFromSquare(const tSquare n)
+	{
+		assert( n < tSquare::squareNumber );
+		return BitMap(1ull << (int)n);
+		//return (BITSET[n]);
+	}
+
+	/*	\brief return a BitMap with the nth bit set
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	static inline BitMap getBitmapFromSquare( const tFile f, const tRank r )
+	{
+		assert( f <= tFile::H );
+		assert( r <= tRank::eight );
+		assert( f >= tFile::A );
+		assert( r >= tRank::one );
+		return BitMap(1ull << (int)gettSquareFromFileRank( f, r ) );
+	}
+
+	/*	\brief return true if the square is set in the bitmap
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	inline bool isSquareSet(const tSquare sq) const
+	{
+		return (b & getBitmapFromSquare(sq).b);
+	}
+
+	/*	\brief return true if the square is set in the bitmap
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	inline bool isSquareSet(const tFile f, const tRank r) const
+	{
+		return (b & getBitmapFromSquare( f, r ).b);
+	}
+
 	/* iterator */
 /*	class iterator: public std::iterator<
 	                        std::input_iterator_tag,   // iterator_category
@@ -87,6 +134,7 @@ public:
 	iterator end() {return iterator(0);}
 */
 	/* operators */
+	inline bool operator ==(const BitMap& rhs) const { return b == rhs.b;}
 /*	//inline bitmap2 operator += (const tSquare sq) { b |= bitHelper::getBitmapFromSquare(sq); return *this; }
 	inline bitmap2& operator=(const bitmap2& other){ b = other.b; return *this;}
 

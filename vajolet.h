@@ -14,19 +14,15 @@
     You should have received a copy of the GNU General Public License
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
-#include <iostream>
-#include "bitMap.h"
 
-int main(void)
-{
-	/* todo remove everything */
-	std::cout.rdbuf()->pubsetbuf( 0, 0 );
-	std::cin.rdbuf()->pubsetbuf( 0, 0 );
+#ifndef VAJOLET_H_
+#define VAJOLET_H_
 
 
-	return 0;
-}
+#define NDEBUG
+#include <assert.h>     /* assert */
 
 
 
 
+#endif /* VAJOLET_H_ */

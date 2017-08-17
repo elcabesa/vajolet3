@@ -19,6 +19,7 @@
 #define TSQUARE_H_
 
 #include <string>
+#include "vajolet.h"
 
 /*	\brief enum rapresenting a square color
 	\author Marco Belli
@@ -210,6 +211,18 @@ static inline std::string to_string(tSquare sq)
 	s += to_string( getFile( sq ) );
 	s += to_string( getRank( sq ) );
 	return s;
+}
+
+/*	\brief create a tSquare from file rank definition
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline tSquare gettSquareFromFileRank(tFile f, tRank r)
+{
+	tSquare t;
+	t = (tSquare)((int)r *8 + (int)f);
+	return t;
 }
 
 

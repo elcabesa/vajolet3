@@ -196,9 +196,20 @@ namespace {
 		ASSERT_EQ(to_string(t),std::string("a2"));
 
 		t = tSquare::F6;
-		ASSERT_EQ(to_string(getFile(t)),std::string("f"));
-		ASSERT_EQ(to_string(getRank(t)),std::string("6"));
-		ASSERT_EQ(to_string(t),std::string("f6"));
+		ASSERT_EQ( to_string( getFile(t) ), std::string("f") );
+		ASSERT_EQ( to_string( getRank(t) ), std::string("6") );
+		ASSERT_EQ( to_string( t ),std::string("f6"));
+
+	}
+
+	TEST(tSquare, gettSquareFromFileRank)
+	{
+		ASSERT_EQ( gettSquareFromFileRank( tFile::A, tRank::six ), tSquare::A6 );
+		ASSERT_EQ( gettSquareFromFileRank( tFile::F, tRank::two ), tSquare::F2 );
+		ASSERT_EQ( gettSquareFromFileRank( tFile::A, tRank::one ), tSquare::A1 );
+		ASSERT_EQ( gettSquareFromFileRank( tFile::H, tRank::eight ), tSquare::H8 );
+		ASSERT_EQ( gettSquareFromFileRank( tFile::G, tRank::three ), tSquare::G3 );
+		ASSERT_EQ( gettSquareFromFileRank( tFile::C, tRank::seven ), tSquare::C7 );
 
 	}
 

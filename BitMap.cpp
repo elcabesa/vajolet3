@@ -14,17 +14,40 @@
     You should have received a copy of the GNU General Public License
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
-#include <iostream>
-#include "bitMap.h"
 
-int main(void)
+#include "vajolet.h"
+#include "BitMap.h"
+
+/*	\brief return a string representing a bitmap
+	\author Marco Belli
+	\version 1.0
+	\date 17/06/2017
+*/
+std::string BitMap::to_string() const
 {
-	/* todo remove everything */
-	std::cout.rdbuf()->pubsetbuf( 0, 0 );
-	std::cin.rdbuf()->pubsetbuf( 0, 0 );
 
+	std::string s;
 
-	return 0;
+	for (int rank = 7 ; rank >= 0; rank--)
+	{
+		s += std::to_string(rank + 1) + " ";
+		for (int file = 0 ; file <= 7; file++)
+		{
+
+			if ( this->isSquareSet( tFile(file), tRank(rank) ) )
+			{
+				s += '1';
+			}
+			else
+			{
+				s += '.';
+			}
+
+		}
+		s += "\n";
+	}
+	s +=  "  abcdefgh";
+	return (s);
 }
 
 
