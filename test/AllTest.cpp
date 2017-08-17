@@ -16,9 +16,25 @@
 */
 
 #include "gtest/gtest.h"
+#include "./../BitMap.h"
+
+class EnvironmentInvocationCatcher : public ::testing::Environment
+{
+protected:
+	virtual void SetUp()
+	{
+		BitMap::init();
+	}
+
+	virtual void TearDown()
+	{
+
+	}
+};
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  AddGlobalTestEnvironment(new EnvironmentInvocationCatcher);
   return RUN_ALL_TESTS();
 }
 

@@ -107,6 +107,26 @@ inline tSquare operator*(int i, const tSquare d) { return tSquare(i * int(d)); }
 inline tSquare operator*(const tSquare d, int i) { return tSquare(int(d) * i); }
 inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
 inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
+
+static inline tFile operator++(tFile& r,int)
+{
+	return r = static_cast<tFile>( static_cast<int>(r) + 1 );
+}
+
+static inline tRank operator++(tRank& r,int)
+{
+	return r = static_cast<tRank>( static_cast<int>(r) + 1 );
+}
+
+static inline tFile operator--(tFile& r,int)
+{
+	return r = static_cast<tFile>( static_cast<int>(r) - 1 );
+}
+
+static inline tRank& operator--(tRank& r,int)
+{
+	return r = static_cast<tRank>( static_cast<int>(r) - 1 );
+}
 /*	\brief class used to iterate over a range of tSquare
 	\author Marco Belli
 	\version 1.0
@@ -218,7 +238,7 @@ static inline std::string to_string(tSquare sq)
 	\version 1.0
 	\date 17/08/2017
 */
-static inline tSquare gettSquareFromFileRank(tFile f, tRank r)
+static inline tSquare getFromFileRank(tFile f, tRank r)
 {
 	tSquare t;
 	t = (tSquare)((int)r *8 + (int)f);

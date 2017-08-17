@@ -26,6 +26,8 @@ class BitMap
 {
 private:
 	uint64_t b;
+	static BitMap RANKMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];
+	static BitMap FILEMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];
 public:
 
 	BitMap(){};
@@ -90,7 +92,7 @@ public:
 		assert( r <= tRank::eight );
 		assert( f >= tFile::A );
 		assert( r >= tRank::one );
-		return BitMap(1ull << (int)gettSquareFromFileRank( f, r ) );
+		return BitMap(1ull << (int)getFromFileRank( f, r ) );
 	}
 
 	/*	\brief return true if the square is set in the bitmap
@@ -135,31 +137,22 @@ public:
 
 	/* operators */
 	inline bool operator ==(const BitMap& rhs) const { return b == rhs.b;}
-/*	//inline bitmap2 operator += (const tSquare sq) { b |= bitHelper::getBitmapFromSquare(sq); return *this; }
-	inline bitmap2& operator=(const bitmap2& other){ b = other.b; return *this;}
+	inline BitMap& operator += (const tSquare sq) { b = b | getBitmapFromSquare(sq).b; return (*this); }
+	inline BitMap& operator = (const tSquare sq) { b = getBitmapFromSquare(sq).b; return (*this); }
 
-	inline bool operator=(const bitmap2& other){ return other.b;}
-	inline bitmap2& operator|=(const bitmap2& other){ b |= other.b; return *this;}
-	inline bitmap2& operator&=(const bitmap2& other){ b &= other.b; return *this;}
-	inline bitmap2& operator^=(const bitmap2& other){ b ^= other.b; return *this;}
-	inline bitmap2 operator|(const bitmap2& other) const { return bitmap2(b | other.b); }
-	inline bitmap2 operator&(const bitmap2& other) const { return bitmap2(b & other.b); }
-	inline bitmap2 operator^(const bitmap2& other) const { return bitmap2(b ^ other.b); }
-	inline bitmap2 operator&&(const bitmap2& other) const { return bitmap2(b && other.b); }
+	static void init(void);
 
-	inline bitmap2& operator|=(const bitMap& other){ b |= other; return *this;} // todo remove
-	inline bitmap2& operator&=(const bitMap& other){ b &= other; return *this;} // todo remove
-	inline bitmap2 operator|(const bitMap& other) const { return bitmap2(b | other); } // todo remove
-	inline bitmap2 operator&(const bitMap& other) const { return bitmap2(b & other); } // todo remove
-	inline bitmap2& operator^=(const bitMap& other){ b ^= other; return *this;} // todo remove
-	inline bitMap getBitmap(void)const { return b;} // TODO remove
-	inline bitmap2& operator=(const bitMap& other){ b = other; return *this;} // todo remove
+	static inline BitMap getRankMask(const tSquare n)
+	{
+		assert( n < squareNumber );
+		return (RANKMASK[ (int)n ]);
+	}
 
-	inline operator !() const { return b==0;}
-	inline operator bool() const { return b!=0;}
-	inline operator bitMap() const { return b;}
-
-*/
+	static inline BitMap getFileMask(const tSquare n)
+	{
+		assert( n < squareNumber );
+		return (FILEMASK[ (int)n ]);
+	}
 };
 
 

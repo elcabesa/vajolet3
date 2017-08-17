@@ -131,6 +131,75 @@ namespace {
 
 	}
 
+	TEST(BitMap, operatorPlusEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D4;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::D4 );
+		ASSERT_EQ( v[1], tSquare::F6 );
+	}
+
+	TEST(BitMap, getRankMask)
+	{
+		for (tFile file = tFile::A; file <= tFile::H; file++)
+		{
+			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
+			{
+				std::vector<tSquare>v;
+				BitMap b = BitMap::getRankMask( getFromFileRank( file, rank) );
+				for(const auto t : b)
+				{
+					v.push_back(t);
+
+				}
+				ASSERT_EQ( v.size(), 8u );
+				ASSERT_EQ( v[0], getFromFileRank( tFile::A, rank) );
+				ASSERT_EQ( v[1], getFromFileRank( tFile::B, rank) );
+				ASSERT_EQ( v[2], getFromFileRank( tFile::C, rank) );
+				ASSERT_EQ( v[3], getFromFileRank( tFile::D, rank) );
+				ASSERT_EQ( v[4], getFromFileRank( tFile::E, rank) );
+				ASSERT_EQ( v[5], getFromFileRank( tFile::F, rank) );
+				ASSERT_EQ( v[6], getFromFileRank( tFile::G, rank) );
+				ASSERT_EQ( v[7], getFromFileRank( tFile::H, rank) );
+			}
+		}
+	}
+
+	TEST(BitMap, getFileMask)
+	{
+		for (tFile file = tFile::A; file <= tFile::H; file++)
+		{
+			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
+			{
+				std::vector<tSquare>v;
+				BitMap b = BitMap::getFileMask( getFromFileRank( file, rank) );
+				for(const auto t : b)
+				{
+					v.push_back(t);
+
+				}
+				ASSERT_EQ( v.size(), 8u );
+				ASSERT_EQ( v[0], getFromFileRank( file, tRank::one) );
+				ASSERT_EQ( v[1], getFromFileRank( file, tRank::two) );
+				ASSERT_EQ( v[2], getFromFileRank( file, tRank::three) );
+				ASSERT_EQ( v[3], getFromFileRank( file, tRank::four) );
+				ASSERT_EQ( v[4], getFromFileRank( file, tRank::five) );
+				ASSERT_EQ( v[5], getFromFileRank( file, tRank::six) );
+				ASSERT_EQ( v[6], getFromFileRank( file, tRank::seven) );
+				ASSERT_EQ( v[7], getFromFileRank( file, tRank::eight) );
+			}
+		}
+	}
+
 }
 
 

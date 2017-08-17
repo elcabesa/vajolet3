@@ -14,9 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
+#include <iostream>
 
 #include "vajolet.h"
 #include "BitMap.h"
+
+BitMap BitMap::RANKMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];			//!< bitmask of a rank given a square on the rank
+BitMap BitMap::FILEMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];			//!< bitmask of a file given a square on the rank
 
 /*	\brief return a string representing a bitmap
 	\author Marco Belli
@@ -27,14 +31,13 @@ std::string BitMap::to_string() const
 {
 
 	std::string s;
-
-	for (int rank = 7 ; rank >= 0; rank--)
+	for (tRank rank = tRank::eight ; rank >= tRank::one; rank--)
 	{
-		s += std::to_string(rank + 1) + " ";
-		for (int file = 0 ; file <= 7; file++)
+		s += std::to_string( (int)rank + 1) + " ";
+		for (tFile file = tFile::A ; file <= tFile::H; file++)
 		{
 
-			if ( this->isSquareSet( tFile(file), tRank(rank) ) )
+			if ( this->isSquareSet( file, rank ) )
 			{
 				s += '1';
 			}
@@ -53,3 +56,37 @@ std::string BitMap::to_string() const
 
 
 
+void BitMap::init(void)
+{
+	for (tFile file = tFile::A; file <= tFile::H; file++)
+	{
+		for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
+		{
+			//===========================================================================
+			//initialize 8-bit rank mask
+			//===========================================================================
+
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] = getFromFileRank(tFile::A, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::B, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::C, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::D, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::E, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::F, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::G, rank);
+			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::H, rank);
+
+			//===========================================================================
+			//initialize 8-bit file mask
+			//===========================================================================
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] = getFromFileRank(file, tRank::one);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::two);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::three);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::four);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::five);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::six);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::seven);
+			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::eight);
+
+		}
+	}
+}

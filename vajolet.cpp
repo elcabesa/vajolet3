@@ -23,7 +23,7 @@ int main(void)
 	std::cout.rdbuf()->pubsetbuf( 0, 0 );
 	std::cin.rdbuf()->pubsetbuf( 0, 0 );
 
-
+	BitMap::init();
 	return 0;
 }
 
