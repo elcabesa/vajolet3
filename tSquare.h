@@ -18,12 +18,14 @@
 #ifndef TSQUARE_H_
 #define TSQUARE_H_
 
+#include <string>
+
 /*	\brief enum rapresenting a square color
 	\author Marco Belli
 	\version 1.0
 	\date 17/08/2017
 */
-enum class Color : int
+enum class tColor : int
 {
 	white = 0,
 	black = 1
@@ -34,7 +36,7 @@ enum class Color : int
 	\version 1.0
 	\date 17/08/2017
 */
-enum class File : int
+enum class tFile : int
 {
 	A,
 	B,
@@ -51,7 +53,7 @@ enum class File : int
 	\version 1.0
 	\date 17/08/2017
 */
-enum class Rank : int
+enum class tRank : int
 {
 	one,
 	two,
@@ -104,7 +106,6 @@ inline tSquare operator*(int i, const tSquare d) { return tSquare(i * int(d)); }
 inline tSquare operator*(const tSquare d, int i) { return tSquare(int(d) * i); }
 inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
 inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
-
 /*	\brief class used to iterate over a range of tSquare
 	\author Marco Belli
 	\version 1.0
@@ -144,10 +145,10 @@ iterator end() {return iterator(Max);}
 	\version 1.0
 	\date 17/08/2017
 */
-static inline File getFile(const tSquare n)
+static inline tFile getFile(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (File)((int)n%8u);
+	return (tFile)((int)n%8u);
 }
 
 /*	\brief get rank of a square
@@ -155,10 +156,10 @@ static inline File getFile(const tSquare n)
 	\version 1.0
 	\date 17/08/2017
 */
-static inline Rank getRank(const tSquare n)
+static inline tRank getRank(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (Rank)((int)n/8);
+	return (tRank)((int)n/8);
 }
 
 
@@ -167,10 +168,48 @@ static inline Rank getRank(const tSquare n)
 	\version 1.0
 	\date 17/08/2017
 */
-static inline Color getColor(const tSquare n)
+static inline tColor getColor(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (Color)((int)n%2);
+	return (tColor)((int)n%2);
+}
+
+/*	\brief convert file to string
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline std::string to_string(tFile f)
+{
+	std::string s;
+	s += char( 'a' + (char)f );
+	return s;
+}
+
+/*	\brief convert rank to string
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline std::string to_string(tRank r)
+{
+	std::string s;
+	s += char( '1' + (char)r );
+	return s;
+}
+
+
+/*	\brief convert square to string
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline std::string to_string(tSquare sq)
+{
+	std::string s;
+	s += to_string( getFile( sq ) );
+	s += to_string( getRank( sq ) );
+	return s;
 }
 
 

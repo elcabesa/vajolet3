@@ -177,16 +177,30 @@ namespace {
 	TEST(tSquare, getFileRankColor)
 	{
 		tSquare t = tSquare::A2;
-		ASSERT_EQ(getFile(t),File::A);
-		ASSERT_EQ(getRank(t),Rank::two);
-		ASSERT_EQ(getColor(t),Color::white);
+		ASSERT_EQ(getFile(t),tFile::A);
+		ASSERT_EQ(getRank(t),tRank::two);
+		ASSERT_EQ(getColor(t),tColor::white);
 
 		t = tSquare::F6;
-		ASSERT_EQ(getFile(t),File::F);
-		ASSERT_EQ(getRank(t),Rank::six);
-		ASSERT_EQ(getColor(t),Color::black);
+		ASSERT_EQ(getFile(t),tFile::F);
+		ASSERT_EQ(getRank(t),tRank::six);
+		ASSERT_EQ(getColor(t),tColor::black);
 	}
 
+	TEST(tSquare, to_string)
+	{
+		tSquare t = tSquare::A2;
+
+		ASSERT_EQ(to_string(getFile(t)),std::string("a"));
+		ASSERT_EQ(to_string(getRank(t)),std::string("2"));
+		ASSERT_EQ(to_string(t),std::string("a2"));
+
+		t = tSquare::F6;
+		ASSERT_EQ(to_string(getFile(t)),std::string("f"));
+		ASSERT_EQ(to_string(getRank(t)),std::string("6"));
+		ASSERT_EQ(to_string(t),std::string("f6"));
+
+	}
 
 
 }
