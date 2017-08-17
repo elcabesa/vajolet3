@@ -18,8 +18,57 @@
 #ifndef TSQUARE_H_
 #define TSQUARE_H_
 
+/*	\brief enum rapresenting a square color
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+enum class Color : int
+{
+	white = 0,
+	black = 1
+};
 
-enum class tSquare
+/*	\brief enum rapresenting a file
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+enum class File : int
+{
+	A,
+	B,
+	C,
+	D,
+	E,
+	F,
+	G,
+	H
+};
+
+/*	\brief enum rapresenting a rank
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+enum class Rank : int
+{
+	one,
+	two,
+	three,
+	four,
+	five,
+	six,
+	seven,
+	eight
+};
+
+/*	\brief enum rapresenting a square
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+enum class tSquare : int
 {
 	A1,	B1,	C1,	D1,	E1,	F1,	G1,	H1,
 	A2,	B2,	C2,	D2,	E2,	F2,	G2,	H2,
@@ -44,6 +93,11 @@ enum class tSquare
 
 };
 
+/*	\brief operators for tSquare
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
 inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare(int(d1) + int(d2)); }
 inline tSquare operator-(const tSquare d1, const tSquare d2) { return tSquare(int(d1) - int(d2)); }
 inline tSquare operator*(int i, const tSquare d) { return tSquare(i * int(d)); }
@@ -51,7 +105,11 @@ inline tSquare operator*(const tSquare d, int i) { return tSquare(int(d) * i); }
 inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
 inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
 
-
+/*	\brief class used to iterate over a range of tSquare
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
 class tSquareRange{
 
 tSquare min;
@@ -81,8 +139,39 @@ iterator end() {return iterator(Max);}
 
 };
 
+/*	\brief get file of a square
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline File getFile(const tSquare n)
+{
+	assert( n < tSquare::squareNumber );
+	return (File)((int)n%8u);
+}
+
+/*	\brief get rank of a square
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline Rank getRank(const tSquare n)
+{
+	assert( n < tSquare::squareNumber );
+	return (Rank)((int)n/8);
+}
 
 
+/*	\brief get color of a square
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+*/
+static inline Color getColor(const tSquare n)
+{
+	assert( n < tSquare::squareNumber );
+	return (Color)((int)n%2);
+}
 
 
 #endif /* TSQUARE_H_ */

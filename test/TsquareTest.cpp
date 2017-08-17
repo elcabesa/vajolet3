@@ -174,6 +174,19 @@ namespace {
 		ASSERT_EQ(count, 0u);
 	}
 
+	TEST(tSquare, getFileRankColor)
+	{
+		tSquare t = tSquare::A2;
+		ASSERT_EQ(getFile(t),File::A);
+		ASSERT_EQ(getRank(t),Rank::two);
+		ASSERT_EQ(getColor(t),Color::white);
+
+		t = tSquare::F6;
+		ASSERT_EQ(getFile(t),File::F);
+		ASSERT_EQ(getRank(t),Rank::six);
+		ASSERT_EQ(getColor(t),Color::black);
+	}
+
 
 
 }
