@@ -109,6 +109,28 @@ namespace {
 
 	}
 
+	TEST(BitMap, iterator)
+	{
+		std::vector<tSquare>v;
+		BitMap b(3458769736543240192ull);
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 8u );
+		ASSERT_EQ( v[0], tSquare::D3 );
+		ASSERT_EQ( v[1], tSquare::H3 );
+		ASSERT_EQ( v[2], tSquare::B4 );
+		ASSERT_EQ( v[3], tSquare::G5 );
+		ASSERT_EQ( v[4], tSquare::H5 );
+		ASSERT_EQ( v[5], tSquare::C6 );
+		ASSERT_EQ( v[6], tSquare::E8 );
+		ASSERT_EQ( v[7], tSquare::F8 );
+
+
+	}
+
 }
 
 

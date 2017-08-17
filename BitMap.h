@@ -114,7 +114,7 @@ public:
 	}
 
 	/* iterator */
-/*	class iterator: public std::iterator<
+	class iterator: public std::iterator<
 	                        std::input_iterator_tag,   // iterator_category
 							tSquare,                      // value_type
 							tSquare,
@@ -132,7 +132,7 @@ public:
 	};
 	iterator begin() {return iterator(b);}
 	iterator end() {return iterator(0);}
-*/
+
 	/* operators */
 	inline bool operator ==(const BitMap& rhs) const { return b == rhs.b;}
 /*	//inline bitmap2 operator += (const tSquare sq) { b |= bitHelper::getBitmapFromSquare(sq); return *this; }
