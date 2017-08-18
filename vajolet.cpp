@@ -15,7 +15,14 @@
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
 #include <iostream>
-#include "bitMap.h"
+#include "tSquare.h"
+#include "BitMap.h"
+
+static void init(void)
+{
+	BitMap::init();
+	inittSquare();
+}
 
 int main(void)
 {
@@ -23,8 +30,8 @@ int main(void)
 	std::cout.rdbuf()->pubsetbuf( 0, 0 );
 	std::cin.rdbuf()->pubsetbuf( 0, 0 );
 
-	BitMap::init();
-	inittSquare();
+	init();
+
 	return 0;
 }
 

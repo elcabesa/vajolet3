@@ -16,7 +16,7 @@
 */
 #include "tSquare.h"
 
-unsigned int SQUARE_DISTANCE[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)][ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)];
+unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
 
 void inittSquare(void)
 {
@@ -24,7 +24,7 @@ void inittSquare(void)
 	{
 		for(auto square2 : tSquareRange())
 		{
-			SQUARE_DISTANCE[(int)square1][(int)square2] = std::max(std::abs( (int)getFile( square1 ) - (int)getFile( square2 ) ), std::abs( (int)getRank( square1 ) - (int)getRank( square2 ) ) );
+			SQUARE_DISTANCE[ square1 ][ square2 ] = std::max(std::abs( getFile( square1 ) - getFile( square2 ) ), std::abs( getRank( square1 ) - getRank( square2 ) ) );
 		}
 	}
 

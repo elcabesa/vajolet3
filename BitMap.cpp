@@ -19,8 +19,8 @@
 #include "vajolet.h"
 #include "BitMap.h"
 
-BitMap BitMap::RANKMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];			//!< bitmask of a rank given a square on the rank
-BitMap BitMap::FILEMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];			//!< bitmask of a file given a square on the rank
+BitMap BitMap::RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
+BitMap BitMap::FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
 
 /*	\brief return a string representing a bitmap
 	\author Marco Belli

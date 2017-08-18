@@ -26,8 +26,8 @@ class BitMap
 {
 private:
 	uint64_t b;
-	static BitMap RANKMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];
-	static BitMap FILEMASK[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber) ];
+	static BitMap RANKMASK[ tSquare::squareNumber ];
+	static BitMap FILEMASK[ tSquare::squareNumber ];
 public:
 
 	BitMap(){};
@@ -77,7 +77,7 @@ public:
 	static inline BitMap getBitmapFromSquare(const tSquare n)
 	{
 		assert( n < tSquare::squareNumber );
-		return BitMap(1ull << (int)n);
+		return BitMap( 1ull << n );
 		//return (BITSET[n]);
 	}
 
@@ -92,7 +92,7 @@ public:
 		assert( r <= tRank::eight );
 		assert( f >= tFile::A );
 		assert( r >= tRank::one );
-		return BitMap(1ull << (int)getSquareFromFileRank( f, r ) );
+		return BitMap(1ull << getSquareFromFileRank( f, r ) );
 	}
 
 	/*	\brief return true if the square is set in the bitmap
@@ -145,13 +145,13 @@ public:
 	static inline BitMap getRankMask(const tSquare n)
 	{
 		assert( n < squareNumber );
-		return (RANKMASK[ (int)n ]);
+		return (RANKMASK[ n ]);
 	}
 
 	static inline BitMap getFileMask(const tSquare n)
 	{
 		assert( n < squareNumber );
-		return (FILEMASK[ (int)n ]);
+		return (FILEMASK[ n ]);
 	}
 };
 

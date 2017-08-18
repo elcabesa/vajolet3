@@ -26,7 +26,7 @@
 	\version 1.0
 	\date 17/08/2017
 */
-enum class tColor : int
+enum tColor : int
 {
 	white = 0,
 	black = 1
@@ -37,7 +37,7 @@ enum class tColor : int
 	\version 1.0
 	\date 17/08/2017
 */
-enum class tFile : int
+enum tFile : int
 {
 	A,
 	B,
@@ -54,7 +54,7 @@ enum class tFile : int
 	\version 1.0
 	\date 17/08/2017
 */
-enum class tRank : int
+enum tRank : int
 {
 	one,
 	two,
@@ -71,7 +71,7 @@ enum class tRank : int
 	\version 1.0
 	\date 17/08/2017
 */
-enum class tSquare : int
+enum tSquare : int
 {
 	A1,	B1,	C1,	D1,	E1,	F1,	G1,	H1,
 	A2,	B2,	C2,	D2,	E2,	F2,	G2,	H2,
@@ -110,22 +110,22 @@ inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return
 
 static inline tFile operator++(tFile& r,int)
 {
-	return r = static_cast<tFile>( static_cast<int>(r) + 1 );
+	return r = (tFile)( r + 1 );
 }
 
 static inline tRank operator++(tRank& r,int)
 {
-	return r = static_cast<tRank>( static_cast<int>(r) + 1 );
+	return r = (tRank)( r + 1 );
 }
 
 static inline tFile operator--(tFile& r,int)
 {
-	return r = static_cast<tFile>( static_cast<int>(r) - 1 );
+	return r = (tFile)( r - 1 );
 }
 
-static inline tRank& operator--(tRank& r,int)
+static inline tRank operator--(tRank& r,int)
 {
-	return r = static_cast<tRank>( static_cast<int>(r) - 1 );
+	return r = (tRank)( r - 1 );
 }
 /*	\brief class used to iterate over a range of tSquare
 	\author Marco Belli
@@ -149,7 +149,7 @@ class iterator: public std::iterator<
 		tSquare t;
 		public:
 			explicit iterator(tSquare _t = tSquare::A1) : t(_t) {}
-			iterator& operator++() { t+=tSquare::east; return *this;}
+			iterator& operator++() { t += tSquare::east; return *this;}
 			iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
 			bool operator==(iterator other) const { return t == other.t; }
 			bool operator!=(iterator other) const { return t != other.t; }
@@ -169,7 +169,7 @@ iterator end() {return iterator(Max);}
 static inline tFile getFile(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (tFile)((int)n%8u);
+	return (tFile)( n % 8u );
 }
 
 /*	\brief get rank of a square
@@ -180,7 +180,7 @@ static inline tFile getFile(const tSquare n)
 static inline tRank getRank(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (tRank)((int)n/8);
+	return (tRank)( n / 8 );
 }
 
 
@@ -192,7 +192,7 @@ static inline tRank getRank(const tSquare n)
 static inline tColor getColor(const tSquare n)
 {
 	assert( n < tSquare::squareNumber );
-	return (tColor)((int)n%2);
+	return (tColor)( n % 2 );
 }
 
 /*	\brief convert file to string
@@ -241,16 +241,16 @@ static inline std::string to_string(tSquare sq)
 static inline tSquare getSquareFromFileRank(tFile f, tRank r)
 {
 	tSquare t;
-	t = (tSquare)((int)r *8 + (int)f);
+	t = (tSquare)( r *8 + f );
 	return t;
 }
 
 static inline unsigned int getSquareDistance(const tSquare s1, const tSquare s2)
 {
-	extern unsigned int SQUARE_DISTANCE[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)][ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)];
+	extern unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
 	assert(s1 < squareNumber);
 	assert(s2 < squareNumber);
-	return (SQUARE_DISTANCE[(int)s1][(int)s2]);
+	return (SQUARE_DISTANCE[ s1 ][ s2 ]);
 }
 
 void inittSquare(void);
