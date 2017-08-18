@@ -204,13 +204,25 @@ namespace {
 
 	TEST(tSquare, gettSquareFromFileRank)
 	{
-		ASSERT_EQ( gettSquareFromFileRank( tFile::A, tRank::six ), tSquare::A6 );
-		ASSERT_EQ( gettSquareFromFileRank( tFile::F, tRank::two ), tSquare::F2 );
-		ASSERT_EQ( gettSquareFromFileRank( tFile::A, tRank::one ), tSquare::A1 );
-		ASSERT_EQ( gettSquareFromFileRank( tFile::H, tRank::eight ), tSquare::H8 );
-		ASSERT_EQ( gettSquareFromFileRank( tFile::G, tRank::three ), tSquare::G3 );
-		ASSERT_EQ( gettSquareFromFileRank( tFile::C, tRank::seven ), tSquare::C7 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::A, tRank::six ), tSquare::A6 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::F, tRank::two ), tSquare::F2 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::A, tRank::one ), tSquare::A1 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::H, tRank::eight ), tSquare::H8 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::G, tRank::three ), tSquare::G3 );
+		ASSERT_EQ( getSquareFromFileRank( tFile::C, tRank::seven ), tSquare::C7 );
 
+	}
+
+	TEST(tSquare, getSquareDistance)
+	{
+		ASSERT_EQ( getSquareDistance( tSquare::A1, tSquare::H8 ), 7u );
+		ASSERT_EQ( getSquareDistance( tSquare::H8, tSquare::A1 ), 7u );
+		ASSERT_EQ( getSquareDistance( tSquare::F6, tSquare::F6 ), 0u );
+		ASSERT_EQ( getSquareDistance( tSquare::F4, tSquare::F7 ), 3u );
+		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::F7 ), 3u );
+		ASSERT_EQ( getSquareDistance( tSquare::F7, tSquare::D4 ), 3u );
+		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::D5 ), 1u );
+		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::E4 ), 1u );
 	}
 
 

@@ -155,21 +155,21 @@ namespace {
 			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
 			{
 				std::vector<tSquare>v;
-				BitMap b = BitMap::getRankMask( getFromFileRank( file, rank) );
+				BitMap b = BitMap::getRankMask( getSquareFromFileRank( file, rank) );
 				for(const auto t : b)
 				{
 					v.push_back(t);
 
 				}
 				ASSERT_EQ( v.size(), 8u );
-				ASSERT_EQ( v[0], getFromFileRank( tFile::A, rank) );
-				ASSERT_EQ( v[1], getFromFileRank( tFile::B, rank) );
-				ASSERT_EQ( v[2], getFromFileRank( tFile::C, rank) );
-				ASSERT_EQ( v[3], getFromFileRank( tFile::D, rank) );
-				ASSERT_EQ( v[4], getFromFileRank( tFile::E, rank) );
-				ASSERT_EQ( v[5], getFromFileRank( tFile::F, rank) );
-				ASSERT_EQ( v[6], getFromFileRank( tFile::G, rank) );
-				ASSERT_EQ( v[7], getFromFileRank( tFile::H, rank) );
+				ASSERT_EQ( v[0], getSquareFromFileRank( tFile::A, rank) );
+				ASSERT_EQ( v[1], getSquareFromFileRank( tFile::B, rank) );
+				ASSERT_EQ( v[2], getSquareFromFileRank( tFile::C, rank) );
+				ASSERT_EQ( v[3], getSquareFromFileRank( tFile::D, rank) );
+				ASSERT_EQ( v[4], getSquareFromFileRank( tFile::E, rank) );
+				ASSERT_EQ( v[5], getSquareFromFileRank( tFile::F, rank) );
+				ASSERT_EQ( v[6], getSquareFromFileRank( tFile::G, rank) );
+				ASSERT_EQ( v[7], getSquareFromFileRank( tFile::H, rank) );
 			}
 		}
 	}
@@ -181,21 +181,21 @@ namespace {
 			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
 			{
 				std::vector<tSquare>v;
-				BitMap b = BitMap::getFileMask( getFromFileRank( file, rank) );
+				BitMap b = BitMap::getFileMask( getSquareFromFileRank( file, rank) );
 				for(const auto t : b)
 				{
 					v.push_back(t);
 
 				}
 				ASSERT_EQ( v.size(), 8u );
-				ASSERT_EQ( v[0], getFromFileRank( file, tRank::one) );
-				ASSERT_EQ( v[1], getFromFileRank( file, tRank::two) );
-				ASSERT_EQ( v[2], getFromFileRank( file, tRank::three) );
-				ASSERT_EQ( v[3], getFromFileRank( file, tRank::four) );
-				ASSERT_EQ( v[4], getFromFileRank( file, tRank::five) );
-				ASSERT_EQ( v[5], getFromFileRank( file, tRank::six) );
-				ASSERT_EQ( v[6], getFromFileRank( file, tRank::seven) );
-				ASSERT_EQ( v[7], getFromFileRank( file, tRank::eight) );
+				ASSERT_EQ( v[0], getSquareFromFileRank( file, tRank::one) );
+				ASSERT_EQ( v[1], getSquareFromFileRank( file, tRank::two) );
+				ASSERT_EQ( v[2], getSquareFromFileRank( file, tRank::three) );
+				ASSERT_EQ( v[3], getSquareFromFileRank( file, tRank::four) );
+				ASSERT_EQ( v[4], getSquareFromFileRank( file, tRank::five) );
+				ASSERT_EQ( v[5], getSquareFromFileRank( file, tRank::six) );
+				ASSERT_EQ( v[6], getSquareFromFileRank( file, tRank::seven) );
+				ASSERT_EQ( v[7], getSquareFromFileRank( file, tRank::eight) );
 			}
 		}
 	}

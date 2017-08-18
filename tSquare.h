@@ -238,12 +238,23 @@ static inline std::string to_string(tSquare sq)
 	\version 1.0
 	\date 17/08/2017
 */
-static inline tSquare getFromFileRank(tFile f, tRank r)
+static inline tSquare getSquareFromFileRank(tFile f, tRank r)
 {
 	tSquare t;
 	t = (tSquare)((int)r *8 + (int)f);
 	return t;
 }
+
+static inline unsigned int getSquareDistance(const tSquare s1, const tSquare s2)
+{
+	extern unsigned int SQUARE_DISTANCE[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)][ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)];
+	assert(s1 < squareNumber);
+	assert(s2 < squareNumber);
+	return (SQUARE_DISTANCE[(int)s1][(int)s2]);
+}
+
+void inittSquare(void);
+
 
 
 #endif /* TSQUARE_H_ */

@@ -14,18 +14,20 @@
     You should have received a copy of the GNU General Public License
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
-#include <iostream>
-#include "bitMap.h"
+#include "tSquare.h"
 
-int main(void)
+unsigned int SQUARE_DISTANCE[ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)][ static_cast<typename std::underlying_type<tSquare>::type>(tSquare::squareNumber)];
+
+void inittSquare(void)
 {
-	/* todo remove everything */
-	std::cout.rdbuf()->pubsetbuf( 0, 0 );
-	std::cin.rdbuf()->pubsetbuf( 0, 0 );
+	for(auto square1 : tSquareRange())
+	{
+		for(auto square2 : tSquareRange())
+		{
+			SQUARE_DISTANCE[(int)square1][(int)square2] = std::max(std::abs( (int)getFile( square1 ) - (int)getFile( square2 ) ), std::abs( (int)getRank( square1 ) - (int)getRank( square2 ) ) );
+		}
+	}
 
-	BitMap::init();
-	inittSquare();
-	return 0;
 }
 
 

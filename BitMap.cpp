@@ -66,26 +66,26 @@ void BitMap::init(void)
 			//initialize 8-bit rank mask
 			//===========================================================================
 
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] = getFromFileRank(tFile::A, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::B, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::C, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::D, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::E, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::F, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::G, rank);
-			RANKMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(tFile::H, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] = getSquareFromFileRank(tFile::A, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::B, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::C, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::D, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::E, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::F, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::G, rank);
+			RANKMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(tFile::H, rank);
 
 			//===========================================================================
 			//initialize 8-bit file mask
 			//===========================================================================
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] = getFromFileRank(file, tRank::one);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::two);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::three);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::four);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::five);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::six);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::seven);
-			FILEMASK[ (int)getFromFileRank( file, rank ) ] += getFromFileRank(file, tRank::eight);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] = getSquareFromFileRank(file, tRank::one);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::two);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::three);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::four);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::five);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::six);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::seven);
+			FILEMASK[ (int)getSquareFromFileRank( file, rank ) ] += getSquareFromFileRank(file, tRank::eight);
 
 		}
 	}

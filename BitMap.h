@@ -92,7 +92,7 @@ public:
 		assert( r <= tRank::eight );
 		assert( f >= tFile::A );
 		assert( r >= tRank::one );
-		return BitMap(1ull << (int)getFromFileRank( f, r ) );
+		return BitMap(1ull << (int)getSquareFromFileRank( f, r ) );
 	}
 
 	/*	\brief return true if the square is set in the bitmap

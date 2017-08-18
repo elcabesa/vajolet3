@@ -17,6 +17,7 @@
 
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
+#include "./../tSquare.h"
 
 class EnvironmentInvocationCatcher : public ::testing::Environment
 {
@@ -24,6 +25,7 @@ protected:
 	virtual void SetUp()
 	{
 		BitMap::init();
+		inittSquare();
 	}
 
 	virtual void TearDown()
