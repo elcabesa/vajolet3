@@ -1,0 +1,58 @@
+create cmake & use gtest
+
+vajolet 2				vajolet 3
+
+*displayBitmap			BitMap::to_string()		
+*bitCnt				BitMap::bitCnt()
+*firstOne				BitMap::firstone()
+*moreThanOneBit		BitMap::moreThanOneBit()
+bitSet				BitMap::getBitmapFromSquare()
+					BitMap::isSquareSet()
+*iterateBit			BitMap::iterator
+					BitMap::operator ==
+					BitMap::operator +=
+					BitMap::operator =
+RANKMASK				BitMap::getRankMask()
+FILEMASK				BitMap::getFileMask()
+
+squaresAligned			
+		
+					tColor
+					tFile
+					tFile::operator++
+					tFile::operator--
+					to_string(tFile)
+					tRank
+					tRank::operator++
+					tRank::operator--
+					to_string(tRank)
+					tSquare
+					tsquare::operator+
+					tsquare::operator-
+					tsquare::operator*
+					tsquare::operator+=
+					tsquare::operator-=
+					to_string(tsquare)
+					
+					tSquareRange
+					tSquareRange::iterator
+FILES				getFile(tSquare)
+RANKS				getRanktSquare
+SQUARE_COLOR			getColortSquare
+BOARDINDEX			getSquareFromFileRank()
+SQUARE_DISTANCE		getSquareDistance()
+
+BITMAP_COLOR			getColorBitMap()
+
+
+DIAGA1H8MASK
+DIAGA8H1MASK
+SQUARES_BETWEEN
+LINES			
+		
+
+ISOLATED_PAWN
+PASSED_PAWN
+SQUARES_IN_FRONT_OF
+centerBitmap
+bigCenterBitmap		

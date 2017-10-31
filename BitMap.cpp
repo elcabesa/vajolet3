@@ -21,6 +21,7 @@
 
 BitMap BitMap::RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
 BitMap BitMap::FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
+BitMap BitMap::SQUARECOLOR[ 2 ] = { 0ull, 0ull };
 
 /*	\brief return a string representing a bitmap
 	\author Marco Belli
@@ -55,7 +56,11 @@ std::string BitMap::to_string() const
 
 
 
-
+/*	\brief initalize help data
+	\author Marco Belli
+	\version 1.0
+	\date 17/06/2017
+*/
 void BitMap::init(void)
 {
 	for (tFile file = tFile::A; file <= tFile::H; file++)
@@ -89,4 +94,13 @@ void BitMap::init(void)
 
 		}
 	}
+	
+	SQUARECOLOR[0] = 0ull;
+	SQUARECOLOR[1] = 0ull;
+	
+	for(auto t: tSquareRange())
+	{
+		SQUARECOLOR[getColor(t)] += t;
+	}
+
 }

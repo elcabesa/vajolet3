@@ -17,6 +17,7 @@
 #include "tSquare.h"
 
 unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
+tColor SQUARE_COLOR[ tSquare::squareNumber ];
 
 void inittSquare(void)
 {
@@ -27,6 +28,15 @@ void inittSquare(void)
 			SQUARE_DISTANCE[ square1 ][ square2 ] = std::max(std::abs( getFile( square1 ) - getFile( square2 ) ), std::abs( getRank( square1 ) - getRank( square2 ) ) );
 		}
 	}
+	
+	for(auto square : tSquareRange())
+	{
+		auto file = getFile(square);
+		auto rank = getRank(square);
+		SQUARE_COLOR[ square ] = (tColor)( ( file + rank + 1 ) % 2 );
+		
+	}
+	
 
 }
 

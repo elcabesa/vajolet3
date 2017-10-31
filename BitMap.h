@@ -18,8 +18,6 @@
 #ifndef BITMAP_H_
 #define BITMAP_H_
 
-#include <cstdint>
-#include <string>
 #include "tSquare.h"
 
 class BitMap
@@ -28,6 +26,7 @@ private:
 	uint64_t b;
 	static BitMap RANKMASK[ tSquare::squareNumber ];
 	static BitMap FILEMASK[ tSquare::squareNumber ];
+	static BitMap SQUARECOLOR[ 2 ];
 public:
 
 	BitMap(){};
@@ -152,6 +151,11 @@ public:
 	{
 		assert( n < squareNumber );
 		return (FILEMASK[ n ]);
+	}
+	
+	static inline BitMap getColorBitMap(const tColor c)
+	{
+		return SQUARECOLOR[c];
 	}
 };
 

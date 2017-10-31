@@ -191,8 +191,9 @@ static inline tRank getRank(const tSquare n)
 */
 static inline tColor getColor(const tSquare n)
 {
+	extern tColor SQUARE_COLOR[ tSquare::squareNumber ];
 	assert( n < tSquare::squareNumber );
-	return (tColor)( n % 2 );
+	return SQUARE_COLOR[n];
 }
 
 /*	\brief convert file to string
@@ -245,6 +246,11 @@ static inline tSquare getSquareFromFileRank(tFile f, tRank r)
 	return t;
 }
 
+/*	\brief get distance between 2 squares
+	\author Marco Belli
+	\version 1.0
+	\date 18/08/2017
+*/
 static inline unsigned int getSquareDistance(const tSquare s1, const tSquare s2)
 {
 	extern unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
@@ -253,6 +259,11 @@ static inline unsigned int getSquareDistance(const tSquare s1, const tSquare s2)
 	return (SQUARE_DISTANCE[ s1 ][ s2 ]);
 }
 
+/*	\brief initTsquares help data
+	\author Marco Belli
+	\version 1.0
+	\date 18/08/2017
+*/
 void inittSquare(void);
 
 

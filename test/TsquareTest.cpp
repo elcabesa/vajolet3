@@ -185,6 +185,33 @@ namespace {
 		ASSERT_EQ(getFile(t),tFile::F);
 		ASSERT_EQ(getRank(t),tRank::six);
 		ASSERT_EQ(getColor(t),tColor::black);
+			
+		t = tSquare::G8;
+		ASSERT_EQ(getFile(t),tFile::G);
+		ASSERT_EQ(getRank(t),tRank::eight);
+		ASSERT_EQ(getColor(t),tColor::white);
+		
+		t = tSquare::D4;
+		ASSERT_EQ(getFile(t),tFile::D);
+		ASSERT_EQ(getRank(t),tRank::four);
+		ASSERT_EQ(getColor(t),tColor::black);
+		
+		t = tSquare::D5;
+		ASSERT_EQ(getFile(t),tFile::D);
+		ASSERT_EQ(getRank(t),tRank::five);
+		ASSERT_EQ(getColor(t),tColor::white);
+		
+		t = tSquare::E4;
+		ASSERT_EQ(getFile(t),tFile::E);
+		ASSERT_EQ(getRank(t),tRank::four);
+		ASSERT_EQ(getColor(t),tColor::white);
+		
+		t = tSquare::E5;
+		ASSERT_EQ(getFile(t),tFile::E);
+		ASSERT_EQ(getRank(t),tRank::five);
+		ASSERT_EQ(getColor(t),tColor::black);
+		
+		
 	}
 
 	TEST(tSquare, to_string)

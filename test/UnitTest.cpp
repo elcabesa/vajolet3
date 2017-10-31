@@ -24,8 +24,8 @@ class EnvironmentInvocationCatcher : public ::testing::Environment
 protected:
 	virtual void SetUp()
 	{
-		BitMap::init();
 		inittSquare();
+		BitMap::init();
 	}
 
 	virtual void TearDown()
@@ -36,7 +36,7 @@ protected:
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  AddGlobalTestEnvironment(new EnvironmentInvocationCatcher);
+  ::testing::AddGlobalTestEnvironment(new EnvironmentInvocationCatcher);
   return RUN_ALL_TESTS();
 }
 

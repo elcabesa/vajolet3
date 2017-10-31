@@ -199,6 +199,15 @@ namespace {
 			}
 		}
 	}
+	
+	TEST(BitMap, getColorBitMap)
+	{	
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::black), 0xAA55AA55AA55AA55ull );
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::white), 0x55AA55AA55AA55AAull );
+		
+	}
+	
+	
 
 }
 

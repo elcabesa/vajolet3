@@ -18,20 +18,22 @@
 #include "tSquare.h"
 #include "BitMap.h"
 
+static void setIoBuffers()
+{
+	std::cout.rdbuf()->pubsetbuf( nullptr, 0 );
+	std::cin.rdbuf()->pubsetbuf( nullptr, 0 );
+}
+
 static void init(void)
 {
-	BitMap::init();
 	inittSquare();
+	BitMap::init();
 }
 
 int main(void)
 {
-	/* todo remove everything */
-	std::cout.rdbuf()->pubsetbuf( 0, 0 );
-	std::cin.rdbuf()->pubsetbuf( 0, 0 );
-
+	setIoBuffers();
 	init();
-
 	return 0;
 }
 
