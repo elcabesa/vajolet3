@@ -207,6 +207,24 @@ namespace {
 		
 	}
 	
+	TEST(BitMap, areSquaresAligned)
+	{
+		ASSERT_TRUE( BitMap::areSquaresAligned( tSquare::D3, tSquare::F5, tSquare::B1 ) );
+		ASSERT_FALSE( BitMap::areSquaresAligned( tSquare::C1, tSquare::C7, tSquare::B4 ) );
+	}
+	
+	TEST(BitMap, getSquaresBetween)
+	{
+		BitMap b = BitMap::getSquaresBetween( tSquare::B7, tSquare::D5);
+		ASSERT_TRUE( b.isSquareSet( tSquare::C6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B7 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::D5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::A8 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::F3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::G7 ) );
+		
+	}
+	
 	
 
 }

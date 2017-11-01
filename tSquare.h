@@ -127,6 +127,12 @@ static inline tRank operator--(tRank& r,int)
 {
 	return r = (tRank)( r - 1 );
 }
+
+static inline tFile operator+(const tFile d1, const int d2) { return tFile( int(d1) + d2 ); }
+static inline tFile operator-(const tFile d1, const int d2) { return tFile( int(d1) - d2 ); }
+static inline tRank operator+(const tRank d1, const int d2) { return tRank( int(d1) + d2 ); }
+static inline tRank operator-(const tRank d1, const int d2) { return tRank( int(d1) - d2 ); }
+
 /*	\brief class used to iterate over a range of tSquare
 	\author Marco Belli
 	\version 1.0

@@ -27,6 +27,8 @@ private:
 	static BitMap RANKMASK[ tSquare::squareNumber ];
 	static BitMap FILEMASK[ tSquare::squareNumber ];
 	static BitMap SQUARECOLOR[ 2 ];
+	static BitMap SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
+	static BitMap LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 public:
 
 	BitMap(){};
@@ -157,6 +159,22 @@ public:
 	{
 		return SQUARECOLOR[c];
 	}
+	
+	static inline BitMap getSquaresBetween(const tSquare n1, const tSquare n2)
+	{
+		assert( n1 < squareNumber );
+		assert( n2 < squareNumber );
+		return SQUARES_BETWEEN[n1][n2];
+	}
+	
+	static inline bool areSquaresAligned(const tSquare s1, const tSquare s2, const tSquare s3)
+	{
+		assert( s1 < squareNumber );
+		assert( s2 < squareNumber );
+		assert( s3 < squareNumber );
+		return LINES[ s1 ][ s2 ].isSquareSet( s3 );
+	}
+	
 };
 
 
