@@ -34,6 +34,7 @@ int main(void)
 {
 	setIoBuffers();
 	init();
+
 	return 0;
 }
 

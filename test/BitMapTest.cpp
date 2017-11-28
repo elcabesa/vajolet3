@@ -18,6 +18,25 @@
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
 namespace {
+	
+	TEST(BitMap, constructor1)
+	{
+		BitMap x = 5;
+		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
+	}
+	
+	TEST(BitMap, constructor2)
+	{
+		BitMap x = 7;
+		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
+	}
+	
 
 	TEST(BitMap, bitCnt)
 	{
