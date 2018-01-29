@@ -19,6 +19,9 @@
 #include "vajolet.h"
 #include "BitMap.h"
 
+namespace libChess
+{
+	
 BitMap BitMap::RANKMASK[ static_cast<int>(tSquare::squareNumber) ];			//!< bitmask of a rank given a square on the rank
 BitMap BitMap::FILEMASK[ static_cast<int>(tSquare::squareNumber) ];			//!< bitmask of a file given a square on the rank
 BitMap BitMap::SQUARECOLOR[ 2 ] = { 0ull, 0ull };
@@ -56,6 +59,60 @@ std::string BitMap::to_string() const
 	return (s);
 }
 
+void BitMap::_initRankMask(void)
+{
+	for( auto sq: tSquareRange() )
+	{
+		
+		tRank rank = getRank( sq );
+		
+		//===========================================================================
+		//initialize 8-bit rank mask
+		//===========================================================================
+		
+		RANKMASK[ static_cast<int>(sq) ] = 0ull;
+		
+		for( auto file: tFileRange() )
+		{
+			RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, rank );
+		}
+	}	
+}
+
+void BitMap::_initFileMask(void)
+{
+	for( auto sq: tSquareRange() )
+	{
+		tFile file = getFile( sq );
+		
+		//===========================================================================
+		//initialize 8-bit file mask
+		//===========================================================================
+		
+		FILEMASK[ static_cast<int>(sq) ] = 0ull;
+		
+		for( auto rank: tRankRange() )
+		{
+			FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, rank );
+		}
+	}
+}
+
+void BitMap::_initSquareColor(void)
+{
+	SQUARECOLOR[0] = 0ull;
+	SQUARECOLOR[1] = 0ull;
+	
+	for( auto sq: tSquareRange() )
+	{
+		//===========================================================================
+		//initialize SQUARECOLOR
+		//===========================================================================
+		SQUARECOLOR[ static_cast<unsigned int>( getColor(sq) ) ] += sq;
+		
+	}
+}
+
 
 
 /*	\brief initalize help data
@@ -68,42 +125,16 @@ void BitMap::init(void)
 	BitMap DIAGA1H8MASK[ static_cast<int>(tSquare::squareNumber) ];
 	BitMap DIAGA8H1MASK[ static_cast<int>(tSquare::squareNumber) ];
 	
-	SQUARECOLOR[0] = 0ull;
-	SQUARECOLOR[1] = 0ull;
+	
+	_initRankMask();
+	_initFileMask();
+	_initSquareColor();
 	
 	for( auto sq: tSquareRange() )
 	{
 		tFile file = getFile( sq );
 		tRank rank = getRank( sq );
-		//===========================================================================
-		//initialize 8-bit rank mask
-		//===========================================================================
-
-		RANKMASK[ static_cast<int>(sq) ] = getSquareFromFileRank( tFile::A, rank ) ;
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::B, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::C, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::D, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::E, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::F, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::G, rank );
-		RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile::H, rank );
-
-		//===========================================================================
-		//initialize 8-bit file mask
-		//===========================================================================
-		FILEMASK[ static_cast<int>(sq) ] = getSquareFromFileRank( file, tRank::one);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::two);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::three);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::four);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::five);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::six);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::seven);
-		FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, tRank::eight);
 		
-		//===========================================================================
-		//initialize SQUARECOLOR
-		//===========================================================================
-		SQUARECOLOR[ static_cast<unsigned int>( getColor(sq) ) ] += sq;
 		
 		//===========================================================================
 		//Initialize 8-bit diagonal mask
@@ -111,6 +142,8 @@ void BitMap::init(void)
 		
 		DIAGA1H8MASK[ static_cast<int>(sq) ] = 0ull;
 		DIAGA8H1MASK[ static_cast<int>(sq) ] = 0ull;
+		
+		
 		int diaga8h1 = static_cast<int>(file) + static_cast<int>(rank); // from 0 to 14, longest diagonal = 7
 		if (diaga8h1 < 8)  // lower half, diagonals 0 to 7
 		{
@@ -127,10 +160,6 @@ void BitMap::init(void)
 			}
 		}
 
-
-		//===========================================================================
-		//Initialize 8-bit diagonal mask, used in the movegenerator (see movegen.ccp)
-		//===========================================================================
 		int diaga1h8 = static_cast<int>(file) - static_cast<int>(rank); // from -7 to +7, longest diagonal = 0
 		if (diaga1h8 > -1)  // lower half, diagonals 0 to 7
 		{
@@ -261,5 +290,6 @@ void BitMap::init(void)
 	}
 	
 	
+}
 
 }

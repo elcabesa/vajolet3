@@ -17,7 +17,382 @@
 
 #include "gtest/gtest.h"
 #include "./../tSquare.h"
+
+using namespace libChess;
+
 namespace {
+	
+	TEST(tFile,assign)
+	{
+		tFile f;
+		f = tFile::B;
+		ASSERT_EQ( tFile::B, f );
+		
+		tFile g = f;
+		ASSERT_EQ( tFile::B, g );
+		g = tFile::F;
+		ASSERT_EQ( tFile::F, g );
+	}
+	
+	TEST(tFile, tFileIncrement)
+	{
+		tFile f = tFile::B;
+		ASSERT_EQ( tFile::B, f++ );
+		ASSERT_EQ( tFile::C, f );
+		ASSERT_EQ( tFile::D, ++f );
+		ASSERT_EQ( tFile::D, f );
+		
+	}
+	
+	TEST(tFile, tFileDecrement)
+	{
+		tFile f = tFile::E;
+		ASSERT_EQ( tFile::E, f-- );
+		ASSERT_EQ( tFile::D, f );
+		ASSERT_EQ( tFile::C, --f );
+		ASSERT_EQ( tFile::C, f );
+		
+	}
+	
+	TEST(tFile, tFileSum)
+	{
+		tFile f = tFile::E;
+		ASSERT_EQ( tFile::G, f + 2 );
+	}
+	
+	TEST(tFile, tFileSub)
+	{
+		tFile f = tFile::E;
+		ASSERT_EQ( tFile::B, f - 3 );
+	}
+	
+	TEST(tFile, tFileDistance)
+	{
+		tFile f = tFile::E;
+		tFile g = tFile::E;
+		ASSERT_EQ( 0, distance( f, g ) );
+		
+		f = tFile::A;
+		g = tFile::D;
+		ASSERT_EQ( 3, distance( f, g ) );
+		
+		f = tFile::D;
+		g = tFile::A;
+		ASSERT_EQ( 3, distance( f, g ) );
+	}
+	
+	TEST(tFile, tFileSum2)
+	{
+		tFile f = tFile::E;
+		ASSERT_EQ( tFile::G, f+= 2 );
+	}
+	
+	TEST(tFile, tFileSub2)
+	{
+		tFile f = tFile::E;
+		ASSERT_EQ( tFile::B, f-= 3 );
+	}
+	
+	TEST(tFile, iterate)
+	{
+		unsigned int i = 0;
+
+		for(auto t: tFileRange())
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			if(i>1000) break;
+		}
+		ASSERT_EQ(i, 8u);
+	}
+	
+	TEST(tFile, iterateRange0)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tFile::B);
+
+		for(auto t: tFileRange(tFile::B,tFile::E))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 4u);
+	}
+
+	TEST(tFile, iterateRange1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tFile::A);
+
+		for(auto t: tFileRange(tFile::A,tFile::B))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 2u);
+	}
+
+	TEST(tFile, iterateRange2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tFile::E);
+
+		for(auto t: tFileRange(tFile::E,tFile::E))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 1u);
+	}
+
+	TEST(tFile, iterateRangeNeg1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tFile::E);
+
+		for(auto t: tFileRange(tFile::E,tFile::D))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+
+	TEST(tFile, iterateRangeNeg2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tFile::E);
+
+		for(auto t: tFileRange(tFile::E,tFile::A))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+	
+	TEST(tFile, to_string)
+	{
+		tFile f = tFile::E;
+		ASSERT_STREQ( "e", to_string(f).c_str() );
+	}
+	
+	TEST(tFile, distance)
+	{
+		tFile f = tFile::E;
+		tFile g = tFile::E;
+		ASSERT_EQ( 0, distance( f,g ));
+		
+		f = tFile::A;
+		g = tFile::D;
+		ASSERT_EQ( 3, distance( f,g ));
+		
+		f = tFile::D;
+		g = tFile::A;
+		ASSERT_EQ( 3, distance( f,g ));
+	}
+	
+	
+		
+	TEST(tRank,assign)
+	{
+		tRank f;
+		f = tRank::two;
+		ASSERT_EQ( tRank::two, f );
+		
+		tRank g = f;
+		ASSERT_EQ( tRank::two, g );
+		g = tRank::four;
+		ASSERT_EQ( tRank::four, g );
+	}
+	
+	TEST(tRank, tRankIncrement)
+	{
+		tRank f = tRank::two;
+		ASSERT_EQ( tRank::two, f++ );
+		ASSERT_EQ( tRank::three, f );
+		ASSERT_EQ( tRank::four, ++f );
+		ASSERT_EQ( tRank::four, f );
+		
+	}
+	
+	TEST(tRank, tRankDecrement)
+	{
+		tRank f = tRank::seven;
+		ASSERT_EQ( tRank::seven, f-- );
+		ASSERT_EQ( tRank::six, f );
+		ASSERT_EQ( tRank::five, --f );
+		ASSERT_EQ( tRank::five, f );
+		
+	}
+	
+	TEST(tRank, tRankSum)
+	{
+		tRank f = tRank::four;
+		ASSERT_EQ( tRank::six, f + 2 );
+	}
+	
+	TEST(tRank, tRankSub)
+	{
+		tRank f = tRank::eight;
+		ASSERT_EQ( tRank::five, f - 3 );
+	}
+	
+	TEST(tRank, tRankDistance)
+	{
+		tRank f = tRank::four;
+		tRank g = tRank::four;
+		ASSERT_EQ( 0, distance( f, g ) );
+		
+		f = tRank::four;
+		g = tRank::one;
+		ASSERT_EQ( 3, distance( f, g ) );
+		
+		f = tRank::one;
+		g = tRank::four;
+		ASSERT_EQ( 3, distance( f, g ) );
+	}
+	
+	TEST(tRank, tRankSum2)
+	{
+		tRank f = tRank::five;
+		ASSERT_EQ( tRank::seven, f+= 2 );
+	}
+	
+	TEST(tRank, tRankSub2)
+	{
+		tRank f = tRank::four;
+		ASSERT_EQ( tRank::one, f-= 3 );
+	}
+	
+	TEST(tRank, iterate)
+	{
+		unsigned int i = 0;
+
+		for(auto t: tRankRange())
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			if(i>1000) break;
+		}
+		ASSERT_EQ(i, 8u);
+	}
+	
+	TEST(tRank, iterateRange0)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::two);
+
+		for(auto t: tRankRange(tRank::two,tRank::five))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 4u);
+	}
+
+	TEST(tRank, iterateRange1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::one);
+
+		for(auto t: tRankRange(tRank::one,tRank::two))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 2u);
+	}
+
+	TEST(tRank, iterateRange2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::seven);
+
+		for(auto t: tRankRange(tRank::seven,tRank::seven))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 1u);
+	}
+
+	TEST(tRank, iterateRangeNeg1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::seven);
+
+		for(auto t: tRankRange(tRank::seven,tRank::six))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+
+	TEST(tRank, iterateRangeNeg2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::eight);
+
+		for(auto t: tRankRange(tRank::eight,tRank::one))
+		{
+			ASSERT_EQ((unsigned int)t,i);
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+	
+	TEST(tRank, to_string)
+	{
+		tRank f = tRank::two;
+		ASSERT_STREQ( "2", to_string(f).c_str() );
+	}
+	
+	TEST(tRank, distance)
+	{
+		tRank f = tRank::seven;
+		tRank g = tRank::seven;
+		ASSERT_EQ( 0, distance( f,g ));
+		
+		f = tRank::one;
+		g = tRank::four;
+		ASSERT_EQ( 3, distance( f,g ));
+		
+		f = tRank::four;
+		g = tRank::one;
+		ASSERT_EQ( 3, distance( f,g ));
+	}
 
 	TEST(tSquare, assign)
 	{
@@ -32,7 +407,8 @@ namespace {
 		ASSERT_EQ(t, tSquare::F6);
 	}
 
-	TEST(tSquare, move)
+	
+	TEST(tSquare, sum)
 	{
 		tSquare t1,t2;
 		t1 = tSquare::C3;
@@ -67,8 +443,22 @@ namespace {
 		t2 = tSquare::northOvest;
 		ASSERT_EQ(t1+t2, tSquare::G6);
 	}
-
+	
+	TEST(tSquare, sum2)
+	{
+		tSquare t;
+		t = tSquare::C3;
+		t += tSquare::north;
+		ASSERT_EQ(tSquare::C4, t );
+	}
+	
 	TEST(tSquare, subtracion)
+	{
+		tSquare t= tSquare::F6;
+		ASSERT_EQ(tSquare::F5, t - tSquare::north );
+	}
+
+	TEST(tSquare, subtracion2)
 	{
 		tSquare t= tSquare::F6;
 		t -= tSquare::north;
@@ -80,6 +470,33 @@ namespace {
 		tSquare t= tSquare::A1;
 		t += 5*tSquare::north;
 		ASSERT_EQ(t, tSquare::A6);
+	}
+	
+	TEST(tSquare, multiply2)
+	{
+		tSquare t= tSquare::A1;
+		t += tSquare::north * 5;
+		ASSERT_EQ(t, tSquare::A6);
+	}
+	
+	TEST(tSquare, tSquareIncrement)
+	{
+		tSquare f = tSquare::E4;
+		ASSERT_EQ( tSquare::E4, f++ );
+		ASSERT_EQ( tSquare::F4, f );
+		ASSERT_EQ( tSquare::G4, ++f );
+		ASSERT_EQ( tSquare::G4, f );
+		
+	}
+	
+	TEST(tSquare, tSquareDecrement)
+	{
+		tSquare f = tSquare::E4;
+		ASSERT_EQ( tSquare::E4, f-- );
+		ASSERT_EQ( tSquare::D4, f );
+		ASSERT_EQ( tSquare::C4, --f );
+		ASSERT_EQ( tSquare::C4, f );
+		
 	}
 
 	TEST(tSquare, iterate)
@@ -94,6 +511,8 @@ namespace {
 		}
 		ASSERT_EQ(i, 64u);
 	}
+	
+	
 	TEST(tSquare, iterateRange0)
 	{
 
@@ -173,6 +592,7 @@ namespace {
 		}
 		ASSERT_EQ(count, 0u);
 	}
+	
 
 	TEST(tSquare, getFileRankColor)
 	{
@@ -240,19 +660,27 @@ namespace {
 
 	}
 
-	TEST(tSquare, getSquareDistance)
+	TEST(tSquare, distance)
 	{
-		ASSERT_EQ( getSquareDistance( tSquare::A1, tSquare::H8 ), 7u );
-		ASSERT_EQ( getSquareDistance( tSquare::H8, tSquare::A1 ), 7u );
-		ASSERT_EQ( getSquareDistance( tSquare::F6, tSquare::F6 ), 0u );
-		ASSERT_EQ( getSquareDistance( tSquare::F4, tSquare::F7 ), 3u );
-		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::F7 ), 3u );
-		ASSERT_EQ( getSquareDistance( tSquare::F7, tSquare::D4 ), 3u );
-		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::D5 ), 1u );
-		ASSERT_EQ( getSquareDistance( tSquare::D4, tSquare::E4 ), 1u );
+		ASSERT_EQ( distance( tSquare::A1, tSquare::H8 ), 7u );
+		ASSERT_EQ( distance( tSquare::H8, tSquare::A1 ), 7u );
+		ASSERT_EQ( distance( tSquare::F6, tSquare::F6 ), 0u );
+		ASSERT_EQ( distance( tSquare::F4, tSquare::F7 ), 3u );
+		ASSERT_EQ( distance( tSquare::D4, tSquare::F7 ), 3u );
+		ASSERT_EQ( distance( tSquare::F7, tSquare::D4 ), 3u );
+		ASSERT_EQ( distance( tSquare::D4, tSquare::D5 ), 1u );
+		ASSERT_EQ( distance( tSquare::D4, tSquare::E4 ), 1u );
 	}
-
-
+	
+	TEST(tColor, assign)
+	{
+		tColor c = tColor::white;
+		ASSERT_EQ(tColor::white, c);
+		
+		c = tColor::black;
+		ASSERT_EQ(tColor::black, c);
+	}
+	
 }
 
 

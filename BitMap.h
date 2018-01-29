@@ -21,6 +21,9 @@
 #include "tSquare.h"
 //#include <x86intrin.h>
 
+namespace libChess
+{
+
 class BitMap
 {
 private:
@@ -227,12 +230,15 @@ public:
 	}
 	
 	static void init(void);
-	
+private:
+	static void _initRankMask(void);
+	static void _initFileMask(void);
+	static void _initSquareColor(void);
 };
 
 
 
-
+}
 
 
 

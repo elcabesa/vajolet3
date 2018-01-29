@@ -17,6 +17,10 @@
 
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
+
+using namespace libChess;
+
+
 namespace {
 	
 	TEST(BitMap, constructor1)

@@ -16,31 +16,36 @@
 */
 #include "tSquare.h"
 
-unsigned int SQUARE_DISTANCE[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
-tColor SQUARE_COLOR[ static_cast<int>(tSquare::squareNumber) ];
-
-void inittSquare(void)
+namespace libChess
 {
-	for(auto square1 : tSquareRange())
+
+	unsigned int SQUARE_DISTANCE[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
+	tColor SQUARE_COLOR[ static_cast<int>(tSquare::squareNumber) ];
+
+	void inittSquare(void)
 	{
-		for(auto square2 : tSquareRange())
+		for(auto square1 : tSquareRange())
 		{
-			SQUARE_DISTANCE[ static_cast<int>(square1) ][ static_cast<int>(square2) ] = 
-				std::max(
-					static_cast<int>(std::abs( static_cast<int>( (getFile( square1 ) - getFile( square2 ) ) ) ) ),
-					static_cast<int>(std::abs( static_cast<int>( (getRank( square1 ) - getRank( square2 ) ) ) ) )
-				);
+			for(auto square2 : tSquareRange())
+			{
+				SQUARE_DISTANCE[ static_cast<int>(square1) ][ static_cast<int>(square2) ] = 
+					std::max(
+						distance( getFile( square1 ) , getFile( square2 ) ) ,
+						distance( getRank( square1 ) , getRank( square2 ) )
+					);
+			}
 		}
-	}
-	
-	for(auto square : tSquareRange())
-	{
-		auto file = getFile(square);
-		auto rank = getRank(square);
-		SQUARE_COLOR[ static_cast<int>(square) ] = (tColor)( ( static_cast<int>(file) + static_cast<int>(rank) + 1 ) % 2 );
+		
+		for(auto square : tSquareRange())
+		{
+			auto file = getFile(square);
+			auto rank = getRank(square);
+			SQUARE_COLOR[ static_cast<int>(square) ] = (tColor)( ( static_cast<int>(file) + static_cast<int>(rank) + 1 ) % 2 );
+			
+		}
 		
 	}
-	
+
 }
 
 

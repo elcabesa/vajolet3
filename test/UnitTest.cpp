@@ -24,8 +24,8 @@ class EnvironmentInvocationCatcher : public ::testing::Environment
 protected:
 	virtual void SetUp()
 	{
-		inittSquare();
-		BitMap::init();
+		libChess::inittSquare();
+		libChess::BitMap::init();
 	}
 
 	virtual void TearDown()

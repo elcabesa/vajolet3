@@ -26,8 +26,8 @@ static void setIoBuffers()
 
 static void init(void)
 {
-	inittSquare();
-	BitMap::init();
+	libChess::inittSquare();
+	libChess::BitMap::init();
 }
 
 int main(void)

@@ -2,7 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 project (Vajolet)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -msse4.2 -m64 -mbmi -mbmi2 -mpopcnt -pedantic -Wall -Wextra -fmessage-length=0")
-set (CMAKE_EXE_LINKER_FLAGS "-s -pthread")
+set(CMAKE_EXE_LINKER_FLAGS "-s -pthread")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 add_library(libChess BitMap.cpp tSquare.cpp)
 
