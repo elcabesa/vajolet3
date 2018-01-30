@@ -19,8 +19,8 @@
 namespace libChess
 {
 
-	unsigned int SQUARE_DISTANCE[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
-	tColor SQUARE_COLOR[ static_cast<int>(tSquare::squareNumber) ];
+	unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
+	tColor SQUARE_COLOR[ tSquare::squareNumber ];
 
 	void inittSquare(void)
 	{
@@ -28,7 +28,7 @@ namespace libChess
 		{
 			for(auto square2 : tSquareRange())
 			{
-				SQUARE_DISTANCE[ static_cast<int>(square1) ][ static_cast<int>(square2) ] = 
+				SQUARE_DISTANCE[ square1 ][ square2 ] = 
 					std::max(
 						distance( getFile( square1 ) , getFile( square2 ) ) ,
 						distance( getRank( square1 ) , getRank( square2 ) )
@@ -40,7 +40,7 @@ namespace libChess
 		{
 			auto file = getFile(square);
 			auto rank = getRank(square);
-			SQUARE_COLOR[ static_cast<int>(square) ] = (tColor)( ( static_cast<int>(file) + static_cast<int>(rank) + 1 ) % 2 );
+			SQUARE_COLOR[ square ] = (tColor)( ( file + rank + 1 ) % 2 );
 			
 		}
 		

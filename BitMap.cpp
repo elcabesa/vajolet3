@@ -22,11 +22,11 @@
 namespace libChess
 {
 	
-BitMap BitMap::RANKMASK[ static_cast<int>(tSquare::squareNumber) ];			//!< bitmask of a rank given a square on the rank
-BitMap BitMap::FILEMASK[ static_cast<int>(tSquare::squareNumber) ];			//!< bitmask of a file given a square on the rank
+BitMap BitMap::RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
+BitMap BitMap::FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
 BitMap BitMap::SQUARECOLOR[ 2 ] = { 0ull, 0ull };
-BitMap BitMap::SQUARES_BETWEEN[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
-BitMap BitMap::LINES[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
+BitMap BitMap::SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
+BitMap BitMap::LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 
 /*	\brief return a string representing a bitmap
 	\author Marco Belli
@@ -70,11 +70,11 @@ void BitMap::_initRankMask(void)
 		//initialize 8-bit rank mask
 		//===========================================================================
 		
-		RANKMASK[ static_cast<int>(sq) ] = 0ull;
+		RANKMASK[ sq ] = 0ull;
 		
 		for( auto file: tFileRange() )
 		{
-			RANKMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, rank );
+			RANKMASK[ sq ] += getSquareFromFileRank( file, rank );
 		}
 	}	
 }
@@ -89,11 +89,11 @@ void BitMap::_initFileMask(void)
 		//initialize 8-bit file mask
 		//===========================================================================
 		
-		FILEMASK[ static_cast<int>(sq) ] = 0ull;
+		FILEMASK[ sq ] = 0ull;
 		
 		for( auto rank: tRankRange() )
 		{
-			FILEMASK[ static_cast<int>(sq) ] += getSquareFromFileRank( file, rank );
+			FILEMASK[ sq ] += getSquareFromFileRank( file, rank );
 		}
 	}
 }
@@ -108,7 +108,7 @@ void BitMap::_initSquareColor(void)
 		//===========================================================================
 		//initialize SQUARECOLOR
 		//===========================================================================
-		SQUARECOLOR[ static_cast<unsigned int>( getColor(sq) ) ] += sq;
+		SQUARECOLOR[ getColor(sq) ] += sq;
 		
 	}
 }
@@ -122,8 +122,8 @@ void BitMap::_initSquareColor(void)
 */
 void BitMap::init(void)
 {
-	BitMap DIAGA1H8MASK[ static_cast<int>(tSquare::squareNumber) ];
-	BitMap DIAGA8H1MASK[ static_cast<int>(tSquare::squareNumber) ];
+	BitMap DIAGA1H8MASK[ tSquare::squareNumber ];
+	BitMap DIAGA8H1MASK[ tSquare::squareNumber ];
 	
 	
 	_initRankMask();
@@ -140,39 +140,39 @@ void BitMap::init(void)
 		//Initialize 8-bit diagonal mask
 		//===========================================================================
 		
-		DIAGA1H8MASK[ static_cast<int>(sq) ] = 0ull;
-		DIAGA8H1MASK[ static_cast<int>(sq) ] = 0ull;
+		DIAGA1H8MASK[ sq ] = 0ull;
+		DIAGA8H1MASK[ sq ] = 0ull;
 		
 		
-		int diaga8h1 = static_cast<int>(file) + static_cast<int>(rank); // from 0 to 14, longest diagonal = 7
+		int diaga8h1 = file + rank; // from 0 to 14, longest diagonal = 7
 		if (diaga8h1 < 8)  // lower half, diagonals 0 to 7
 		{
 			for (int square = 0 ; square <= diaga8h1 ; square ++)
 			{
-				DIAGA8H1MASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile( square ), tRank( diaga8h1 - square ) ) ;
+				DIAGA8H1MASK[ sq ] += getSquareFromFileRank( tFile( square ), tRank( diaga8h1 - square ) ) ;
 			}
 		}
 		else  // upper half, diagonals 8 to 14
 		{
 			for (int square = 0 ; square < 15 - diaga8h1 ; square ++)
 			{
-				DIAGA8H1MASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile( diaga8h1 + square - 7 ), tRank( 7 - square ) );
+				DIAGA8H1MASK[ sq ] += getSquareFromFileRank( tFile( diaga8h1 + square - 7 ), tRank( 7 - square ) );
 			}
 		}
 
-		int diaga1h8 = static_cast<int>(file) - static_cast<int>(rank); // from -7 to +7, longest diagonal = 0
+		int diaga1h8 = file - rank; // from -7 to +7, longest diagonal = 0
 		if (diaga1h8 > -1)  // lower half, diagonals 0 to 7
 		{
 			for (int square = 0 ; square <= 7 - diaga1h8 ; square ++)
 			{
-				DIAGA1H8MASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile( diaga1h8 + square ), tRank( square ) );
+				DIAGA1H8MASK[ sq ] += getSquareFromFileRank( tFile( diaga1h8 + square ), tRank( square ) );
 			}
 		}
 		else
 		{
 			for (int square = 0 ; square <= 7 + diaga1h8 ; square ++)
 			{
-				DIAGA1H8MASK[ static_cast<int>(sq) ] += getSquareFromFileRank( tFile(square), tRank( square - diaga1h8 ) );
+				DIAGA1H8MASK[ sq ] += getSquareFromFileRank( tFile(square), tRank( square - diaga1h8 ) );
 			}
 		}
 	}
@@ -181,8 +181,8 @@ void BitMap::init(void)
 	{
 		for( auto sq2: tSquareRange() )
 		{
-			LINES[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = 0ull;
-			SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = 0ull;
+			LINES[ sq1 ][ sq2 ] = 0ull;
+			SQUARES_BETWEEN[ sq1 ][ sq2 ] = 0ull;
 			
 			if( sq1 != sq2 )
 			{
@@ -190,13 +190,13 @@ void BitMap::init(void)
 				{
 					// stessa colonna
 
-					LINES[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = FILEMASK[ static_cast<int>(sq1) ];
+					LINES[ sq1 ][ sq2 ] = FILEMASK[ sq1 ];
 					if( getRank( sq2 ) > getRank( sq1 ) ) // in salita
 					{
 						tRank temp = getRank( sq1 ) + 1;
 						while( temp < getRank( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( getFile( sq1 ), temp );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
 							temp++;
 						}
 					}
@@ -205,20 +205,20 @@ void BitMap::init(void)
 						tRank temp = getRank( sq1 ) - 1;
 						while( temp > getRank( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( getFile( sq1 ), temp );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
 							temp--;
 						}
 					}
 				}
 				if( getRank( sq1 ) == getRank( sq2 ) )
 				{
-					LINES[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = RANKMASK[ static_cast<int>(sq1) ];
+					LINES[ sq1 ][ sq2 ] = RANKMASK[ sq1 ];
 					if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
 					{
 						tFile temp = getFile( sq1 ) + 1;
 						while( temp < getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, getRank( sq1 ) );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
 							temp++;
 						}
 					}
@@ -227,21 +227,21 @@ void BitMap::init(void)
 						tFile temp = getFile( sq1 ) - 1;
 						while( temp > getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, getRank( sq1 ) );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
 							temp--;
 						}
 					}
 				}
-				if( DIAGA1H8MASK[ static_cast<int>(sq1) ].isSquareSet( sq2 ) )
+				if( DIAGA1H8MASK[ sq1 ].isSquareSet( sq2 ) )
 				{
-					LINES[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = DIAGA1H8MASK[ static_cast<int>(sq1) ];
+					LINES[ sq1 ][ sq2 ] = DIAGA1H8MASK[ sq1 ];
 					if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
 					{
 						tFile temp = getFile( sq1 ) + 1;
 						tRank temp2 = getRank( sq1 ) + 1;
 						while( temp < getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, temp2 );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
 							temp++;
 							temp2++;
 						}
@@ -252,22 +252,22 @@ void BitMap::init(void)
 						tRank temp2 = getRank( sq1 ) - 1;
 						while( temp > getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, temp2 );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
 							temp--;
 							temp2--;
 						}
 					}
 				}
-				if(DIAGA8H1MASK[ static_cast<int>(sq1) ].isSquareSet( sq2 ) )
+				if(DIAGA8H1MASK[ sq1 ].isSquareSet( sq2 ) )
 				{
-					LINES[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] = DIAGA8H1MASK[ static_cast<int>(sq1) ];
+					LINES[ sq1 ][ sq2 ] = DIAGA8H1MASK[ sq1 ];
 					if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
 					{
 						tFile temp = getFile( sq1 ) + 1;
 						tRank temp2 = getRank( sq1 ) - 1;
 						while( temp < getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, temp2 );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
 							temp++;
 							temp2--;
 						}
@@ -278,7 +278,7 @@ void BitMap::init(void)
 						tRank temp2 = getRank( sq1 ) + 1;
 						while( temp > getFile( sq2 ) )
 						{
-							SQUARES_BETWEEN[ static_cast<int>(sq1) ][ static_cast<int>(sq2) ] += getSquareFromFileRank( temp, temp2 );
+							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
 							temp--;
 							temp2++;
 						}

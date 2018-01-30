@@ -154,23 +154,6 @@ namespace {
 
 	}
 
-	TEST(BitMap, operatorPlusEqual)
-	{
-		std::vector<tSquare>v;
-		BitMap b(0);
-		b+= tSquare::F6;
-		b+= tSquare::D4;
-		b+= tSquare::D4;
-		for(const auto t : b)
-		{
-			v.push_back(t);
-		}
-
-		ASSERT_EQ( v.size(), 2u );
-		ASSERT_EQ( v[0], tSquare::D4 );
-		ASSERT_EQ( v[1], tSquare::F6 );
-	}
-
 	TEST(BitMap, getRankMask)
 	{
 		for (tFile file = tFile::A; file <= tFile::H; file++)
@@ -248,10 +231,298 @@ namespace {
 		
 	}
 	
+	TEST(BitMap, to_string)
+	{
+		BitMap b(64382);
+		std::string s = "8 ........\n7 ........\n6 ........\n5 ........\n4 ........\n3 ........\n2 11.11111\n1 .111111.\n  abcdefgh";
+		ASSERT_STREQ( s.c_str(), b.to_string().c_str() );
+	}
 	
+	TEST(BitMap, isEmpty)
+	{
+		BitMap b(64382);
+		ASSERT_FALSE( b.isEmpty() );
+		BitMap b2(0);
+		ASSERT_TRUE( b2.isEmpty() );
+		
+	}
+	
+	TEST(BitMap, operatorPlusEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D4;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
 
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::D4 );
+		ASSERT_EQ( v[1], tSquare::F6 );
+	}
+	
+	TEST(BitMap, operatorComparison)
+	{
+		BitMap b(12692365593);
+		BitMap b2(12692365593);
+		BitMap b3(1243780067094);
+		
+		ASSERT_TRUE( b == b2 );
+		ASSERT_FALSE( b == b3 );
+		ASSERT_FALSE( b2 == b3 );
+		ASSERT_TRUE( b == b );
+		ASSERT_TRUE( b2 == b2 );
+		ASSERT_TRUE( b3 == b3 );
+		ASSERT_FALSE( b3 == b2 );
+		ASSERT_FALSE( b3 == b );
+	}
+	
+	TEST(BitMap, operatorPlusEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F8;
+		b2+= tSquare::D5;
+		
+		b += b2;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 5u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::D5 );
+		ASSERT_EQ( v[3], tSquare::F6 );
+		ASSERT_EQ( v[4], tSquare::F8 );
+	}
+	
+	TEST(BitMap, operatorandEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
+		
+		b &= b2;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::D5 );
+		ASSERT_EQ( v[1], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b = tSquare::F6;
+		
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 1u );
+		ASSERT_EQ( v[0], tSquare::F6 );
+	}
+	
+	TEST(BitMap, operatorEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D4;
+		
+		BitMap b2;
+		b2 = b;
+		for(const auto t : b2)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::D4 );
+		ASSERT_EQ( v[1], tSquare::F6 );
+	}
+	
+	TEST(BitMap, operatorPlus)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F8;
+		b2+= tSquare::D5;
+		
+		BitMap b3 = b + b2;
+		for(const auto t : b3)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 5u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::D5 );
+		ASSERT_EQ( v[3], tSquare::F6 );
+		ASSERT_EQ( v[4], tSquare::F8 );
+	}
+	
+	TEST(BitMap, operatorAnd)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
+		
+		BitMap b3 = b & b2;
+		for(const auto t : b3)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::D5 );
+		ASSERT_EQ( v[1], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorXor)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
+		
+		BitMap b3 = b ^ b2;
+		for(const auto t : b3)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
+
+	}
+	
+	TEST(BitMap, operatorXor2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b3 = b ^ tSquare::A2;
+		b3 = b3 ^ tSquare::F6;
+		b3 = b3 ^ tSquare::D5;
+		b3 = b3 ^ tSquare::E8;
+		for(const auto t : b3)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
+
+	}
+	
+	TEST(BitMap, operatorXorEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
+		
+		 b ^= b2;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
+
+	}
+	
+	TEST(BitMap, operatorXorEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		b ^= tSquare::A2;
+		b ^= tSquare::F6;
+		b ^= tSquare::D5;
+		b ^= tSquare::E8;
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
+
+	}
+	
 }
-
-
-
-

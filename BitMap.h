@@ -28,11 +28,11 @@ class BitMap
 {
 private:
 	uint64_t b;
-	static BitMap RANKMASK[ static_cast<int>(tSquare::squareNumber) ];
-	static BitMap FILEMASK[ static_cast<int>(tSquare::squareNumber) ];
+	static BitMap RANKMASK[ tSquare::squareNumber ];
+	static BitMap FILEMASK[ tSquare::squareNumber ];
 	static BitMap SQUARECOLOR[ 2 ];
-	static BitMap SQUARES_BETWEEN[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
-	static BitMap LINES[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
+	static BitMap SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
+	static BitMap LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 public:
 
 	BitMap(){};
@@ -91,7 +91,7 @@ public:
 	static inline BitMap getBitmapFromSquare(const tSquare n)
 	{
 		assert( n < tSquare::squareNumber );
-		return BitMap( 1ull << static_cast<int>(n) );
+		return BitMap( 1ull << n );
 	}
 
 	/*	\brief return a BitMap with the nth bit set
@@ -105,7 +105,7 @@ public:
 		assert( r <= tRank::eight );
 		assert( f >= tFile::A );
 		assert( r >= tRank::one );
-		return BitMap(1ull << static_cast<int>( getSquareFromFileRank( f, r ) ) );
+		return BitMap(1ull << getSquareFromFileRank( f, r ) );
 	}
 
 	/*	\brief return true if the square is set in the bitmap
@@ -180,7 +180,7 @@ public:
 	static inline BitMap getRankMask(const tSquare n)
 	{
 		assert( n < squareNumber );
-		return (RANKMASK[ static_cast<int>(n) ]);
+		return (RANKMASK[ n ]);
 	}
 
 	/*	\brief return a bitmap used to mask file
@@ -191,7 +191,7 @@ public:
 	static inline BitMap getFileMask(const tSquare n)
 	{
 		assert( n < squareNumber );
-		return (FILEMASK[ static_cast<int>(n) ]);
+		return (FILEMASK[ n ]);
 	}
 	
 	/*	\brief return a bitmap used to mask wlight or dark square
@@ -201,7 +201,7 @@ public:
 	*/
 	static inline BitMap getColorBitMap(const tColor c)
 	{
-		return SQUARECOLOR[ static_cast<unsigned int>(c) ];
+		return SQUARECOLOR[ c ];
 	}
 	
 	/*	\brief get a bitmap with the squares between 2 squares
@@ -213,7 +213,7 @@ public:
 	{
 		assert( n1 < squareNumber );
 		assert( n2 < squareNumber );
-		return SQUARES_BETWEEN[ static_cast<int>(n1) ][ static_cast<int>(n2) ];
+		return SQUARES_BETWEEN[ n1 ][ n2 ];
 	}
 	
 	/*	\brief tell whether 3 squares are aligned or not
@@ -226,7 +226,7 @@ public:
 		assert( s1 < squareNumber );
 		assert( s2 < squareNumber );
 		assert( s3 < squareNumber );
-		return LINES[ static_cast<int>(s1) ][ static_cast<int>(s2) ].isSquareSet( s3 );
+		return LINES[ s1 ][ s2 ].isSquareSet( s3 );
 	}
 	
 	static void init(void);

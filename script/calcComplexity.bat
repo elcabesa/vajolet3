@@ -1,0 +1,1 @@
+lizard -l cpp  -x"../.git/*" -x"../Release/*" -x"../Debug/*" -x"../build/*" -x"../test/*" .. >complexity.txt

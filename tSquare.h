@@ -32,7 +32,7 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	enum class tFile : int
+	enum tFile : int
 	{
 		A,
 		B,
@@ -51,12 +51,12 @@ namespace libChess
 	*/
 	static inline tFile& operator++(tFile& r)
 	{
-		return r = (tFile)( static_cast<int>(r) + 1 );
+		return r = (tFile)( (int)r + 1 );
 	}
 
 	static inline tFile& operator--(tFile& r)
 	{
-		return r = (tFile)( static_cast<int>(r) - 1 );
+		return r = (tFile)( (int)r - 1 );
 	}
 
 	static inline tFile operator++(tFile& r,int)
@@ -73,8 +73,8 @@ namespace libChess
 		return n;
 	}
 
-	static inline tFile operator+(const tFile d1, const int d2) { return tFile( static_cast<int>(d1) + d2 ); }
-	static inline tFile operator-(const tFile d1, const int d2) { return tFile( static_cast<int>(d1) - d2 ); }
+	static inline tFile operator+(const tFile d1, const int d2) { return tFile( (int)d1 + d2 ); }
+	static inline tFile operator-(const tFile d1, const int d2) { return tFile( (int)d1 - d2 ); }
 
 	inline tFile& operator+=(tFile& d1, const int d2) { d1 = d1 + d2; return d1; }
 	inline tFile& operator-=(tFile& d1, const int d2) { d1 = d1 - d2; return d1; }
@@ -89,7 +89,7 @@ namespace libChess
 	tFile min;
 	tFile Max;
 	public:
-	tFileRange(tFile _min=tFile::A, tFile _Max= tFile::H): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
+	tFileRange(tFile _min = tFile::A, tFile _Max = tFile::H): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
 														std::input_iterator_tag,	// iterator_category
@@ -126,7 +126,7 @@ namespace libChess
 		return s;
 	}
 	
-	static inline int distance(const tFile d1, const tFile d2) { return std::abs(static_cast<int>(d1) - static_cast<int>(d2)); }
+	static inline int distance(const tFile d1, const tFile d2) { return std::abs( (int)d1 - (int)d2 ); }
 
 
 	//-----------------------------------------------------
@@ -138,7 +138,7 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	enum class tRank : int
+	enum tRank : int
 	{
 		one,
 		two,
@@ -158,12 +158,12 @@ namespace libChess
 
 	static inline tRank& operator++(tRank& r)
 	{
-		return r = (tRank)( static_cast<int>(r) + 1 );
+		return r = (tRank)( (int)r + 1 );
 	}
 
 	static inline tRank& operator--(tRank& r)
 	{
-		return r = (tRank)( static_cast<int>(r) - 1 );
+		return r = (tRank)( (int)r - 1 );
 	}
 
 
@@ -181,8 +181,8 @@ namespace libChess
 		return n;
 	}
 
-	static inline tRank operator+(const tRank d1, const int d2) { return tRank( static_cast<int>(d1) + d2 ); }
-	static inline tRank operator-(const tRank d1, const int d2) { return tRank( static_cast<int>(d1) - d2 ); }
+	static inline tRank operator+(const tRank d1, const int d2) { return tRank( (int)d1 + d2 ); }
+	static inline tRank operator-(const tRank d1, const int d2) { return tRank( (int)d1 - d2 ); }
 
 
 
@@ -200,7 +200,7 @@ namespace libChess
 	tRank min;
 	tRank Max;
 	public:
-	tRankRange(tRank _min=tRank::one, tRank _Max= tRank::eight): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
+	tRankRange(tRank _min = tRank::one, tRank _Max = tRank::eight): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
 														std::input_iterator_tag,	// iterator_category
@@ -236,7 +236,7 @@ namespace libChess
 		return s;
 	}
 	
-	static inline int distance(const tRank d1, const tRank d2) { return std::abs(static_cast<int>(d1) - static_cast<int>(d2)); }
+	static inline int distance(const tRank d1, const tRank d2) { return std::abs( (int)d1 - (int)d2 ); }
 
 
 	//-----------------------------------------------------
@@ -248,7 +248,7 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	enum class tSquare : int
+	enum tSquare : int
 	{
 		A1,	B1,	C1,	D1,	E1,	F1,	G1,	H1,
 		A2,	B2,	C2,	D2,	E2,	F2,	G2,	H2,
@@ -280,10 +280,10 @@ namespace libChess
 		\date 17/08/2017
 	*/
 
-	inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare( static_cast<int>(d1) + static_cast<int>(d2) ); }
-	inline tSquare operator-(const tSquare d1, const tSquare d2) { return tSquare( static_cast<int>(d1) - static_cast<int>(d2) ); }
-	inline tSquare operator*(int i, const tSquare d) { return tSquare( i * static_cast<int>(d) ); }
-	inline tSquare operator*(const tSquare d, int i) { return tSquare(static_cast<int>(d) * i); }
+	inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 + (int)d2 ); }
+	inline tSquare operator-(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 - (int)d2 ); }
+	inline tSquare operator*(int i, const tSquare d) { return tSquare( i * (int)d ); }
+	inline tSquare operator*(const tSquare d, int i) { return tSquare( (int)d * i ); }
 	inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
 	inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
 
@@ -296,12 +296,12 @@ namespace libChess
 
 	static inline tSquare& operator++(tSquare& r)
 	{
-		return r = (tSquare)( static_cast<int>(r) + 1 );
+		return r = (tSquare)( (int)r + 1 );
 	}
 
 	static inline tSquare& operator--(tSquare& r)
 	{
-		return r = (tSquare)( static_cast<int>(r) - 1 );
+		return r = (tSquare)( (int)r - 1 );
 	}
 
 
@@ -330,7 +330,7 @@ namespace libChess
 	tSquare min;
 	tSquare Max;
 	public:
-	tSquareRange(tSquare _min=tSquare::A1, tSquare _Max= tSquare::H8): min(_min), Max( _Max + tSquare::east ){if(Max < min) Max = min;}
+	tSquareRange(tSquare _min = tSquare::A1, tSquare _Max = tSquare::H8): min(_min), Max( _Max + tSquare::east ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
 														std::input_iterator_tag,	// iterator_category
@@ -365,7 +365,7 @@ namespace libChess
 	static inline tFile getFile(const tSquare n)
 	{
 		assert( n < tSquare::squareNumber );
-		return (tFile)( static_cast<int>(n) % 8u );
+		return (tFile)( n % 8u );
 	}
 
 	/*	\brief get rank of a square
@@ -376,7 +376,7 @@ namespace libChess
 	static inline tRank getRank(const tSquare n)
 	{
 		assert( n < tSquare::squareNumber );
-		return (tRank)( static_cast<int>(n) / 8 );
+		return (tRank)( n / 8 );
 	}
 
 
@@ -402,7 +402,7 @@ namespace libChess
 	static inline tSquare getSquareFromFileRank(tFile f, tRank r)
 	{
 		tSquare t;
-		t = (tSquare)( static_cast<int>(r) *8 + static_cast<int>(f) );
+		t = (tSquare)( r *8 + f );
 		return t;
 	}
 
@@ -413,10 +413,10 @@ namespace libChess
 	*/
 	static inline unsigned int distance(const tSquare s1, const tSquare s2)
 	{
-		extern unsigned int SQUARE_DISTANCE[ static_cast<int>(tSquare::squareNumber) ][ static_cast<int>(tSquare::squareNumber) ];
-		assert( s1 < static_cast<int>(squareNumber) );
-		assert( s2 < static_cast<int>(squareNumber) );
-		return (SQUARE_DISTANCE[ static_cast<int>(s1) ][ static_cast<int>(s2) ]);
+		extern unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
+		assert( s1 < intsquareNumber );
+		assert( s2 < intsquareNumber );
+		return (SQUARE_DISTANCE[ s1 ][ s2 ]);
 	}
 
 	//-----------------------------------------------------
@@ -428,7 +428,7 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	enum class tColor : unsigned int
+	enum tColor : unsigned int
 	{
 		white = 0,
 		black = 1
@@ -441,9 +441,9 @@ namespace libChess
 	*/
 	static inline tColor getColor(const tSquare n)
 	{
-		extern tColor SQUARE_COLOR[ static_cast<int>(tSquare::squareNumber) ];
-		assert( n < static_cast<int>(tSquare::squareNumber) );
-		return SQUARE_COLOR[static_cast<int>(n)];
+		extern tColor SQUARE_COLOR[ tSquare::squareNumber ];
+		assert( n < tSquare::squareNumber );
+		return SQUARE_COLOR[ n ];
 	}
 
 	/*	\brief initTsquares help data
