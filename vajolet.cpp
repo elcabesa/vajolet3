@@ -17,6 +17,7 @@
 #include <iostream>
 #include "tSquare.h"
 #include "BitMap.h"
+#include "HashKeys.h"
 
 static void setIoBuffers()
 {
@@ -27,7 +28,8 @@ static void setIoBuffers()
 static void init(void)
 {
 	libChess::inittSquare();
-	//libChess::BitMap::init();
+	libChess::BitMap::init();
+	libChess::HashKey::init();
 }
 
 int main(void)

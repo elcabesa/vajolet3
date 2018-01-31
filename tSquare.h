@@ -19,7 +19,7 @@
 #define TSQUARE_H_
 
 #include <string>
-#include "vajolet.h"
+#include "Vajolet.h"
 
 namespace libChess
 {

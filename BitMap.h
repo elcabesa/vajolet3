@@ -19,7 +19,6 @@
 #define BITMAP_H_
 
 #include "tSquare.h"
-//#include <x86intrin.h>
 
 namespace libChess
 {

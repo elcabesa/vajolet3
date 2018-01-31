@@ -18,6 +18,7 @@
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
 #include "./../tSquare.h"
+#include "./../HashKeys.h"
 
 class EnvironmentInvocationCatcher : public ::testing::Environment
 {
@@ -26,6 +27,7 @@ protected:
 	{
 		libChess::inittSquare();
 		libChess::BitMap::init();
+		libChess::HashKey::init();
 	}
 
 	virtual void TearDown()

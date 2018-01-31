@@ -22,7 +22,9 @@
 #define NDEBUG
 #include <assert.h>     /* assert */
 
+const char PIECE_NAMES_FEN[] = {' ','K','Q','R','B','N','P',' ',' ','k','q','r','b','n','p',' '};
 
+typedef signed int Score;	/*!< score saved as a single signed int value*/
 
 
 #endif /* VAJOLET_H_ */

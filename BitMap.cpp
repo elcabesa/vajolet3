@@ -16,7 +16,7 @@
 */
 #include <iostream>
 
-#include "vajolet.h"
+#include "Vajolet.h"
 #include "BitMap.h"
 
 namespace libChess

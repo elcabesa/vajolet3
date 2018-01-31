@@ -7,9 +7,9 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s -pthread")
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG " -pthread --coverage")
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
-add_library(libChess BitMap.cpp HashKeys.cpp tSquare.cpp)
+add_library(libChess BitMap.cpp HashKeys.cpp Move.cpp tSquare.cpp)
 
-add_executable(Vajolet vajolet.cpp )
+add_executable(Vajolet Vajolet.cpp )
 target_link_libraries (Vajolet libChess)
 
 # Download and unpack googletest at configure time
@@ -45,7 +45,7 @@ target_link_libraries (Vajolet libChess)
 
     enable_testing()
     # Now simply link against gtest or gtest_main as needed. Eg
-    add_executable(Vajolet_unitTest test/UnitTest.cpp test/BitMapTest.cpp test/tSquareTest.cpp)
+    add_executable(Vajolet_unitTest test/UnitTest.cpp test/BitMapTest.cpp test/HashKeysTest.cpp test/MoveTest.cpp test/tSquareTest.cpp)
     target_link_libraries(Vajolet_unitTest gtest libChess)
     add_test(NAME example_test COMMAND Vajolet_unitTest)
     
