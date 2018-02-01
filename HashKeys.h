@@ -24,6 +24,7 @@
 //---------------------------------
 #include "Vajolet.h"
 #include "tSquare.h"
+#include "Position.h"
 
 namespace libChess
 {
@@ -42,9 +43,9 @@ public:
 	uint64_t inline getKey(void)const{ return _key; } 
 	HashKey inline exclusion(void)const{ return _key ^ _exclusion; }
 	
-	void inline movePiece(const /*piece*/ unsigned int p, const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p];};
-	void inline addPiece(const /*piece*/ unsigned int p, const tSquare sq){_key ^= _keys[sq][p];};
-	void inline removePiece(const /*piece*/ unsigned int p, const tSquare sq){_key ^= _keys[sq][p];};
+	void inline movePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p];};
+	void inline addPiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p];};
+	void inline removePiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p];};
 	void inline changeSide(void){_key ^= _side;};
 	void inline addEp(const tSquare sq){_key ^= _ep[sq];};
 	void inline removeEp(const tSquare sq){_key ^= _ep[sq];};
@@ -56,7 +57,7 @@ private:
 	HashKey(const uint64_t key):_key(key){};
 	static const unsigned int _CastlingRightBit = 4;
 	static const unsigned int _CastlingRightSize = 1<<_CastlingRightBit;
-	static const unsigned int _KeyNum = 30;
+	static const unsigned int _KeyNum = bitboardNumber;
 	static uint64_t _keys[tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
 	static uint64_t _side;									// side to move (black)
 	static uint64_t _ep[tSquare::squareNumber];				// ep targets (only 16 used)

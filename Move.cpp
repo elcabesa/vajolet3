@@ -20,6 +20,8 @@
 #include "tSquare.h"
 #include "Move.h"
 
+#include "Position.h"
+
 namespace libChess
 {
 	std::string Move::to_string(void) const
@@ -38,8 +40,7 @@ namespace libChess
 		//promotion
 		if( isPromotionMove() )
 		{
-			// todo rework con piece type
-			s += PIECE_NAMES_FEN[ getPromotionType() + 10 ];
+			s += PIECE_NAMES_FEN[ getPromotionType() + blackQueens ];
 		}
 		return s;
 	}

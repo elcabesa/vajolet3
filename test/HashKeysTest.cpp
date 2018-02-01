@@ -42,7 +42,7 @@ namespace {
 	TEST(HashKeys, assign)
 	{
 		HashKey x;
-		x.movePiece(3,tSquare::A1,tSquare::F3);
+		x.movePiece(whiteRooks,tSquare::A1,tSquare::F3);
 		
 		HashKey y;
 		y = x;
@@ -57,7 +57,7 @@ namespace {
 		ASSERT_EQ( y.getKey(), x.getKey());
 		
 		// todo change to number of pieces to constant
-		for( int i = 0; i < 30; i++)
+		for( auto i : bitboardIndexRange() )
 		{
 			for(auto from: tSquareRange())
 			{
@@ -87,7 +87,7 @@ namespace {
 		ASSERT_EQ( z.getKey(), x.getKey());
 		
 		// todo change to number of pieces to constant
-		for( int i = 0; i < 30; i++)
+		for( auto i : bitboardIndexRange() )
 		{
 			for(auto from: tSquareRange())
 			{
@@ -116,7 +116,7 @@ namespace {
 	TEST(HashKeys, changeSide)
 	{
 		HashKey x;
-		x.movePiece(3,tSquare::A1,tSquare::F3);
+		x.movePiece(blackKnights,tSquare::A1,tSquare::F3);
 		
 		HashKey y = x;
 		x.changeSide();
