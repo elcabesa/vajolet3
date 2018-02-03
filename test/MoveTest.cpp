@@ -257,8 +257,8 @@ namespace {
 		Move z(tSquare::D7, tSquare::E8, Move::fcastle, Move::promBishop);
 		ASSERT_STREQ( "d7e8", z.to_string().c_str() );
 		
-		Move z(tSquare::A1, tSquare::A1);
-		ASSERT_STREQ( "0000", z.to_string().c_str() );
+		Move w(tSquare::A1, tSquare::A1);
+		ASSERT_STREQ( "0000", w.to_string().c_str() );
 		
 	}
 	
