@@ -19,7 +19,7 @@
 #define MOVE_H_
 
 #include <string>
-#include "vajolet.h"
+#include "Vajolet.h"
 #include "tSquare.h"
 
 namespace libChess

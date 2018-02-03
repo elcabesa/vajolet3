@@ -75,7 +75,6 @@ public:
 	*/
 	inline bool moreThanOneBit() const
 	{
-		//return (bool)_blsr_u64(b);
 		return bitCnt() > 1;
 	}
 
