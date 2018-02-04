@@ -18,7 +18,4 @@ script:
   - ./Vajolet_unitTest
   
 after_success:
-- coveralls --root ..
-
-
-  
+- coveralls --root .. -E "Debug" -E "test"
