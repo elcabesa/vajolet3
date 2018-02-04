@@ -18,4 +18,4 @@ script:
   - ./Vajolet_unitTest
   
 after_success:
-- coveralls --gcov-options '\-lp --root .. -E ".*Debug.*" -E ".*test.*"
+- coveralls --gcov-options '\-lp' --root .. -E ".*Debug.*" -E ".*test.*"
