@@ -8,13 +8,17 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
 
-
+before_install:
+  - pip install --user cpp-coveralls
 
 script: 
   - cd Debug
   - cmake -DCMAKE_BUILD_TYPE=Debug ..
   - make
   - ./Vajolet_unitTest
+  
+after_success:
+- coveralls --root ..
 
 
   
