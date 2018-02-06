@@ -27,16 +27,16 @@ namespace {
 	TEST(HashKeys, constructor)
 	{
 		HashKey x;	
-		ASSERT_EQ( 0, x.getKey());
+		ASSERT_EQ( HashKey(0), x );
 	}
 	
 	TEST(HashKeys, constructor2)
 	{
 		HashKey x;
 		HashKey ex = x.exclusion();
-		ASSERT_NE( 0, ex.getKey());
+		ASSERT_NE( HashKey(0), ex );
 		
-		ASSERT_EQ( 0, ex.exclusion().getKey());
+		ASSERT_EQ( HashKey(0), ex.exclusion() );
 	}
 	
 	TEST(HashKeys, assign)
@@ -47,14 +47,14 @@ namespace {
 		HashKey y;
 		y = x;
 		
-		ASSERT_EQ( y.getKey(), x.getKey());
+		ASSERT_EQ( y, x);
 	}
 	
 	TEST(HashKeys, MovePiece)
 	{
 		HashKey x;
 		HashKey y = x;
-		ASSERT_EQ( y.getKey(), x.getKey());
+		ASSERT_EQ( y, x);
 		
 		// todo change to number of pieces to constant
 		for( auto i : bitboardIndexRange() )
@@ -66,11 +66,11 @@ namespace {
 					x.movePiece(i,from,to);
 					if( from == to )
 					{
-						ASSERT_EQ(y.getKey(), x.getKey());
+						ASSERT_EQ( y, x );
 					}
 					else
 					{
-						ASSERT_NE(y.getKey(), x.getKey());
+						ASSERT_NE( y, x );
 					}
 					y = x;
 				}
@@ -83,8 +83,8 @@ namespace {
 		HashKey x;
 		HashKey y = x;
 		HashKey z = x;
-		ASSERT_EQ( y.getKey(), x.getKey());
-		ASSERT_EQ( z.getKey(), x.getKey());
+		ASSERT_EQ( y, x );
+		ASSERT_EQ( z, x );
 		
 		// todo change to number of pieces to constant
 		for( auto i : bitboardIndexRange() )
@@ -94,18 +94,18 @@ namespace {
 				for(auto to: tSquareRange())
 				{
 					z = x;
-					x.addPiece(i,from);
+					x.addPiece( i, from );
 					
-					ASSERT_NE(z.getKey(), x.getKey());
+					ASSERT_NE( z, x );
 					x.removePiece(i,to);
 					
 					if( from == to )
 					{
-						ASSERT_EQ(y.getKey(), x.getKey());
+						ASSERT_EQ( y, x );
 					}
 					else
 					{
-						ASSERT_NE(y.getKey(), x.getKey());
+						ASSERT_NE( y, x );
 					}
 					y = x;
 				}
@@ -121,21 +121,21 @@ namespace {
 		HashKey y = x;
 		x.changeSide();
 		
-		ASSERT_NE( y.getKey(), x.getKey());
+		ASSERT_NE( y , x );
 	}
 	
 	TEST(HashKeys, AddEp)
 	{
 		HashKey x;
 		HashKey y = x;
-		ASSERT_EQ( y.getKey(), x.getKey());
+		ASSERT_EQ( y, x );
 		
 
 		for(auto ep: tSquareRange())
 		{
 			y = x;
 			x.addEp(ep);	
-			ASSERT_NE(y.getKey(), x.getKey());
+			ASSERT_NE( y, x );
 		}		
 	}
 	
@@ -143,14 +143,14 @@ namespace {
 	{
 		HashKey x;
 		HashKey y = x;
-		ASSERT_EQ( y.getKey(), x.getKey());
+		ASSERT_EQ( y, x);
 		
 
 		for(auto ep: tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
-			ASSERT_NE(y.getKey(), x.getKey());
+			ASSERT_NE( y, x );
 		}		
 	}
 	
@@ -158,24 +158,24 @@ namespace {
 	{
 		HashKey x;
 		HashKey y = x;
-		ASSERT_EQ( y.getKey(), x.getKey());
+		ASSERT_EQ( y, x );
 		
 
 		for(auto ep: tSquareRange())
 		{
 			y = x;
 			x.addEp(ep);	
-			ASSERT_NE(y.getKey(), x.getKey());
+			ASSERT_NE( y, x );
 		}
 		
 		for(auto ep: tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
-			ASSERT_NE(y.getKey(), x.getKey());
+			ASSERT_NE( y, x );
 		}
 		
-		ASSERT_EQ( 0, x.getKey());
+		ASSERT_EQ( HashKey(0), x);
 		
 		
 	}
@@ -186,8 +186,8 @@ namespace {
 		HashKey y = x;
 		HashKey z = x;
 		
-		ASSERT_EQ( y.getKey(), x.getKey());
-		ASSERT_EQ( z.getKey(), z.getKey());
+		ASSERT_EQ( y, x );
+		ASSERT_EQ( z, z );
 		
 		for( int i = 0 ;i < 16; i++ )
 		{
@@ -195,22 +195,22 @@ namespace {
 			z = x;
 			y.changeCastlingRight(i);
 			
-			if( i != 0 ){ ASSERT_NE(y.getKey(), x.getKey()); }
-			else{ ASSERT_EQ(y.getKey(), x.getKey()); }
+			if( i != 0 ){ ASSERT_NE( y, x ); }
+			else{ ASSERT_EQ( y, x ); }
 			
 			if( i & 1 ){ z.changeCastlingRight( 1 ); }
 			if( i & 2 ){ z.changeCastlingRight( 2 ); }
 			if( i & 4 ){ z.changeCastlingRight( 4 ); }
 			if( i & 8 ){ z.changeCastlingRight( 8 ); }
 			
-			ASSERT_EQ(y.getKey(), z.getKey());
+			ASSERT_EQ( y, z );
 		}
 		
 		for(auto ep: tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
-			ASSERT_NE(y.getKey(), x.getKey());
+			ASSERT_NE( y, x );
 		}		
 	}
 }
