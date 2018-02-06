@@ -25,7 +25,7 @@ namespace {
 	
 	TEST(BitMap, constructor1)
 	{
-		BitMap x = 5;
+		BitMap x = BitMap(5);
 		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
 		ASSERT_FALSE( x.isSquareSet(tSquare::B1));
 		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
@@ -34,7 +34,7 @@ namespace {
 	
 	TEST(BitMap, constructor2)
 	{
-		BitMap x = 7;
+		BitMap x = BitMap(7);
 		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
 		ASSERT_TRUE( x.isSquareSet(tSquare::B1));
 		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
@@ -208,8 +208,8 @@ namespace {
 	
 	TEST(BitMap, getColorBitMap)
 	{	
-		ASSERT_EQ( BitMap::getColorBitMap(tColor::black), 0xAA55AA55AA55AA55ull );
-		ASSERT_EQ( BitMap::getColorBitMap(tColor::white), 0x55AA55AA55AA55AAull );
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::black), BitMap(0xAA55AA55AA55AA55ull) );
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::white), BitMap(0x55AA55AA55AA55AAull) );
 		
 	}
 	

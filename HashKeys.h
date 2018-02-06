@@ -37,11 +37,11 @@ class HashKey
 public:
 	HashKey():_key(0){};
 	
-	
+	HashKey ( const HashKey & ) = default;
 	HashKey& operator=(HashKey & other){_key = other._key; return *this;}
 	
 	uint64_t inline getKey(void)const{ return _key; } 
-	HashKey inline exclusion(void)const{ return _key ^ _exclusion; }
+	HashKey inline exclusion(void)const{ return HashKey(_key ^ _exclusion); }
 	
 	void inline movePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p];};
 	void inline addPiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p];};
@@ -54,7 +54,7 @@ public:
 	
 	
 private:
-	HashKey(const uint64_t key):_key(key){};
+	explicit HashKey(const uint64_t key):_key(key){};
 	static const unsigned int _CastlingRightBit = 4;
 	static const unsigned int _CastlingRightSize = 1<<_CastlingRightBit;
 	static const unsigned int _KeyNum = bitboardNumber;

@@ -35,7 +35,8 @@ private:
 public:
 
 	BitMap(){};
-	BitMap(uint64_t _b): b(_b){}
+	BitMap ( const BitMap & ) = default;	
+	explicit BitMap(uint64_t _b): b(_b){}
 
 	/*	\brief count the number of 1 bits in a 64 bit variable
 		\author Marco Belli

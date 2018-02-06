@@ -63,7 +63,7 @@ public:
 	
 	Move(){}
 	Move(const Move& m): _packed(m._packed){}
-	Move(const unsigned short i):_packed(i){}
+	explicit Move(const unsigned short i):_packed(i){}
 	Move(const tSquare _from, const tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
 	
 	
@@ -120,8 +120,8 @@ public:
 	void inline setScore(const Score s){ _score = s;}
 	
 	extMove(){};
-	extMove(const Move& m): Move(m){}
-	extMove(const unsigned short i): Move(i){}
+	explicit extMove(const Move& m): Move(m){}
+	explicit extMove(const unsigned short i): Move(i){}
 	extMove(const tSquare _from, const tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
 	
 	inline bool operator < (const extMove& d1) const { return _score < d1._score;}
