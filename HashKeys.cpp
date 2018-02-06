@@ -44,18 +44,24 @@ void HashKey::init()
 {
 	// initialize all random 64-bit numbers
 	unsigned int i,j;
-	uint64_t temp[_CastlingRightBit];
+	uint64_t temp[_CastlingRightBit] = {0};
 	std::mt19937_64 rnd;
 	std::uniform_int_distribution<uint64_t> uint_dist;
 
 	// use current time (in seconds) as random seed:
 	rnd.seed(19091979);
 
+	/********************
+	load ep keys
+	*********************/
 	for (auto & val :_ep)
 	{
 		val = uint_dist(rnd);
 	}
 
+	/********************
+	load piece keys
+	*********************/
 	for(auto & outerArray :_keys)
 	{
 		for(auto & val :outerArray)
@@ -65,25 +71,31 @@ void HashKey::init()
 
 	}
 
+	/********************
+	load side and exclusion keys
+	*********************/
 	_side = uint_dist(rnd);
-	_exclusion=uint_dist(rnd);
+	_exclusion = uint_dist(rnd);
 
-	for(auto & val :_castlingRight )
-	{
-		val = 0;
-	}
-
-
+	
+	/********************
+	load castling keys
+	*********************/
+	
+	//prepare temp keys
 	for(auto & val :temp)
 	{
-		val=uint_dist(rnd);
+		val = uint_dist(rnd);
 	}
 
-	for( i = 0; i<_CastlingRightSize; i++ )
+	// save precalculated castling keys 	
+	for( i = 0; i<_CastlingRightSize; ++i )
 	{
-		for( j = 0; j < _CastlingRightBit; j++ )
+		_castlingRight[i] = 0;
+		
+		for( j = 0; j < _CastlingRightBit; ++j )
 		{
-			if(i&(1<<j))
+			if( i & ( 1<<j ) )
 			{
 				_castlingRight[i] ^= temp[j];
 			}
