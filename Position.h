@@ -18,130 +18,53 @@
 #ifndef POSITION_H_
 #define POSITION_H_
 
+#include "BitMap.h"
+#include "HashKeys.h"
+#include "Score.h"
+
 namespace libChess
 {
 	
-	enum bitboardIndex
-	{
-		occupiedSquares=0,				//0		00000000
-		whiteKing=1,					//1		00000001
-		whiteQueens=2,					//2		00000010
-		whiteRooks=3,					//3		00000011
-		whiteBishops=4,					//4		00000100
-		whiteKnights=5,					//5		00000101
-		whitePawns=6,					//6		00000110
-		whitePieces=7,					//7		00000111
-
-		separationBitmap=8,
-		blackKing=9,					//9		00001001
-		blackQueens=10,					//10	00001010
-		blackRooks=11,					//11	00001011
-		blackBishops=12,				//12	00001100
-		blackKnights=13,				//13	00001101
-		blackPawns=14,					//14	00001110
-		blackPieces=15,					//15	00001111
-
-
-
-
-		bitboardNumber=16,
-
-		King=whiteKing,
-		Queens,
-		Rooks,
-		Bishops,
-		Knights,
-		Pawns,
-		Pieces,
-
-		empty=occupiedSquares
-
-	};
-
-	/*	\brief operators for bitboardIndex
+	
+	
+	/*! \brief define the state of the board
 		\author Marco Belli
 		\version 1.0
-		\date 17/08/2017
+		\date 27/10/2013
 	*/
-	static inline bitboardIndex& operator++(bitboardIndex& r)
+	class GameState
 	{
-		return r = (bitboardIndex)( (int)r + 1 );
-	}
-
-	static inline bitboardIndex& operator--(bitboardIndex& r)
-	{
-		return r = (bitboardIndex)( (int)r - 1 );
-	}
-
-	static inline bitboardIndex operator++(bitboardIndex& r,int)
-	{
-		bitboardIndex n = r;
-		++r;
-		return n;
-	}
-
-	static inline bitboardIndex operator--(bitboardIndex& r,int)
-	{
-		bitboardIndex n = r;
-		--r;
-		return n;
-	}
-
-	static inline bitboardIndex operator+(const bitboardIndex d1, const int d2) { return bitboardIndex( (int)d1 + d2 ); }
-	static inline bitboardIndex operator-(const bitboardIndex d1, const int d2) { return bitboardIndex( (int)d1 - d2 ); }
-	
-
-	inline bitboardIndex& operator+=(bitboardIndex& d1, const int d2) { d1 = d1 + d2; return d1; }
-	inline bitboardIndex& operator-=(bitboardIndex& d1, const int d2) { d1 = d1 - d2; return d1; }
-
-	
-		/*	\brief class used to iterate over a range of tFile
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	
-	class bitboardIndexRange{
-
-	bitboardIndex min;
-	bitboardIndex Max;
-	public:
-	bitboardIndexRange(bitboardIndex _min = bitboardIndex::occupiedSquares, bitboardIndex _Max = bitboardIndex::blackPieces): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
-
-	class iterator: public std::iterator<
-														std::input_iterator_tag,	// iterator_category
-								bitboardIndex,					// value_type
-								bitboardIndex,
-								const bitboardIndex*,
-								bitboardIndex
-								>{
-			bitboardIndex t;
-			public:
-				explicit iterator(bitboardIndex _t = bitboardIndex::occupiedSquares) : t(_t) {}
-				iterator& operator++() { t += 1; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
-		};
-
-	iterator begin() {return iterator(min);}
-	iterator end() {return iterator(Max);}
-
-	};
-	
-	enum eTurn	// color turn. ( it's also used as offset to access bitmaps by index)
-	{
-		whiteTurn = 0,
-		blackTurn = (int)blackKing - (int)whiteKing
-	};
-
-	enum eCastle	// castleRights
-	{
-		wCastleOO=1,
-		wCastleOOO=2,
-		bCastleOO=4,
-		bCastleOOO=8,
+		private:
+		HashKey 
+			_key,		/*!<  hashkey identifying the position*/
+			_pawnKey,	/*!<  hashkey identifying the pawn formation*/
+			_materialKey;/*!<  hashkey identifying the material signature*/
+			
+		simdScore _nonPawnMaterialValue; 	/*!< four score used for white/black opening/endgame non pawn material sum*/
+		simdScore _materialValue;			/*!< material value of the position*/
+		
+		/* todo spostare fuori dal gamestate? */
+		eTurn _turn;	/*!< who is the active player*/
+		eCastle _castleRights; /*!<  actual castle rights*/
+		tSquare epSquare;	/*!<  en passant square*/
+		
+		unsigned int 
+			fiftyMoveCnt,	/*!<  50 move count used for draw rule*/
+			pliesFromNull,	/*!<  plies from null move*/
+		/* todo spostare fuori dal gamestate? */
+			ply;			/*!<  ply from the start*/
+			
+		bitboardIndex _capturedPiece; /*!<  index of the captured piece for unmakeMove*/
+		
+		BitMap _checkingSquares[bitboardNumber]; /*!< squares of the board from where a king can be checked*/
+		BitMap _hiddenCheckersCandidate;	/*!< pieces who can make a discover check moving*/
+		BitMap _pinnedPieces;	/*!< pinned pieces*/
+		BitMap _checkers;	/*!< checking pieces*/
+		Move _currentMove;
+		
+		public:
+		
+		GameState(){}
 	};
 	
 	class Position
