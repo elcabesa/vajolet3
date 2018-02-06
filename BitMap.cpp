@@ -24,7 +24,7 @@ namespace libChess
 	
 BitMap BitMap::RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
 BitMap BitMap::FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
-BitMap BitMap::SQUARECOLOR[ 2 ] = { 0ull, 0ull };
+BitMap BitMap::SQUARECOLOR[ 2 ] = { BitMap(0ull), BitMap(0ull) };
 BitMap BitMap::SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
 BitMap BitMap::LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 
@@ -37,10 +37,10 @@ std::string BitMap::to_string() const
 {
 
 	std::string s;
-	for (tRank rank = tRank::eight ; rank >= tRank::one; rank--)
+	for (tRank rank = tRank::eight ; rank >= tRank::one; --rank)
 	{
 		s += std::to_string( (int)rank + 1) + " ";
-		for (tFile file = tFile::A ; file <= tFile::H; file++)
+		for (tFile file = tFile::A ; file <= tFile::H; ++file)
 		{
 
 			if ( this->isSquareSet( file, rank ) )
@@ -70,7 +70,7 @@ void BitMap::_initRankMask(void)
 		//initialize 8-bit rank mask
 		//===========================================================================
 		
-		RANKMASK[ sq ] = 0ull;
+		RANKMASK[ sq ] = BitMap(0ull);
 		
 		for( auto file: tFileRange() )
 		{
@@ -89,7 +89,7 @@ void BitMap::_initFileMask(void)
 		//initialize 8-bit file mask
 		//===========================================================================
 		
-		FILEMASK[ sq ] = 0ull;
+		FILEMASK[ sq ] = BitMap(0ull);
 		
 		for( auto rank: tRankRange() )
 		{
@@ -100,8 +100,8 @@ void BitMap::_initFileMask(void)
 
 void BitMap::_initSquareColor(void)
 {
-	SQUARECOLOR[0] = 0ull;
-	SQUARECOLOR[1] = 0ull;
+	SQUARECOLOR[0] = BitMap(0ull);
+	SQUARECOLOR[1] = BitMap(0ull);
 	
 	for( auto sq: tSquareRange() )
 	{
@@ -140,8 +140,8 @@ void BitMap::init(void)
 		//Initialize 8-bit diagonal mask
 		//===========================================================================
 		
-		DIAGA1H8MASK[ sq ] = 0ull;
-		DIAGA8H1MASK[ sq ] = 0ull;
+		DIAGA1H8MASK[ sq ] = BitMap(0ull);
+		DIAGA8H1MASK[ sq ] = BitMap(0ull);
 		
 		
 		int diaga8h1 = file + rank; // from 0 to 14, longest diagonal = 7
@@ -181,8 +181,8 @@ void BitMap::init(void)
 	{
 		for( auto sq2: tSquareRange() )
 		{
-			LINES[ sq1 ][ sq2 ] = 0ull;
-			SQUARES_BETWEEN[ sq1 ][ sq2 ] = 0ull;
+			LINES[ sq1 ][ sq2 ] = BitMap(0ull);
+			SQUARES_BETWEEN[ sq1 ][ sq2 ] = BitMap(0ull);
 			
 			if( sq1 != sq2 )
 			{
@@ -197,7 +197,7 @@ void BitMap::init(void)
 						while( temp < getRank( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
-							temp++;
+							++temp;
 						}
 					}
 					if( getRank( sq2 ) < getRank( sq1 ) ) // in discesa
@@ -206,7 +206,7 @@ void BitMap::init(void)
 						while( temp > getRank( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
-							temp--;
+							--temp;
 						}
 					}
 				}
@@ -219,7 +219,7 @@ void BitMap::init(void)
 						while( temp < getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
-							temp++;
+							++temp;
 						}
 					}
 					if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
@@ -228,7 +228,7 @@ void BitMap::init(void)
 						while( temp > getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
-							temp--;
+							--temp;
 						}
 					}
 				}
@@ -242,8 +242,8 @@ void BitMap::init(void)
 						while( temp < getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-							temp++;
-							temp2++;
+							++temp;
+							++temp2;
 						}
 					}
 					if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
@@ -253,8 +253,8 @@ void BitMap::init(void)
 						while( temp > getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-							temp--;
-							temp2--;
+							--temp;
+							--temp2;
 						}
 					}
 				}
@@ -268,8 +268,8 @@ void BitMap::init(void)
 						while( temp < getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-							temp++;
-							temp2--;
+							++temp;
+							--temp2;
 						}
 					}
 					if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
@@ -279,8 +279,8 @@ void BitMap::init(void)
 						while( temp > getFile( sq2 ) )
 						{
 							SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-							temp--;
-							temp2++;
+							--temp;
+							++temp2;
 						}
 					}
 				}
