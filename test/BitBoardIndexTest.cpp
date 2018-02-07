@@ -16,7 +16,7 @@
 */
 
 #include "gtest/gtest.h"
-#include "./../bitboardIndex.h"
+#include "./../BitBoardIndex.h"
 
 using namespace libChess;
 
