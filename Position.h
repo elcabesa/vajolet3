@@ -21,11 +21,12 @@
 #include "BitMap.h"
 #include "HashKeys.h"
 #include "Score.h"
+#include "Move.h"
 
 namespace libChess
 {
-	
-	
+	// forward declatarion
+	class Position;
 	
 	/*! \brief define the state of the board
 		\author Marco Belli
@@ -34,6 +35,7 @@ namespace libChess
 	*/
 	class GameState
 	{
+		friend class Position;
 		private:
 		HashKey 
 			_key,		/*!<  hashkey identifying the position*/
@@ -46,25 +48,138 @@ namespace libChess
 		/* todo spostare fuori dal gamestate? */
 		eTurn _turn;	/*!< who is the active player*/
 		eCastle _castleRights; /*!<  actual castle rights*/
-		tSquare epSquare;	/*!<  en passant square*/
+		tSquare _epSquare;	/*!<  en passant square*/
 		
 		unsigned int 
-			fiftyMoveCnt,	/*!<  50 move count used for draw rule*/
-			pliesFromNull,	/*!<  plies from null move*/
+			_fiftyMoveCnt,	/*!<  50 move count used for draw rule*/
+			_pliesFromNull,	/*!<  plies from null move*/
 		/* todo spostare fuori dal gamestate? */
-			ply;			/*!<  ply from the start*/
+			_ply;			/*!<  ply from the start*/
 			
 		bitboardIndex _capturedPiece; /*!<  index of the captured piece for unmakeMove*/
 		
 		BitMap _checkingSquares[bitboardNumber]; /*!< squares of the board from where a king can be checked*/
-		BitMap _hiddenCheckersCandidate;	/*!< pieces who can make a discover check moving*/
-		BitMap _pinnedPieces;	/*!< pinned pieces*/
+		BitMap _hiddenCheckers;	/*!< pieces who can make a discover check moving*/
+		BitMap _pinned;	/*!< pinned pieces*/
 		BitMap _checkers;	/*!< checking pieces*/
 		Move _currentMove;
 		
 		public:
 		
+		//-----------------------------------------
+		// constructor
+		//-----------------------------------------
 		GameState(){}
+		
+		
+		//-----------------------------------------
+		// getters
+		//-----------------------------------------
+		const HashKey& getKey()                const { return _key; }
+		const HashKey& getPawnKey()            const { return _pawnKey; }
+		const HashKey& getMaterialKey()        const { return _materialKey; }
+		
+		const simdScore& getNonMaterialValue() const { return _nonPawnMaterialValue; }
+		const simdScore& getMaterialValue()    const { return _materialValue; }
+		
+		eTurn getTurn()                        const {return _turn; }
+		eCastle getCastleRights()              const {return _castleRights; }
+		tSquare getEpSquare()                  const {return _epSquare; }
+		
+		unsigned int getFiftyMoveCnt()         const { return _fiftyMoveCnt; }
+		unsigned int getPliesFromNullCnt()     const { return _pliesFromNull; }
+		unsigned int getPliesCnt()             const { return _ply; }
+		
+		bitboardIndex getCapturedPiece()       const { return _capturedPiece; }
+		BitMap getCheckingSquare( const bitboardIndex idx ) const { return _checkingSquares[idx]; }
+		
+		const BitMap& getHiddenCheckers()      const { return _hiddenCheckers; }
+		const BitMap& getPinned()              const { return _pinned; }
+		const BitMap& getCheckers()            const { return _checkers; }
+		
+		const Move& getCurrentMove()           const { return _currentMove; }
+		
+		protected:
+		//-----------------------------------------
+		// methods
+		//-----------------------------------------
+		inline void changeTurn()
+		{
+			_turn = (eTurn)( blackTurn - _turn );
+			_key.changeSide();
+		}
+		
+		inline void setCurrentMove( const Move& m )
+		{
+			_currentMove = m;
+		}
+		
+		inline void incrementCounters()
+		{
+			++_ply;
+			++_fiftyMoveCnt;
+			++_pliesFromNull;
+		}
+		
+		inline void incrementCountersNullMove()
+		{
+			++_ply;
+			++_fiftyMoveCnt;
+			_pliesFromNull = 0;
+		}
+		
+		inline void resetFiftyMovecounter()
+		{
+			_fiftyMoveCnt = 0;
+		}
+		
+		inline void resetEpSquare()
+		{
+			if( _epSquare != squareNone)
+			{
+				assert( _epSquare < squareNumber );
+				_key.removeEp(_epSquare);
+				_epSquare = squareNone;
+			}
+		}
+		
+		inline void setEpSquare( const tSquare sq)
+		{
+			assert( _epSquare == squareNone);
+			assert( sq < squareNumber );
+			_epSquare = sq;
+			_key.addEp(_epSquare);
+			
+			
+		}
+		
+		inline void setCapturedPiece( const bitboardIndex idx )
+		{
+			assert( idx < bitboardNumber );
+			_capturedPiece = idx;
+		}
+		inline void resetCapturedPiece()
+		{
+			_capturedPiece = empty;
+		}
+		
+		inline void updateCastleRights( const int cr )
+		{
+			const int filteredCR = _castleRights & cr;
+			// Update castle rights if needed
+			if ( filteredCR )
+			{
+				assert( ( filteredCR ) < 16 );
+				_key.changeCastlingRight( filteredCR );
+				_castleRights = (eCastle)( _castleRights & (~filteredCR) );
+			}
+		}
+		
+		inline void setPinned( const BitMap& b)
+		{
+			_pinned = b;
+		}
+		
 	};
 	
 	class Position

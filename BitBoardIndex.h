@@ -24,30 +24,30 @@ namespace libChess
 
 	enum bitboardIndex
 	{
-		occupiedSquares=0,				//0		00000000
-		whiteKing=1,					//1		00000001
-		whiteQueens=2,					//2		00000010
-		whiteRooks=3,					//3		00000011
-		whiteBishops=4,					//4		00000100
-		whiteKnights=5,					//5		00000101
-		whitePawns=6,					//6		00000110
-		whitePieces=7,					//7		00000111
+		occupiedSquares = 0,			//0		00000000
+		whiteKing = 1,					//1		00000001
+		whiteQueens = 2,				//2		00000010
+		whiteRooks = 3,					//3		00000011
+		whiteBishops = 4,				//4		00000100
+		whiteKnights = 5,				//5		00000101
+		whitePawns = 6,					//6		00000110
+		whitePieces = 7,				//7		00000111
 
-		separationBitmap=8,
-		blackKing=9,					//9		00001001
-		blackQueens=10,					//10	00001010
-		blackRooks=11,					//11	00001011
-		blackBishops=12,				//12	00001100
-		blackKnights=13,				//13	00001101
-		blackPawns=14,					//14	00001110
-		blackPieces=15,					//15	00001111
-
-
+		separationBitmap = 8,
+		blackKing = 9,					//9		00001001
+		blackQueens = 10,				//10	00001010
+		blackRooks = 11,				//11	00001011
+		blackBishops = 12,				//12	00001100
+		blackKnights = 13,				//13	00001101
+		blackPawns = 14,				//14	00001110
+		blackPieces = 15,				//15	00001111
 
 
-		bitboardNumber=16,
 
-		King=whiteKing,
+
+		bitboardNumber = 16,
+
+		King = whiteKing,
 		Queens,
 		Rooks,
 		Bishops,
@@ -55,7 +55,7 @@ namespace libChess
 		Pawns,
 		Pieces,
 
-		empty=occupiedSquares
+		empty = occupiedSquares
 
 	};
 
