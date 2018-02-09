@@ -75,113 +75,163 @@ namespace libChess
 		//-----------------------------------------
 		// getters
 		//-----------------------------------------
-		const HashKey& getKey()                const { return _key; }
-		const HashKey& getPawnKey()            const { return _pawnKey; }
-		const HashKey& getMaterialKey()        const { return _materialKey; }
+		const HashKey& getKey() const;
+		const HashKey& getPawnKey() const;
+		const HashKey& getMaterialKey() const;
 		
-		const simdScore& getNonMaterialValue() const { return _nonPawnMaterialValue; }
-		const simdScore& getMaterialValue()    const { return _materialValue; }
+		const simdScore& getNonMaterialValue() const;
+		const simdScore& getMaterialValue() const;
 		
-		eTurn getTurn()                        const {return _turn; }
-		eCastle getCastleRights()              const {return _castleRights; }
-		tSquare getEpSquare()                  const {return _epSquare; }
+		eTurn getTurn() const;
+		eCastle getCastleRights() const;
+		tSquare getEpSquare() const;
 		
-		unsigned int getFiftyMoveCnt()         const { return _fiftyMoveCnt; }
-		unsigned int getPliesFromNullCnt()     const { return _pliesFromNull; }
-		unsigned int getPliesCnt()             const { return _ply; }
+		unsigned int getFiftyMoveCnt() const;
+		unsigned int getPliesFromNullCnt() const;
+		unsigned int getPliesCnt() const;
 		
-		bitboardIndex getCapturedPiece()       const { return _capturedPiece; }
-		BitMap getCheckingSquare( const bitboardIndex idx ) const { return _checkingSquares[idx]; }
+		bitboardIndex getCapturedPiece() const;
+		BitMap getCheckingSquare( const bitboardIndex idx ) const;
 		
-		const BitMap& getHiddenCheckers()      const { return _hiddenCheckers; }
-		const BitMap& getPinned()              const { return _pinned; }
-		const BitMap& getCheckers()            const { return _checkers; }
+		const BitMap& getHiddenCheckers() const;
+		const BitMap& getPinned() const;
+		const BitMap& getCheckers() const;
 		
-		const Move& getCurrentMove()           const { return _currentMove; }
+		const Move& getCurrentMove() const;
 		
 		protected:
 		//-----------------------------------------
 		// methods
 		//-----------------------------------------
-		inline void changeTurn()
-		{
-			_turn = (eTurn)( blackTurn - _turn );
-			_key.changeSide();
-		}
+		void changeTurn();
 		
-		inline void setCurrentMove( const Move& m )
-		{
-			_currentMove = m;
-		}
+		void setCurrentMove( const Move& m );
 		
-		inline void incrementCounters()
-		{
-			++_ply;
-			++_fiftyMoveCnt;
-			++_pliesFromNull;
-		}
+		void incrementCounters();
 		
-		inline void incrementCountersNullMove()
-		{
-			++_ply;
-			++_fiftyMoveCnt;
-			_pliesFromNull = 0;
-		}
+		void incrementCountersNullMove();
 		
-		inline void resetFiftyMovecounter()
-		{
-			_fiftyMoveCnt = 0;
-		}
+		void resetFiftyMovecounter();
 		
-		inline void resetEpSquare()
-		{
-			if( _epSquare != squareNone)
-			{
-				assert( _epSquare < squareNumber );
-				_key.removeEp(_epSquare);
-				_epSquare = squareNone;
-			}
-		}
+		void resetEpSquare();
 		
-		inline void setEpSquare( const tSquare sq)
-		{
-			assert( _epSquare == squareNone);
-			assert( sq < squareNumber );
-			_epSquare = sq;
-			_key.addEp(_epSquare);
-			
-			
-		}
+		void setEpSquare( const tSquare sq);
 		
-		inline void setCapturedPiece( const bitboardIndex idx )
-		{
-			assert( idx < bitboardNumber );
-			_capturedPiece = idx;
-		}
-		inline void resetCapturedPiece()
-		{
-			_capturedPiece = empty;
-		}
+		void setCapturedPiece( const bitboardIndex idx );
 		
-		inline void updateCastleRights( const int cr )
-		{
-			const int filteredCR = _castleRights & cr;
-			// Update castle rights if needed
-			if ( filteredCR )
-			{
-				assert( ( filteredCR ) < 16 );
-				_key.changeCastlingRight( filteredCR );
-				_castleRights = (eCastle)( _castleRights & (~filteredCR) );
-			}
-		}
+		void resetCapturedPiece();
 		
-		inline void setPinned( const BitMap& b)
-		{
-			_pinned = b;
-		}
+		void updateCastleRights( const int cr );
+		
+		void setPinned( const BitMap& b);
 		
 	};
 	
+	
+	inline const HashKey& GameState::getKey()                const { return _key; }
+	inline const HashKey& GameState::getPawnKey()            const { return _pawnKey; }
+	inline const HashKey& GameState::getMaterialKey()        const { return _materialKey; }
+	
+	inline const simdScore& GameState::getNonMaterialValue() const { return _nonPawnMaterialValue; }
+	inline const simdScore& GameState::getMaterialValue()    const { return _materialValue; }
+	
+	inline eTurn GameState::getTurn()                        const {return _turn; }
+	inline eCastle GameState::getCastleRights()              const {return _castleRights; }
+	inline tSquare GameState::getEpSquare()                  const {return _epSquare; }
+	
+	inline unsigned int GameState::getFiftyMoveCnt()         const { return _fiftyMoveCnt; }
+	inline unsigned int GameState::getPliesFromNullCnt()     const { return _pliesFromNull; }
+	inline unsigned int GameState::getPliesCnt()             const { return _ply; }
+	
+	inline bitboardIndex GameState::getCapturedPiece()       const { return _capturedPiece; }
+	inline BitMap GameState::getCheckingSquare( const bitboardIndex idx ) const { return _checkingSquares[idx]; }
+	
+	inline const BitMap& GameState::getHiddenCheckers()      const { return _hiddenCheckers; }
+	inline const BitMap& GameState::getPinned()              const { return _pinned; }
+	inline const BitMap& GameState::getCheckers()            const { return _checkers; }
+	
+	inline const Move& GameState::getCurrentMove()           const { return _currentMove; }
+	
+	//-----------------------------------------
+	// methods
+	//-----------------------------------------
+	inline void GameState::changeTurn()
+	{
+		_turn = (eTurn)( blackTurn - _turn );
+		_key.changeSide();
+	}
+	
+	inline void GameState::setCurrentMove( const Move& m )
+	{
+		_currentMove = m;
+	}
+	
+	inline void GameState::incrementCounters()
+	{
+		++_ply;
+		++_fiftyMoveCnt;
+		++_pliesFromNull;
+	}
+	
+	inline void GameState::incrementCountersNullMove()
+	{
+		++_ply;
+		++_fiftyMoveCnt;
+		_pliesFromNull = 0;
+	}
+	
+	inline void GameState::resetFiftyMovecounter()
+	{
+		_fiftyMoveCnt = 0;
+	}
+	
+	inline void GameState::resetEpSquare()
+	{
+		if( _epSquare != squareNone)
+		{
+			assert( _epSquare < squareNumber );
+			_key.removeEp(_epSquare);
+			_epSquare = squareNone;
+		}
+	}
+	
+	inline void GameState::setEpSquare( const tSquare sq)
+	{
+		assert( _epSquare == squareNone);
+		assert( sq < squareNumber );
+		_epSquare = sq;
+		_key.addEp(_epSquare);
+		
+		
+	}
+	
+	inline void GameState::setCapturedPiece( const bitboardIndex idx )
+	{
+		assert( idx < bitboardNumber );
+		_capturedPiece = idx;
+	}
+	inline void GameState::resetCapturedPiece()
+	{
+		_capturedPiece = empty;
+	}
+	
+	inline void GameState::updateCastleRights( const int cr )
+	{
+		const int filteredCR = _castleRights & cr;
+		// Update castle rights if needed
+		if ( filteredCR )
+		{
+			assert( ( filteredCR ) < 16 );
+			_key.changeCastlingRight( filteredCR );
+			_castleRights = (eCastle)( _castleRights & (~filteredCR) );
+		}
+	}
+	
+	inline void GameState::setPinned( const BitMap& b)
+	{
+		_pinned = b;
+	}
+
 	class Position
 	{
 	
