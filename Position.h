@@ -69,7 +69,7 @@ namespace libChess
 		//-----------------------------------------
 		// constructor
 		//-----------------------------------------
-		GameState(){}
+		GameState();
 		
 		
 		//-----------------------------------------
@@ -103,6 +103,18 @@ namespace libChess
 		//-----------------------------------------
 		// methods
 		//-----------------------------------------
+		void setKeys(const HashKey key, const HashKey pawnKey, const HashKey materialKey );
+		
+		void setMaterialValues(const simdScore MaterialValue, const simdScore nonPawnMaterialValue );
+		
+		void setTurn( const eTurn turn);
+		
+		void setCastleRights( const eCastle cr);
+		
+		void setFiftyMoveCnt( const unsigned int fmc );
+		
+		void setPliesCnt( const unsigned int cnt );
+		
 		void changeTurn();
 		
 		void setCurrentMove( const Move& m );
@@ -121,13 +133,47 @@ namespace libChess
 		
 		void resetCapturedPiece();
 		
-		void updateCastleRights( const int cr );
+		void clearCastleRights( const int cr );
+		
+		void setCheckingSquare( const bitboardIndex idx, const BitMap& b );
+		
+		void setHiddenChechers( const BitMap& b);
 		
 		void setPinned( const BitMap& b);
 		
+		void setCheckers( const BitMap& b );
+		
+		void keyMovePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq);
+		
+		void keyRemovePiece(const bitboardIndex p , const tSquare sq);
+		
+		void keyPromotePiece(const bitboardIndex piece, const bitboardIndex promotedPiece, const tSquare sq);
+		
+		void pawnKeyMovePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq);
+	
+		void pawnKeyRemovePiece(const bitboardIndex p , const tSquare sq);
+		
+		void materialKeyRemovePiece(const bitboardIndex p , unsigned int count);
+	
+		void materialKeyPromovePiece(const bitboardIndex piece , const unsigned int count, const bitboardIndex promotedPiece, const unsigned int promotedCount);
+		
+		void MaterialMovePiece( const simdScore to, const simdScore from );
+		
+		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
+	
+		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+		
 	};
 	
+	//-----------------------------------------
+	// constructor
+	//-----------------------------------------
+	inline GameState::GameState(){}
 	
+	
+	//-----------------------------------------
+	// getters
+	//-----------------------------------------
 	inline const HashKey& GameState::getKey()                const { return _key; }
 	inline const HashKey& GameState::getPawnKey()            const { return _pawnKey; }
 	inline const HashKey& GameState::getMaterialKey()        const { return _materialKey; }
@@ -155,6 +201,39 @@ namespace libChess
 	//-----------------------------------------
 	// methods
 	//-----------------------------------------
+	inline void GameState::setKeys(const HashKey key, const HashKey pawnKey, const HashKey materialKey )
+	{
+		_key = key;
+		_pawnKey = pawnKey;
+		_materialKey = materialKey;
+	}
+	
+	inline void GameState::setMaterialValues(const simdScore materialValue, const simdScore nonPawnMaterialValue )
+	{
+		_materialValue = materialValue;
+		_nonPawnMaterialValue = nonPawnMaterialValue;
+	}
+	
+	inline void GameState::setTurn( const eTurn turn)
+	{
+		_turn = turn;
+	}
+	
+	inline void GameState::setCastleRights( const eCastle cr)
+	{
+		_castleRights = cr;
+	}
+	
+	inline void GameState::setFiftyMoveCnt( const unsigned int fmc )
+	{
+		_fiftyMoveCnt = fmc;
+	}
+	
+	inline void GameState::setPliesCnt( const unsigned int cnt )
+	{
+		_ply = cnt;
+	}
+	
 	inline void GameState::changeTurn()
 	{
 		_turn = (eTurn)( blackTurn - _turn );
@@ -215,7 +294,7 @@ namespace libChess
 		_capturedPiece = empty;
 	}
 	
-	inline void GameState::updateCastleRights( const int cr )
+	inline void GameState::clearCastleRights( const int cr )
 	{
 		const int filteredCR = _castleRights & cr;
 		// Update castle rights if needed
@@ -230,6 +309,74 @@ namespace libChess
 	inline void GameState::setPinned( const BitMap& b)
 	{
 		_pinned = b;
+	}
+
+	inline void GameState::setHiddenChechers( const BitMap& b)
+	{
+		_hiddenCheckers = b;
+	}
+	
+	inline void GameState::setCheckers( const BitMap& b )
+	{
+		_checkers = b;
+	}
+	
+	inline void GameState::setCheckingSquare( const bitboardIndex idx, const BitMap& b )
+	{
+		assert( idx < bitboardNumber );
+		_checkingSquares[idx] = b;
+	}
+	
+	inline void GameState::keyMovePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq)
+	{
+		_key.movePiece( p, fromSq, toSq );
+	}
+	
+	inline void GameState::keyRemovePiece(const bitboardIndex p , const tSquare sq)
+	{
+		_key.removePiece( p, sq );
+	}
+	
+	inline void GameState::keyPromotePiece(const bitboardIndex piece, const bitboardIndex promotedPiece, const tSquare sq)
+	{
+		_key.removePiece( piece, sq).addPiece( promotedPiece, sq);
+	}
+	
+	inline void GameState::pawnKeyMovePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq)
+	{
+		_pawnKey.movePiece( p, fromSq, toSq );
+	}
+	
+	inline void GameState::pawnKeyRemovePiece(const bitboardIndex p , const tSquare sq)
+	{
+		_pawnKey.removePiece( p, sq );
+	}
+	
+	inline void GameState::materialKeyRemovePiece(const bitboardIndex p , unsigned int count)
+	{
+		_materialKey.removePiece( p, (tSquare)count );
+	}
+	
+	inline void GameState::materialKeyPromovePiece(const bitboardIndex piece , const unsigned int count, const bitboardIndex promotedPiece, const unsigned int promotedCount)
+	{
+		_materialKey.removePiece( piece, (tSquare)count ).addPiece( promotedPiece, (tSquare)promotedCount );
+	}
+	
+	inline void  GameState::MaterialMovePiece( const simdScore to, const simdScore from )
+	{
+		_materialValue += to - from;
+	}
+	
+	inline void  GameState::MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial )
+	{
+		_materialValue -= material;
+		_nonPawnMaterialValue -= nonPawnMaterial;
+	}
+	
+	inline void  GameState::MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial )
+	{
+		_materialValue += protmotedMaterial - material;
+		_nonPawnMaterialValue -= nonPawnPromotedMaterial;
 	}
 
 	class Position

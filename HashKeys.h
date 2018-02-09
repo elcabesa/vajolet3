@@ -41,21 +41,21 @@ public:
 	
 	HashKey ( const HashKey & ) = default;
 	
-	HashKey& operator=(HashKey & other){_key = other._key; return *this;}
+	HashKey& operator=(const HashKey & other){_key = other._key; return *this;}
 	bool operator==(const HashKey & other)const {return (_key == other._key);}
 	bool operator!=(const HashKey & other)const {return (_key != other._key);}
 	
 	//uint64_t inline getKey(void)const{ return _key; } 
 	
-	HashKey inline exclusion(void)const{ return HashKey(_key ^ _exclusion); }
+	inline HashKey exclusion(void)const{ return HashKey(_key ^ _exclusion); }
 	
-	void inline movePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p];};
-	void inline addPiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p];};
-	void inline removePiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p];};
-	void inline changeSide(void){_key ^= _side;};
-	void inline addEp(const tSquare sq){_key ^= _ep[sq];};
-	void inline removeEp(const tSquare sq){_key ^= _ep[sq];};
-	void inline changeCastlingRight(const unsigned int cr){_key ^= _castlingRight[cr];};
+	inline HashKey& movePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
+	inline HashKey& addPiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& removePiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& changeSide(void){_key ^= _side; return *this;};
+	inline HashKey& addEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
+	inline HashKey& removeEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
+	inline HashKey& changeCastlingRight(const unsigned int cr){_key ^= _castlingRight[cr]; return *this;};
 	
 	
 	
