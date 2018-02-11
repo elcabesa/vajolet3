@@ -103,7 +103,7 @@ namespace libChess
 		//-----------------------------------------
 		// methods
 		//-----------------------------------------
-		void setKeys(const HashKey key, const HashKey pawnKey, const HashKey materialKey );
+		void setKeys(const HashKey& key, const HashKey& pawnKey, const HashKey& materialKey );
 		
 		void setMaterialValues(const simdScore MaterialValue, const simdScore nonPawnMaterialValue );
 		
@@ -201,7 +201,7 @@ namespace libChess
 	//-----------------------------------------
 	// methods
 	//-----------------------------------------
-	inline void GameState::setKeys(const HashKey key, const HashKey pawnKey, const HashKey materialKey )
+	inline void GameState::setKeys(const HashKey& key, const HashKey& pawnKey, const HashKey& materialKey )
 	{
 		_key = key;
 		_pawnKey = pawnKey;
