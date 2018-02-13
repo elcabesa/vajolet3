@@ -29,14 +29,10 @@ namespace libChess
 		_setUsThem();
 	}
 	
-	Position::Position(const Position& other)
+	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard)
 	{
-		_stateList = other._stateList;
 		_actualState = &_stateList.back();
 		
-		_squares = other._squares;
-		_bitBoard = other._bitBoard;
-
 		_setUsThem();
 		
 	}
