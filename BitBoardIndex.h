@@ -21,6 +21,7 @@
 
 namespace libChess
 {
+	const char PIECE_NAMES_FEN[] = {' ','K','Q','R','B','N','P',' ',' ','k','q','r','b','n','p',' '};
 
 	enum bitboardIndex
 	{
@@ -58,6 +59,11 @@ namespace libChess
 		empty = occupiedSquares
 
 	};
+	
+	static inline bitboardIndex getMyPiecesfromPiece(const bitboardIndex& piece)
+	{
+		return  piece > separationBitmap ? blackPieces : whitePieces;
+	}
 
 	/*	\brief operators for bitboardIndex
 		\author Marco Belli
@@ -136,6 +142,11 @@ namespace libChess
 		whiteTurn = 0,
 		blackTurn = (int)blackKing - (int)whiteKing
 	};
+	
+	inline eTurn getSwitchedTurn(eTurn t)
+	{
+		return (eTurn)(blackTurn - t);
+	}
 
 	enum eCastle	// castleRights
 	{
@@ -144,5 +155,6 @@ namespace libChess
 		bCastleOO=4,
 		bCastleOOO=8,
 	};
+	
 }
 #endif

@@ -57,7 +57,7 @@ target_link_libraries (Vajolet libChess)
 
     enable_testing()
     # Now simply link against gtest or gtest_main as needed. Eg
-    add_executable(Vajolet_unitTest test/UnitTest.cpp test/BitBoardIndexTest.cpp test/BitMapTest.cpp test/HashKeysTest.cpp test/MoveTest.cpp test/PositionTest.cpp test/ScoreTest.cpp test/tSquareTest.cpp)
+    add_executable(Vajolet_unitTest test/UnitTest.cpp test/BitBoardIndexTest.cpp test/BitMapTest.cpp test/HashKeysTest.cpp test/MoveTest.cpp test/PositionTest.cpp test/ScoreTest.cpp test/StateTest.cpp test/tSquareTest.cpp)
     target_link_libraries(Vajolet_unitTest libChess gtest )
     add_test(NAME example_test COMMAND Vajolet_unitTest)
     

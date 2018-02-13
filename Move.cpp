@@ -16,11 +16,10 @@
 */
 #include <iostream>
 
-#include "Vajolet.h"
 #include "tSquare.h"
 #include "Move.h"
-
 #include "Position.h"
+
 
 namespace libChess
 {

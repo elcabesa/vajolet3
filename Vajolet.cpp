@@ -15,6 +15,8 @@
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
 #include <iostream>
+
+#include "vajolet.h"
 #include "tSquare.h"
 #include "BitMap.h"
 #include "HashKeys.h"

@@ -213,4 +213,20 @@ namespace {
 			ASSERT_NE( y, x );
 		}		
 	}
+	
+	TEST(HashKeys, Concatenate)
+	{
+		HashKey x;
+		HashKey& y = x.changeSide().addPiece(bitboardIndex::whiteKing, tSquare::E1);
+		
+		HashKey z;
+		z.addPiece(bitboardIndex::whiteKing, tSquare::E1);
+		z.changeSide();
+		
+		ASSERT_EQ( y, z );
+		
+		
+		
+	}
+	
 }

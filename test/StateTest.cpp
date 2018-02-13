@@ -16,10 +16,25 @@
 */
 
 #include "gtest/gtest.h"
-#include "./../Position.h"
+#include "./../State.h"
 
 
 
+
+
+
+namespace libChess
+{
+	// Google-test:
+	class GameStateFixture: public GameState
+	{
+		public:
+
+		void setEpSquare( const tSquare sq){ GameState::setEpSquare(sq);}
+
+	
+	};
+}
 
 using namespace libChess;
 
@@ -27,5 +42,11 @@ namespace {
 	
 	
 	
+	TEST(GameState, setEpSquare)
+	{
+		GameStateFixture st;
+		st.setEpSquare(tSquare::E3);
+		ASSERT_EQ( tSquare::E3, st.getEpSquare() );
+	}
 	
 }
