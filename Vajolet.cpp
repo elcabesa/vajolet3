@@ -16,7 +16,7 @@
 */
 #include <iostream>
 
-#include "vajolet.h"
+#include "Vajolet.h"
 #include "tSquare.h"
 #include "BitMap.h"
 #include "HashKeys.h"
