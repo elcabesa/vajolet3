@@ -129,24 +129,43 @@ public:
 
 	/* iterator */
 	class iterator: public std::iterator<
-	                        std::input_iterator_tag,   // iterator_category
-							tSquare,                      // value_type
-							tSquare,
-							const tSquare*,
-							tSquare
+	                        std::input_iterator_tag,	// iterator_category
+							tSquare,					// value_type
+							tSquare,					// difference type
+							const tSquare*,					// pointer
+							tSquare 					// reference
 							>{
-		unsigned long long b;
+		uint64_t b;
 		public:
-			explicit iterator(unsigned long long _b = 0ull) : b(_b) {}
+			explicit iterator(const uint64_t _b = 0ull) : b(_b) {}
 			iterator& operator++() { b &= ( b - 1 ); return *this;}
 			iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
 			bool operator==(iterator other) const { return b == other.b; }
 			bool operator!=(iterator other) const { return b != other.b; }
 			reference operator*() const {return (tSquare)__builtin_ctzll(b);}
 	};
-	iterator begin() {return iterator(b);}
-	iterator end() {return iterator(0);}
-
+	iterator begin() const {return iterator(b);}
+	iterator end() const {return iterator(0);}
+	
+	/*class const_iterator: public std::iterator<
+	                        std::input_iterator_tag,	// iterator_category
+							const tSquare,				// value_type
+							const tSquare,				// difference type
+							const tSquare*,				// pointer
+							tSquare 					// reference
+							>{
+		uint64_t b;
+		public:
+			explicit const_iterator(const uint64_t _b = 0ull) : b(_b) {}
+			const_iterator& operator++() { b &= ( b - 1 ); return *this;}
+			const_iterator operator++(int) { const_iterator retval = *this; ++(*this); return retval;}
+			bool operator==(const_iterator other) const { return b == other.b; }
+			bool operator!=(const_iterator other) const { return b != other.b; }
+			reference operator*() const {return (tSquare)__builtin_ctzll(b);}
+	};
+	const_iterator begin() {return const_iterator(b);}
+	const_iterator end() {return const_iterator(0);}*/
+	
 	/* operators */
 	
 	inline bool operator ==(const BitMap& rhs) const { return b == rhs.b;}

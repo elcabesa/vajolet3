@@ -55,7 +55,7 @@ public:
 	inline HashKey& changeSide(void){_key ^= _side; return *this;};
 	inline HashKey& addEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
 	inline HashKey& removeEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
-	inline HashKey& changeCastlingRight(const unsigned int cr){_key ^= _castlingRight[cr]; return *this;};
+	inline HashKey& changeCastlingRight(const eCastle cr){_key ^= _castlingRight[cr]; return *this;};
 	
 	
 	

@@ -64,6 +64,11 @@ namespace libChess
 	{
 		return  piece > separationBitmap ? blackPieces : whitePieces;
 	}
+	
+	static inline bool isValidPiece(const bitboardIndex& piece)
+	{
+		return  (piece != occupiedSquares) && (piece != whitePieces) && (piece != separationBitmap) && (piece != blackPieces);
+	}
 
 	/*	\brief operators for bitboardIndex
 		\author Marco Belli

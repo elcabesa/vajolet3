@@ -52,6 +52,9 @@ namespace libChess
 		void _addPiece( const bitboardIndex piece, const tSquare s );
 		void _removePiece(const bitboardIndex piece,const tSquare s);
 		void _movePiece(const bitboardIndex piece, const tSquare from, const tSquare to);
+		HashKey _calcKey(void) const;
+		HashKey _calcPawnKey(void) const;
+		HashKey _calcMaterialKey(void) const;
 	
 		
 	public:
@@ -61,6 +64,14 @@ namespace libChess
 		Position();
 		Position(const Position& other);
 		Position& operator=(const Position& other);
+		
+		const BitMap& getOccupationBitmap() const;
+		const BitMap& getBitmap(const bitboardIndex in) const;
+		tSquare getSquareOfThePiece(const bitboardIndex piece) const;
+		const BitMap& getOurBitmap( const bitboardIndex piece )const;
+		const BitMap& getTheirBitmap( const bitboardIndex piece )const;
+		unsigned int getPieceCount(const bitboardIndex in) const;
+		bitboardIndex getPieceAt(const tSquare sq) const;
 	
 	
 		
@@ -74,6 +85,39 @@ namespace libChess
 	inline GameState& Position::_getActualState(void)
 	{
 		return *_actualState;
+	}
+	
+	inline const BitMap& Position::getOccupationBitmap() const
+	{
+		return _bitBoard[ occupiedSquares ];
+	}
+	
+	inline const BitMap& Position::getBitmap( const bitboardIndex in ) const
+	{
+		return _bitBoard[in];
+	}
+	
+	inline unsigned int Position::getPieceCount( const bitboardIndex in ) const
+	{
+		return getBitmap( in ).bitCnt();
+	}
+
+	inline bitboardIndex Position::getPieceAt(const tSquare sq) const
+	{
+		return _squares[sq];
+	}
+	
+	inline tSquare Position::getSquareOfThePiece(const bitboardIndex piece) const
+	{
+		return getBitmap(piece).firstOne();
+	}
+	inline const BitMap& Position::getOurBitmap( const bitboardIndex piece )const
+	{
+		return _Us[ piece ];
+	}
+	inline const BitMap& Position::getTheirBitmap( const bitboardIndex piece )const
+	{
+		return _Them[ piece ];
 	}
 	
 }

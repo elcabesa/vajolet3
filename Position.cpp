@@ -164,5 +164,68 @@ namespace libChess
 	}
 	
 	
+	HashKey Position::_calcKey(void) const
+	{
+		HashKey hash;
+		const GameState& st = getActualStateConst();
+
+		for(auto t: tSquareRange())
+		{
+			if( _squares[t] != empty )
+			{
+				hash.addPiece( _squares[t], t );
+			}
+		}
+
+		if( st.getTurn() == blackTurn )
+		{
+			hash.changeSide();
+		}
+		
+		hash.changeCastlingRight( st.getCastleRights() );
+
+		tSquare epSq = st.getEpSquare();
+		if( epSq != squareNone )
+		{
+			hash.addEp(epSq);
+		}
+
+		return hash;
+	}
+	
+
+	HashKey Position::_calcPawnKey(void) const
+	{
+		HashKey hash(1);
+		
+		for(const auto t : getBitmap( whitePawns ) )
+		{
+			hash.addPiece( whitePawns, t );
+		}
+		
+		for(const auto t : getBitmap( blackPawns ) )
+		{
+			hash.addPiece( blackPawns, t );
+		}
+		return hash;
+	}
+
+
+	HashKey Position::_calcMaterialKey(void) const
+	{
+		HashKey hash;
+		for( const auto p: bitboardIndexRange())
+		{
+			if ( isValidPiece(p))
+			{
+				for (unsigned int cnt = 0; cnt < getPieceCount( p ); ++cnt)
+				{
+					hash.addPiece( p, (tSquare)cnt );
+				}
+			}
+		}
+
+		return hash;
+	}	
 	
 }

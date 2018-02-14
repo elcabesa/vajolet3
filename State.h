@@ -296,7 +296,7 @@ namespace libChess
 	
 	inline void GameState::clearCastleRights( const int cr )
 	{
-		const int filteredCR = _castleRights & cr;
+		const eCastle filteredCR = eCastle(_castleRights & cr);
 		// Update castle rights if needed
 		if ( filteredCR )
 		{

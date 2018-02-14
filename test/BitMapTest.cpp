@@ -136,7 +136,7 @@ namespace {
 	{
 		std::vector<tSquare>v;
 		BitMap b(3458769736543240192ull);
-		for(const auto t : b)
+		for(const auto& t : b)
 		{
 			v.push_back(t);
 		}

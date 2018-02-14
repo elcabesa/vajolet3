@@ -193,15 +193,15 @@ namespace {
 		{
 			y = x;
 			z = x;
-			y.changeCastlingRight(i);
+			y.changeCastlingRight((eCastle)i);
 			
 			if( i != 0 ){ ASSERT_NE( y, x ); }
 			else{ ASSERT_EQ( y, x ); }
 			
-			if( i & 1 ){ z.changeCastlingRight( 1 ); }
-			if( i & 2 ){ z.changeCastlingRight( 2 ); }
-			if( i & 4 ){ z.changeCastlingRight( 4 ); }
-			if( i & 8 ){ z.changeCastlingRight( 8 ); }
+			if( i & 1 ){ z.changeCastlingRight( (eCastle)1 ); }
+			if( i & 2 ){ z.changeCastlingRight( (eCastle)2 ); }
+			if( i & 4 ){ z.changeCastlingRight( (eCastle)4 ); }
+			if( i & 8 ){ z.changeCastlingRight( (eCastle)8 ); }
 			
 			ASSERT_EQ( y, z );
 		}
