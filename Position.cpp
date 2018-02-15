@@ -228,4 +228,237 @@ namespace libChess
 		return hash;
 	}	
 	
+	/*	\brief display the fen string of the position
+	\author Marco Belli
+	\version 1.0
+	\date 15/02/2018
+	*/
+	const std::string Position::getFen(void) const
+	{
+
+		std::string s;
+		
+		const GameState& st = getActualStateConst();
+		
+		// write rank
+		for(auto rank: tRankNegativeRange())
+		{
+			unsigned int emptyFiles = 0u;
+			// for ech file
+			for(auto file: tFileRange())
+			{
+				const tSquare sq =getSquareFromFileRank( file, rank );
+				const bitboardIndex piece = getPieceAt( sq );
+				
+				// write piece...
+				if( isValidPiece(piece) )
+				{
+					// ...prepending empty square number
+					if( emptyFiles != 0 )
+					{
+						s += std::to_string( emptyFiles );
+					}
+					emptyFiles = 0u;
+					
+					s += getPieceName( piece );
+				}
+				else
+				{
+					++emptyFiles;
+				}
+			}
+			// append empty squares after last piece on row
+			if(emptyFiles!=0)
+			{
+				s += std::to_string(emptyFiles);
+			}
+			// append '/' if needed
+			if( rank != tRank::one )
+			{
+				s += "/";
+			}
+		}
+		
+		// turn
+		s += " ";
+		if( st.getTurn() == blackTurn )
+		{
+			s += "b";
+		}
+		else
+		{
+			s += "w";
+		}
+		s += " ";
+		
+		// castling rights
+		bool hasSomeCastleRight = false;
+		if( st.hasCastleRight( wCastleOO ) )
+		{
+			s += "K";
+			hasSomeCastleRight = true;
+		}
+		if(st.hasCastleRight( wCastleOOO) )
+		{
+			s += "Q";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOO) )
+		{
+			s += "k";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOOO) )
+		{
+			s += "q";
+			hasSomeCastleRight = true;
+		}
+		
+		if( false == hasSomeCastleRight){
+			s += "-";
+		}
+		s += ' ';
+		// epsquare
+		
+		if( st.hasEpSquareSet() )
+		{
+			s += to_string( st.getEpSquare() );
+		}
+		else
+		{
+			s += "-";
+		}
+		
+		s += " ";
+		// half move clock
+		s += std::to_string(st.getFiftyMoveCnt());
+		// full move clock
+		s += " " + std::to_string( st.getFullMoveCounter() );
+		
+		return s;
+	}
+	
+	
+	/*	\brief display the fen string of the symmetrical position
+	\author Marco Belli
+	\version 1.0
+	\date 15/02/2018
+	*/
+	const std::string Position::getSymmetricFen(void) const
+	{
+		std::string s;
+		
+		const GameState& st = getActualStateConst();
+		
+		// write rank
+		for(auto rank: tRankRange())
+		{
+			unsigned int emptyFiles = 0u;
+			// for ech file
+			for(auto file: tFileRange())
+			{
+				const tSquare sq =getSquareFromFileRank( file, rank );
+				const bitboardIndex piece = getPieceAt( sq );
+				
+				// write piece...
+				if( isValidPiece(piece) )
+				{
+					// ...prepending empty square number
+					if( emptyFiles != 0 )
+					{
+						s += std::to_string( emptyFiles );
+					}
+					emptyFiles = 0u;
+					
+					bitboardIndex symPiece = piece;
+					if( isBlackPiece( symPiece ) )
+					{
+						symPiece -= separationBitmap;
+					}
+					else
+					{
+						symPiece += separationBitmap;
+					}
+					s += getPieceName( symPiece );
+				}
+				else
+				{
+					++emptyFiles;
+				}
+			}
+			// append empty squares after last piece on row
+			if(emptyFiles!=0)
+			{
+				s += std::to_string(emptyFiles);
+			}
+			// append '/' if needed
+			if( rank != tRank::one )
+			{
+				s += "/";
+			}
+		}
+		
+		// turn
+		s += " ";
+		if( st.getTurn() == blackTurn )
+		{
+			s += "w";
+		}
+		else
+		{
+			s += "b";
+		}
+		s += " ";
+		
+		// castling rights
+		bool hasSomeCastleRight = false;
+		if( st.hasCastleRight( wCastleOO ) )
+		{
+			s += "k";
+			hasSomeCastleRight = true;
+		}
+		if(st.hasCastleRight( wCastleOOO) )
+		{
+			s += "q";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOO) )
+		{
+			s += "K";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOOO) )
+		{
+			s += "Q";
+			hasSomeCastleRight = true;
+		}
+		
+		if( false == hasSomeCastleRight){
+			s += "-";
+		}
+		s += ' ';
+		// epsquare
+		
+		if( st.hasEpSquareSet() )
+		{
+			const tSquare sq = st.getEpSquare();
+			const tFile symFile = getFile(sq);
+			tRank symRank = tRank::eight - getRank(sq);
+			
+			s += to_string( getSquareFromFileRank( symFile, symRank ) );
+		}
+		else
+		{
+			s += "-";
+		}
+		
+		s += " ";
+		// half move clock
+		s += std::to_string(st.getFiftyMoveCnt());
+		// full move clock
+		s += " " + std::to_string( st.getFullMoveCounter()  );
+		
+		return s;
+	}
+	
 }

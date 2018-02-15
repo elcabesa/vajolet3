@@ -373,6 +373,104 @@ namespace {
 		ASSERT_EQ(count, 0u);
 	}
 	
+	
+	
+	TEST(tRank, iterateNeg)
+	{
+		unsigned int i = 0;
+
+		for(auto t: tRankNegativeRange())
+		{
+			ASSERT_EQ((unsigned int)t, 7 - i );
+			i++;
+			if(i>1000) break;
+		}
+		ASSERT_EQ(i, 8u);
+	}
+	
+	TEST(tRank, iterateNegRange0)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::two);
+
+		for(auto t: tRankRange(tRank::two,tRank::five))
+		{
+			ASSERT_EQ((unsigned int)t, i );
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 4u);
+	}
+
+	TEST(tRank, iterateNegRange1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::one);
+
+		for(auto t: tRankRange(tRank::one,tRank::two))
+		{
+			ASSERT_EQ((unsigned int)t, i );
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 2u);
+	}
+
+	
+	TEST(tRank, iterateNegRange2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::seven);
+
+		for(auto t: tRankRange(tRank::seven,tRank::seven))
+		{
+			ASSERT_EQ((unsigned int)t, i );
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 1u);
+	}
+
+	TEST(tRank, iterateNegRangeNeg1)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::seven);
+
+		for(auto t: tRankRange(tRank::seven,tRank::six))
+		{
+			ASSERT_EQ((unsigned int)t, 7 - i );
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+
+	TEST(tRank, iterateNegRangeNeg2)
+	{
+
+		unsigned int count = 0;
+		unsigned int i = (int)(tRank::eight);
+
+		for(auto t: tRankRange(tRank::eight,tRank::one))
+		{
+			ASSERT_EQ((unsigned int)t, 7 - i );
+			i++;
+			count++;
+			if(count>1000) break;
+		}
+		ASSERT_EQ(count, 0u);
+	}
+	
+	
+	
 	TEST(tRank, to_string)
 	{
 		tRank f = tRank::two;

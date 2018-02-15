@@ -18,6 +18,7 @@
 #ifndef TSQUARE_H_
 #define TSQUARE_H_
 
+#include <iostream>
 #include <string>
 #include "Vajolet.h"
 
@@ -92,7 +93,7 @@ namespace libChess
 	tFileRange(tFile _min = tFile::A, tFile _Max = tFile::H): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
-														std::input_iterator_tag,	// iterator_category
+								std::input_iterator_tag,	// iterator_category
 								tFile,					// value_type
 								tFile,
 								const tFile*,
@@ -203,7 +204,7 @@ namespace libChess
 	tRankRange(tRank _min = tRank::one, tRank _Max = tRank::eight): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
-														std::input_iterator_tag,	// iterator_category
+								std::input_iterator_tag,	// iterator_category
 								tRank,					// value_type
 								tRank,
 								const tRank*,
@@ -223,6 +224,42 @@ namespace libChess
 	iterator end() {return iterator(Max);}
 
 	};
+	
+	/*	\brief class used to iterate over a range of tRank
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	class tRankNegativeRange{
+
+	tRank min;
+	tRank Max;
+	public:
+	tRankNegativeRange(tRank _min = tRank::one, tRank _Max = tRank::eight): min( _min - 1 ), Max( _Max ){if(Max < min) Max = min;}
+
+	class iterator: public std::iterator<
+								std::input_iterator_tag,	// iterator_category
+								tRank,					// value_type
+								tRank,
+								const tRank*,
+								tRank
+								>{
+			tRank t;
+			public:
+				explicit iterator(tRank _t = tRank::one) : t(_t) {std::cout<<"ctor "<<t<<std::endl;}
+				iterator& operator++() { t -= 1; std::cout<<"increment iterator "<<t<<std::endl;return *this;}
+				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+				bool operator==(iterator other) const { std::cout<<"op == "<<t<<" "<<other.t<<std::endl;return t == other.t; }
+				bool operator!=(iterator other) const { std::cout<<"op != "<<t<<" "<<other.t<<std::endl;return t != other.t; }
+				reference operator*() const {return t;}
+		};
+
+	iterator begin() {return iterator(Max);}
+	iterator end() {return iterator(min);}
+
+	};
+	
+	
 
 	/*	\brief convert rank to string
 		\author Marco Belli
@@ -333,7 +370,7 @@ namespace libChess
 	tSquareRange(tSquare _min = tSquare::A1, tSquare _Max = tSquare::H8): min(_min), Max( _Max + tSquare::east ){if(Max < min) Max = min;}
 
 	class iterator: public std::iterator<
-														std::input_iterator_tag,	// iterator_category
+								std::input_iterator_tag,	// iterator_category
 								tSquare,					// value_type
 								tSquare,
 								const tSquare*,

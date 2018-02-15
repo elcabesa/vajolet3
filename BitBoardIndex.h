@@ -21,8 +21,9 @@
 
 namespace libChess
 {
-	const char PIECE_NAMES_FEN[] = {' ','K','Q','R','B','N','P',' ',' ','k','q','r','b','n','p',' '};
-
+	
+	
+	
 	enum bitboardIndex
 	{
 		occupiedSquares = 0,			//0		00000000
@@ -60,6 +61,14 @@ namespace libChess
 
 	};
 	
+	static inline std::string getPieceName( bitboardIndex in )
+	{
+		static std::string PIECE_NAMES_FEN[] = {" ","K","Q","R","B","N","P"," "," ","k","q","r","b","n","p"," "};
+		
+		assert( in < bitboardNumber );
+		return std::string(PIECE_NAMES_FEN[ in ]);
+	}
+	
 	static inline bitboardIndex getMyPiecesfromPiece(const bitboardIndex& piece)
 	{
 		return  piece > separationBitmap ? blackPieces : whitePieces;
@@ -68,6 +77,62 @@ namespace libChess
 	static inline bool isValidPiece(const bitboardIndex& piece)
 	{
 		return  (piece != occupiedSquares) && (piece != whitePieces) && (piece != separationBitmap) && (piece != blackPieces);
+	}
+	
+	/*! \brief tell if the piece is a pawn
+		\author Marco Belli
+		\version 1.0
+		\date 27/10/2013
+	*/
+	inline static bool isPawn(bitboardIndex piece)
+	{
+		return (piece&7) == Pawns;
+	}
+	/*! \brief tell if the piece is a king
+		\author Marco Belli
+		\version 1.0
+		\date 27/10/2013
+	*/
+	inline static bool isKing(bitboardIndex piece)
+	{
+		return (piece&7) == King;
+	}
+	/*! \brief tell if the piece is a queen
+		\author Marco Belli
+		\version 1.0
+		\date 04/11/2013
+	*/
+	inline static bool isQueen(bitboardIndex piece)
+	{
+		return (piece&7) == Queens;
+	}
+	/*! \brief tell if the piece is a rook
+		\author Marco Belli
+		\version 1.0
+		\date 04/11/2013
+	*/
+	inline static bool isRook(bitboardIndex piece)
+	{
+		return (piece&7) == Rooks;
+	}
+	/*! \brief tell if the piece is a bishop
+		\author Marco Belli
+		\version 1.0
+		\date 04/11/2013
+	*/
+	inline static bool isBishop(bitboardIndex piece)
+	{
+		return (piece&7) == Bishops;
+	}
+	
+	static inline bool isBlackPiece(const bitboardIndex& piece)
+	{
+		return  piece & 8;
+	}
+	
+	static inline bool isWhitePiece(const bitboardIndex& piece)
+	{
+		return  piece < separationBitmap;
 	}
 
 	/*	\brief operators for bitboardIndex
@@ -101,7 +166,6 @@ namespace libChess
 
 	static inline bitboardIndex operator+(const bitboardIndex d1, const int d2) { return bitboardIndex( (int)d1 + d2 ); }
 	static inline bitboardIndex operator-(const bitboardIndex d1, const int d2) { return bitboardIndex( (int)d1 - d2 ); }
-	
 
 	inline bitboardIndex& operator+=(bitboardIndex& d1, const int d2) { d1 = d1 + d2; return d1; }
 	inline bitboardIndex& operator-=(bitboardIndex& d1, const int d2) { d1 = d1 - d2; return d1; }

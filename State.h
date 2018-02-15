@@ -163,6 +163,10 @@ namespace libChess
 	
 		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
 		
+		bool hasCastleRight(eCastle cr)const{ return _castleRights & cr;}
+		bool hasEpSquareSet(void)const{ return _epSquare != squareNone;}
+		unsigned int getFullMoveCounter(void) const;
+		
 	};
 	
 	//-----------------------------------------
@@ -377,6 +381,11 @@ namespace libChess
 	{
 		_materialValue += protmotedMaterial - material;
 		_nonPawnMaterialValue -= nonPawnPromotedMaterial;
+	}
+	
+	inline unsigned int GameState::getFullMoveCounter(void) const
+	{
+		return 1 + (getPliesCnt() - int( getTurn() == blackTurn ) ) / 2;
 	}
 }
 
