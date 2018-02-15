@@ -216,9 +216,9 @@ namespace libChess
 		HashKey hash;
 		for( const auto p: bitboardIndexRange())
 		{
-			if ( isValidPiece(p))
+			if ( isValidPiece(p) )
 			{
-				for (unsigned int cnt = 0; cnt < getPieceCount( p ); ++cnt)
+				for ( unsigned int cnt = 0; cnt < getPieceCount( p ); ++cnt )
 				{
 					hash.addPiece( p, (tSquare)cnt );
 				}
@@ -241,11 +241,11 @@ namespace libChess
 		const GameState& st = getActualStateConst();
 		
 		// write rank
-		for(auto rank: tRankNegativeRange())
+		for( const auto rank: tRankNegativeRange() )
 		{
 			unsigned int emptyFiles = 0u;
 			// for ech file
-			for(auto file: tFileRange())
+			for( const auto file: tFileRange() )
 			{
 				const tSquare sq =getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
@@ -268,7 +268,7 @@ namespace libChess
 				}
 			}
 			// append empty squares after last piece on row
-			if(emptyFiles!=0)
+			if( emptyFiles != 0 )
 			{
 				s += std::to_string(emptyFiles);
 			}
@@ -314,10 +314,11 @@ namespace libChess
 			hasSomeCastleRight = true;
 		}
 		
-		if( false == hasSomeCastleRight){
+		if( false == hasSomeCastleRight )
+		{
 			s += "-";
 		}
-		s += ' ';
+		s += " ";
 		// epsquare
 		
 		if( st.hasEpSquareSet() )
@@ -331,7 +332,7 @@ namespace libChess
 		
 		s += " ";
 		// half move clock
-		s += std::to_string(st.getFiftyMoveCnt());
+		s += std::to_string( st.getFiftyMoveCnt() );
 		// full move clock
 		s += " " + std::to_string( st.getFullMoveCounter() );
 		
@@ -351,11 +352,11 @@ namespace libChess
 		const GameState& st = getActualStateConst();
 		
 		// write rank
-		for(auto rank: tRankRange())
+		for( const auto rank: tRankRange() )
 		{
 			unsigned int emptyFiles = 0u;
 			// for ech file
-			for(auto file: tFileRange())
+			for( const auto file: tFileRange() ) 
 			{
 				const tSquare sq =getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
@@ -436,7 +437,7 @@ namespace libChess
 		if( false == hasSomeCastleRight){
 			s += "-";
 		}
-		s += ' ';
+		s += " ";
 		// epsquare
 		
 		if( st.hasEpSquareSet() )
@@ -457,8 +458,105 @@ namespace libChess
 		s += std::to_string(st.getFiftyMoveCnt());
 		// full move clock
 		s += " " + std::to_string( st.getFullMoveCounter()  );
+		return s;
+	}
+	
+	/*	\brief display a board for debug purpose
+		\author Marco Belli
+		\version 1.0
+		\date 15/02/2018
+	*/
+	const std::string Position::display(void) const
+	{
+		const GameState& st = getActualStateConst();
+		
+		std::string s = getFen() + "\n";
+		
+		for( const auto rank: tRankNegativeRange() )
+		{
+			s += "  +---+---+---+---+---+---+---+---+\n";
+			s += to_string(rank) +  " |";
+			
+			for( const auto file: tFileRange() )
+			{
+				const tSquare sq =getSquareFromFileRank( file, rank );
+				const bitboardIndex piece = getPieceAt( sq );
+				s += " " + getPieceName( piece ) + " |";
+			}
+			s += "\n";
+			
+		}
+		s += "  +---+---+---+---+---+---+---+---+\n";
+		s += " ";
+		for(auto file: tFileRange())
+		{
+			s += "   " + to_string(file);
+		}
+		s += "\n";
+
+		s += (st.getTurn() == whiteTurn ? "WHITE TO MOVE" : "BLACK TO MOVE");
+		s += "\n";
+		s += "50 move counter ";
+		s += st.getFiftyMoveCnt() + "\n";
+		s += "castleRights ";
+		
+		bool hasSomeCastleRight = false;
+		if( st.hasCastleRight( wCastleOO ) )
+		{
+			s+= "K" ;
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( wCastleOOO ) )
+		{
+			s+= "Q";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOO ) )
+		{
+			s+= "k";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( bCastleOOO ) )
+		{
+			s+= "q";
+			hasSomeCastleRight = true;
+		}
+		
+		if( false == hasSomeCastleRight )
+		{
+			s += "-";
+		}
+		
+		s += "\n";
+		
+		s += "epsquare ";
+
+		if( st.hasEpSquareSet() )
+		{
+			s += to_string( st.getEpSquare() );
+		}
+		else
+		{
+			s += "-";
+		}
+		
+		s += "\n";
+		
+		// todo add this code
+		s += "material ";
+		s += st.getMaterialValue()[0]/10000.0;
+		s += "\n";
+		
+		s += "white material  ";
+		s += st.getNonPawnMaterialValue()[0]/10000.0;
+		s += "\n";
+		
+		s += "black material  ";
+		s += st.getNonPawnMaterialValue()[2]/10000.0;
+		s += "\n";
 		
 		return s;
+
 	}
 	
 }

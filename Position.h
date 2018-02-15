@@ -74,6 +74,7 @@ namespace libChess
 		bitboardIndex getPieceAt(const tSquare sq) const;
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
+		const std::string display(void) const;
 	
 	
 		

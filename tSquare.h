@@ -246,11 +246,11 @@ namespace libChess
 								>{
 			tRank t;
 			public:
-				explicit iterator(tRank _t = tRank::one) : t(_t) {std::cout<<"ctor "<<t<<std::endl;}
-				iterator& operator++() { t -= 1; std::cout<<"increment iterator "<<t<<std::endl;return *this;}
+				explicit iterator(tRank _t = tRank::one) : t(_t) {}
+				iterator& operator++() { t -= 1; return *this;}
 				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { std::cout<<"op == "<<t<<" "<<other.t<<std::endl;return t == other.t; }
-				bool operator!=(iterator other) const { std::cout<<"op != "<<t<<" "<<other.t<<std::endl;return t != other.t; }
+				bool operator==(iterator other) const { return t == other.t; }
+				bool operator!=(iterator other) const { return t != other.t; }
 				reference operator*() const {return t;}
 		};
 

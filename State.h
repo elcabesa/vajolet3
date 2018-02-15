@@ -79,7 +79,7 @@ namespace libChess
 		const HashKey& getPawnKey() const;
 		const HashKey& getMaterialKey() const;
 		
-		const simdScore& getNonPawnValue() const;
+		const simdScore& getNonPawnMaterialValue() const;
 		const simdScore& getMaterialValue() const;
 		
 		eTurn getTurn() const;
@@ -182,7 +182,7 @@ namespace libChess
 	inline const HashKey& GameState::getPawnKey()            const { return _pawnKey; }
 	inline const HashKey& GameState::getMaterialKey()        const { return _materialKey; }
 	
-	inline const simdScore& GameState::getNonPawnValue() const { return _nonPawnMaterialValue; }
+	inline const simdScore& GameState::getNonPawnMaterialValue() const { return _nonPawnMaterialValue; }
 	inline const simdScore& GameState::getMaterialValue()    const { return _materialValue; }
 	
 	inline eTurn GameState::getTurn()                        const {return _turn; }
