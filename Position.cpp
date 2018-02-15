@@ -292,43 +292,11 @@ namespace libChess
 		s += " ";
 		
 		// castling rights
-		bool hasSomeCastleRight = false;
-		if( st.hasCastleRight( wCastleOO ) )
-		{
-			s += "K";
-			hasSomeCastleRight = true;
-		}
-		if(st.hasCastleRight( wCastleOOO) )
-		{
-			s += "Q";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOO) )
-		{
-			s += "k";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOOO) )
-		{
-			s += "q";
-			hasSomeCastleRight = true;
-		}
-		
-		if( false == hasSomeCastleRight )
-		{
-			s += "-";
-		}
+		s += st.getCastleRightsString();
 		s += " ";
-		// epsquare
 		
-		if( st.hasEpSquareSet() )
-		{
-			s += to_string( st.getEpSquare() );
-		}
-		else
-		{
-			s += "-";
-		}
+		// epsquare
+		s += st.getEpSquareString();
 		
 		s += " ";
 		// half move clock
@@ -350,6 +318,7 @@ namespace libChess
 		std::string s;
 		
 		const GameState& st = getActualStateConst();
+		GameState symmSt = st;
 		
 		// write rank
 		for( const auto rank: tRankRange() )
@@ -412,47 +381,23 @@ namespace libChess
 		s += " ";
 		
 		// castling rights
-		bool hasSomeCastleRight = false;
-		if( st.hasCastleRight( wCastleOO ) )
-		{
-			s += "k";
-			hasSomeCastleRight = true;
-		}
-		if(st.hasCastleRight( wCastleOOO) )
-		{
-			s += "q";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOO) )
-		{
-			s += "K";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOOO) )
-		{
-			s += "Q";
-			hasSomeCastleRight = true;
-		}
+		//TODO fare un metodo per aggiungere un singolo castleRight
+		symmSt.setCastleRights( (eCastle)0 );
+		if( st.hasCastleRight( wCastleOO ) ) symmSt.setCastleRight(  bCastleOO );
+		if( st.hasCastleRight( wCastleOOO ) ) symmSt.setCastleRight(  bCastleOOO );
+		if( st.hasCastleRight( bCastleOO ) ) symmSt.setCastleRight(  wCastleOO );
+		if( st.hasCastleRight( bCastleOOO ) ) symmSt.setCastleRight(  wCastleOOO );
+		s += symmSt.getCastleRightsString();
 		
-		if( false == hasSomeCastleRight){
-			s += "-";
-		}
 		s += " ";
 		// epsquare
+		const tSquare sq = st.getEpSquare();
+		const tFile symFile = getFile(sq);
+		tRank symRank = tRank::eight - getRank(sq);
+		symmSt.setEpSquare(getSquareFromFileRank( symFile, symRank ));
 		
-		if( st.hasEpSquareSet() )
-		{
-			const tSquare sq = st.getEpSquare();
-			const tFile symFile = getFile(sq);
-			tRank symRank = tRank::eight - getRank(sq);
-			
-			s += to_string( getSquareFromFileRank( symFile, symRank ) );
-		}
-		else
-		{
-			s += "-";
-		}
-		
+		s += symmSt.getEpSquareString();
+	
 		s += " ";
 		// half move clock
 		s += std::to_string(st.getFiftyMoveCnt());
@@ -500,46 +445,12 @@ namespace libChess
 		s += st.getFiftyMoveCnt() + "\n";
 		s += "castleRights ";
 		
-		bool hasSomeCastleRight = false;
-		if( st.hasCastleRight( wCastleOO ) )
-		{
-			s+= "K" ;
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( wCastleOOO ) )
-		{
-			s+= "Q";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOO ) )
-		{
-			s+= "k";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( bCastleOOO ) )
-		{
-			s+= "q";
-			hasSomeCastleRight = true;
-		}
-		
-		if( false == hasSomeCastleRight )
-		{
-			s += "-";
-		}
-		
+		// castling rights
+		s += st.getCastleRightsString();
 		s += "\n";
 		
 		s += "epsquare ";
-
-		if( st.hasEpSquareSet() )
-		{
-			s += to_string( st.getEpSquare() );
-		}
-		else
-		{
-			s += "-";
-		}
-		
+		s += st.getEpSquareString();
 		s += "\n";
 		
 		// todo add this code

@@ -84,7 +84,10 @@ namespace libChess
 		
 		eTurn getTurn() const;
 		eCastle getCastleRights() const;
+		std::string getCastleRightsString(void) const;
 		tSquare getEpSquare() const;
+		std::string getEpSquareString(void) const;
+		
 		
 		unsigned int getFiftyMoveCnt() const;
 		unsigned int getPliesFromNullCnt() const;
@@ -110,6 +113,8 @@ namespace libChess
 		void setTurn( const eTurn turn);
 		
 		void setCastleRights( const eCastle cr);
+		
+		void setCastleRight( const eCastle cr);
 		
 		void setFiftyMoveCnt( const unsigned int fmc );
 		
@@ -226,6 +231,11 @@ namespace libChess
 	inline void GameState::setCastleRights( const eCastle cr)
 	{
 		_castleRights = cr;
+	}
+	
+	inline void GameState::setCastleRight( const eCastle cr)
+	{
+		_castleRights = (eCastle)(_castleRights | cr);
 	}
 	
 	inline void GameState::setFiftyMoveCnt( const unsigned int fmc )
@@ -386,6 +396,55 @@ namespace libChess
 	inline unsigned int GameState::getFullMoveCounter(void) const
 	{
 		return 1 + (getPliesCnt() - int( getTurn() == blackTurn ) ) / 2;
+	}
+	
+	inline std::string GameState::getEpSquareString(void) const
+	{
+		std::string s;
+		
+		if( hasEpSquareSet() )
+		{
+			s = to_string( getEpSquare() );
+		}
+		else
+		{
+			s = "-";
+		}
+		return s;
+	}
+	
+	inline std::string GameState::getCastleRightsString(void) const
+	{
+		std::string s;
+		// castling rights
+		bool hasSomeCastleRight = false;
+		if( hasCastleRight( wCastleOO ) )
+		{
+			s += "k";
+			hasSomeCastleRight = true;
+		}
+		if( hasCastleRight( wCastleOOO) )
+		{
+			s += "q";
+			hasSomeCastleRight = true;
+		}
+		if( hasCastleRight( bCastleOO) )
+		{
+			s += "K";
+			hasSomeCastleRight = true;
+		}
+		if( hasCastleRight( bCastleOOO) )
+		{
+			s += "Q";
+			hasSomeCastleRight = true;
+		}
+		
+		if( false == hasSomeCastleRight )
+		{
+			s += "-";
+		}
+		
+		return s;
 	}
 }
 
