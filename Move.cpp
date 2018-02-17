@@ -23,6 +23,7 @@
 
 namespace libChess
 {
+	const Move NOMOVE(0);
 	std::string Move::to_string(void) const
 	{
 		std::string s;

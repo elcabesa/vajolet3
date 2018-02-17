@@ -24,7 +24,7 @@
 
 namespace libChess
 {
-
+	
 /*!	\brief struct move
     \author Marco Belli
 	\version 1.0
@@ -109,6 +109,7 @@ public:
 
 };
 
+extern const Move NOMOVE;
 
 
 class extMove: public Move

@@ -16,6 +16,7 @@
 */
 
 #include <utility>
+#include <sstream>
 #include "Position.h"
 
 namespace libChess
@@ -61,6 +62,20 @@ namespace libChess
 		_stateList.emplace_back(GameState());
 		_actualState = &_stateList.back();
 		
+	}
+	
+	
+	inline void Position::_clear()
+	{
+		for (auto& piece : _squares)
+		{
+			piece = empty;
+		}
+		for (auto& b : _bitBoard)
+		{
+			b.clear();
+		}
+		_clearStateList();
 	}
 	
 	inline GameState& Position::_pushState(void)
@@ -247,7 +262,7 @@ namespace libChess
 			// for ech file
 			for( const auto file: tFileRange() )
 			{
-				const tSquare sq =getSquareFromFileRank( file, rank );
+				const tSquare sq = getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
 				
 				// write piece...
@@ -278,6 +293,7 @@ namespace libChess
 				s += "/";
 			}
 		}
+		
 		
 		// turn
 		s += " ";
@@ -381,8 +397,7 @@ namespace libChess
 		s += " ";
 		
 		// castling rights
-		//TODO fare un metodo per aggiungere un singolo castleRight
-		symmSt.setCastleRights( (eCastle)0 );
+		symmSt.clearAllCastleRights();
 		if( st.hasCastleRight( wCastleOO ) ) symmSt.setCastleRight(  bCastleOO );
 		if( st.hasCastleRight( wCastleOOO ) ) symmSt.setCastleRight(  bCastleOOO );
 		if( st.hasCastleRight( bCastleOO ) ) symmSt.setCastleRight(  wCastleOO );
@@ -468,6 +483,220 @@ namespace libChess
 		
 		return s;
 
+	}
+	
+	
+	/*! \brief setup a position from a fen string
+		\author Marco Belli
+		\version 1.0
+		\date 27/10/2013
+	*/
+	bool Position::setupFromFen(const std::string& fenStr)
+	{
+		char token;
+		tSquare sq = A8;
+		tFile file = A;
+		
+		std::istringstream ss(fenStr);
+		ss >> std::noskipws;
+		
+		_clear();
+		
+		GameState &st = _getActualState();
+
+		// parse piece list
+		while( (ss >> token) && !std::isspace(token) )
+		{
+			if( file < A || file > H || sq > H8 || sq < A1)
+			{
+				return false;
+			}
+			
+			if( isdigit(token) )
+			{
+				sq += tSquare( token - '0' ); // Advance the given number of files
+				file += tFile( token - '0' );
+			}
+			else if(token == '/')
+			{
+				sq -= tSquare(16);
+				file = A;
+			}
+			else
+			{
+				// TODO try to use a function here that map char to index -> using PIECE_NAMES_FEN in bitBoardIndex.h
+				switch(token)
+				{
+				case 'P':
+					_addPiece( whitePawns, sq );
+					break;
+				case 'N':
+					_addPiece( whiteKnights, sq );
+					break;
+				case 'B':
+					_addPiece( whiteBishops, sq );
+					break;
+				case 'R':
+					_addPiece( whiteRooks, sq );
+					break;
+				case 'Q':
+					_addPiece( whiteQueens, sq );
+					break;
+				case 'K':
+					_addPiece( whiteKing, sq );
+					break;
+				case 'p':
+					_addPiece( blackPawns, sq );
+					break;
+				case 'n':
+					_addPiece( blackKnights, sq );
+					break;
+				case 'b':
+					_addPiece( blackBishops, sq );
+					break;
+				case 'r':
+					_addPiece( blackRooks, sq );
+					break;
+				case 'q':
+					_addPiece( blackQueens, sq );
+					break;
+				case 'k':
+					_addPiece( blackKing, sq );
+					break;
+				default:
+					return false;
+				
+				}
+				sq++;
+			}
+		}
+		
+		// turn
+		ss >> token;
+		if( token == 'w' )
+		{
+			st.setTurn(whiteTurn);
+		}
+		else if( token == 'b' )
+		{
+			st.setTurn(blackTurn);
+		}
+		else
+		{
+			return false;
+		}
+		_setUsThem();
+		
+		//space
+		ss >> token;
+		if( token !=' ')
+		{
+			return false;
+		}
+		
+		// castle rights
+		st.clearAllCastleRights();
+		
+		while ( (ss >> token) && !isspace(token) )
+		{
+			switch(token)
+			{
+			case 'K':
+				st.setCastleRight( wCastleOO );
+				break;
+			case 'Q':
+				st.setCastleRight( wCastleOOO);
+				break;
+			case 'k':
+				st.setCastleRight( bCastleOO);
+				break;
+			case 'q':
+				st.setCastleRight( bCastleOOO);
+				break;
+			default:
+				return false;
+			}
+		}
+		
+		ss >> token;
+		
+		// parse epsquare
+		if( token == '-' )
+		{
+			st.resetEpSquare();
+		}
+		else
+		{
+			
+			char col,row;
+			if (
+				( (ss >> col) && (col >= 'a' && col <= 'h') )
+				&& ( (ss >> row) && ( row == '3' || row == '6' ) )
+				)
+			{
+				st.setEpSquare( (tSquare) ( ( col - 'a' ) + 8 * ( row - '1' ) ) );
+				// todo add this code
+				/*if (!(getAttackersTo(x.epSquare) & bitBoard[whitePawns+x.nextMove]))
+				{
+					st.resetEpSquare();
+				}*/
+				
+			}
+			else{
+				return false;
+			}
+			
+		}
+		
+		ss >> token;
+		if( token !=' ')
+		{
+			return false;
+		}
+		
+		int fmc;
+		ss >> std::skipws >> fmc;
+		st.setFiftyMoveCnt(fmc);
+		
+		if( ss.eof() )
+		{
+			st.setPliesCnt( int( st.getTurn() == blackTurn) );
+			st.resetFiftyMoveCnt();
+
+		}else
+		{
+			int plies;
+			ss >> plies;
+			plies = std::max( 2 * ( plies - 1), 0) + int( st.getTurn() == blackTurn );
+			st.setPliesCnt( plies );
+			
+		}
+		
+		st.resetCountersNullMove();
+		st.setCurrentMove( NOMOVE );
+		st.resetCapturedPiece();
+		/*
+		// todo readd those methods
+
+		x.nonPawnMaterial = calcNonPawnMaterialValue();
+
+		x.material=  calcMaterialValue();*/
+		
+		st.setKeys(_calcKey(), _calcPawnKey(), _calcMaterialKey() );
+
+/*
+		// todo readd those methods
+		
+		calcCheckingSquares();
+
+		x.hiddenCheckersCandidate=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove)),x.nextMove);
+		x.pinnedPieces=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),eNextMove(blackTurn-x.nextMove));
+		x.checkers= getAttackersTo(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))) & bitBoard[blackPieces-x.nextMove];
+
+
+
+		checkPosConsistency(1);*/
+		return true;
 	}
 	
 }

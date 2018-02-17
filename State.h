@@ -128,7 +128,9 @@ namespace libChess
 		
 		void incrementCountersNullMove();
 		
-		void resetFiftyMovecounter();
+		void resetCountersNullMove();
+		
+		void resetFiftyMoveCnt();
 		
 		void resetEpSquare();
 		
@@ -138,7 +140,9 @@ namespace libChess
 		
 		void resetCapturedPiece();
 		
-		void clearCastleRights( const int cr );
+		void clearCastleRight( const int cr );
+		
+		void clearAllCastleRights();
 		
 		void setCheckingSquare( const bitboardIndex idx, const BitMap& b );
 		
@@ -272,8 +276,12 @@ namespace libChess
 		++_fiftyMoveCnt;
 		_pliesFromNull = 0;
 	}
+	inline void GameState::resetCountersNullMove(void)
+	{
+		_pliesFromNull = 0;
+	}
 	
-	inline void GameState::resetFiftyMovecounter()
+	inline void GameState::resetFiftyMoveCnt()
 	{
 		_fiftyMoveCnt = 0;
 	}
@@ -308,7 +316,7 @@ namespace libChess
 		_capturedPiece = empty;
 	}
 	
-	inline void GameState::clearCastleRights( const int cr )
+	inline void GameState::clearCastleRight( const int cr )
 	{
 		const eCastle filteredCR = eCastle(_castleRights & cr);
 		// Update castle rights if needed
@@ -318,6 +326,11 @@ namespace libChess
 			_key.changeCastlingRight( filteredCR );
 			_castleRights = (eCastle)( _castleRights & (~filteredCR) );
 		}
+	}
+	
+	inline void GameState::clearAllCastleRights()
+	{
+		_castleRights = (eCastle)0;
 	}
 	
 	inline void GameState::setPinned( const BitMap& b)

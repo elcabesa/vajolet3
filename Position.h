@@ -43,6 +43,7 @@ namespace libChess
 		
 	private:
 		void _clearStateList( void );
+		void _clear(void);
 		
 		GameState& _getActualState( void );
 		GameState& _pushState( void );
@@ -64,6 +65,7 @@ namespace libChess
 		Position();
 		Position(const Position& other);
 		Position& operator=(const Position& other);
+		bool setupFromFen(const std::string& fenStr);
 		
 		const BitMap& getOccupationBitmap() const;
 		const BitMap& getBitmap(const bitboardIndex in) const;
@@ -72,6 +74,7 @@ namespace libChess
 		const BitMap& getTheirBitmap( const bitboardIndex piece )const;
 		unsigned int getPieceCount(const bitboardIndex in) const;
 		bitboardIndex getPieceAt(const tSquare sq) const;
+		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
 		const std::string display(void) const;
