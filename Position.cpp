@@ -415,7 +415,7 @@ namespace libChess
 	
 		s += " ";
 		// half move clock
-		s += std::to_string(st.getFiftyMoveCnt());
+		s += std::to_string( st.getFiftyMoveCnt() );
 		// full move clock
 		s += " " + std::to_string( st.getFullMoveCounter()  );
 		return s;
@@ -457,7 +457,7 @@ namespace libChess
 		s += (st.getTurn() == whiteTurn ? "WHITE TO MOVE" : "BLACK TO MOVE");
 		s += "\n";
 		s += "50 move counter ";
-		s += st.getFiftyMoveCnt() + "\n";
+		s += std::to_string( st.getFiftyMoveCnt() ) + "\n";
 		s += "castleRights ";
 		
 		// castling rights
@@ -507,23 +507,39 @@ namespace libChess
 		// parse piece list
 		while( (ss >> token) && !std::isspace(token) )
 		{
-			if( file < A || file > H || sq > H8 || sq < A1)
-			{
-				return false;
-			}
 			
-			if( isdigit(token) )
+			//std::cout<<to_string(sq)<<std::endl;
+			
+			if(token == '/')
+			{
+				
+				sq -= tSquare(16);
+				//std::cout<<"a capo "<<to_string(sq)<<std::endl;
+				file = A;
+				if( file < A || file > H || sq > H8 || sq < A1 )
+				{
+					//std::cout<<"argh 1"<<std::endl;
+					return false;
+				}
+				
+			}else if( isdigit(token) )
 			{
 				sq += tSquare( token - '0' ); // Advance the given number of files
 				file += tFile( token - '0' );
-			}
-			else if(token == '/')
-			{
-				sq -= tSquare(16);
-				file = A;
-			}
+				
+				/*if( file < A || file > H || sq > H8 || sq < A1 )
+				{
+					//std::cout<<"argh 2"<<std::endl;
+					return false;
+				}*/
+			} 
 			else
 			{
+				if( file < A || file > H || sq > H8 || sq < A1 )
+				{
+					//std::cout<<"argh 3"<<std::endl;
+					return false;
+				}
 				// TODO try to use a function here that map char to index -> using PIECE_NAMES_FEN in bitBoardIndex.h
 				switch(token)
 				{
@@ -569,16 +585,25 @@ namespace libChess
 				}
 				sq++;
 			}
+			
+		}
+		if( sq != A2 )
+		{
+			std::cout<<"argh 4"<< to_string(sq) << std::endl;
+			return false;
 		}
 		
+		std::cout<<"get turn"<< std::endl;
 		// turn
 		ss >> token;
 		if( token == 'w' )
 		{
+			std::cout<<"white turn"<< std::endl;
 			st.setTurn(whiteTurn);
 		}
 		else if( token == 'b' )
 		{
+			std::cout<<"black turn"<< std::endl;
 			st.setTurn(blackTurn);
 		}
 		else
@@ -594,40 +619,60 @@ namespace libChess
 			return false;
 		}
 		
+		std::cout<<"get castle"<< std::endl;
 		// castle rights
 		st.clearAllCastleRights();
+		unsigned int crCounter = 0;
 		
 		while ( (ss >> token) && !isspace(token) )
 		{
 			switch(token)
 			{
 			case 'K':
+				++crCounter;
+				std::cout<<"wOO"<< std::endl;
 				st.setCastleRight( wCastleOO );
 				break;
 			case 'Q':
+				++crCounter;
+				std::cout<<"wOOO"<< std::endl;
 				st.setCastleRight( wCastleOOO);
 				break;
 			case 'k':
+				++crCounter;
+				std::cout<<"bOO"<< std::endl;
 				st.setCastleRight( bCastleOO);
 				break;
 			case 'q':
+				++crCounter;
+				std::cout<<"bOOO"<< std::endl;
 				st.setCastleRight( bCastleOOO);
+				break;
+			case '-':
 				break;
 			default:
 				return false;
 			}
 		}
 		
+		if( crCounter > 4 || (crCounter == 0 && st.getCastleRights() != 0 ) )
+		{
+			return false;
+		}
+		
+		std::cout<<"get ep"<< std::endl;
 		ss >> token;
 		
 		// parse epsquare
 		if( token == '-' )
 		{
-			st.resetEpSquare();
+			std::cout<<"ep null"<< std::endl;
+			st.setEpSquare( squareNone );
 		}
 		else
 		{
 			
+			std::cout<<"ep "<< std::endl;
 			char col,row;
 			if (
 				( (ss >> col) && (col >= 'a' && col <= 'h') )
@@ -648,12 +693,13 @@ namespace libChess
 			
 		}
 		
+		
 		ss >> token;
 		if( token !=' ')
 		{
 			return false;
 		}
-		
+		std::cout<<"get fifty"<< std::endl;
 		int fmc;
 		ss >> std::skipws >> fmc;
 		st.setFiftyMoveCnt(fmc);

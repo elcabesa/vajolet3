@@ -288,8 +288,10 @@ namespace libChess
 	
 	inline void GameState::resetEpSquare()
 	{
+		std::cout<<"reset"<< std::endl;
 		if( _epSquare != squareNone)
 		{
+			std::cout<<"!=null"<< std::endl;
 			assert( _epSquare < squareNumber );
 			_key.removeEp(_epSquare);
 			_epSquare = squareNone;
