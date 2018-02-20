@@ -34,6 +34,14 @@ namespace {
 	{
 		HashKey x;
 		HashKey ex = x.exclusion();
+		HashKey y(ex);
+		ASSERT_EQ( y, ex );
+	}
+	
+	TEST(HashKeys, constructor3)
+	{
+		HashKey x;
+		HashKey ex = x.exclusion();
 		ASSERT_NE( HashKey(0), ex );
 		
 		ASSERT_EQ( HashKey(0), ex.exclusion() );
