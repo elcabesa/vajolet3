@@ -69,6 +69,53 @@ namespace libChess
 		return std::string(PIECE_NAMES_FEN[ in ]);
 	}
 	
+	static inline bitboardIndex getPieceFromUci( char token )
+	{
+		switch(token)
+		{
+		case 'P':
+			return whitePawns;
+			break;
+		case 'N':
+			return whiteKnights;
+			break;
+		case 'B':
+			return whiteBishops;
+			break;
+		case 'R':
+			return whiteRooks;
+			break;
+		case 'Q':
+			return whiteQueens;
+			break;
+		case 'K':
+			return whiteKing;
+			break;
+		case 'p':
+			return blackPawns;
+			break;
+		case 'n':
+			return blackKnights;
+			break;
+		case 'b':
+			return blackBishops;
+			break;
+		case 'r':
+			return blackRooks;
+			break;
+		case 'q':
+			return blackQueens;
+			break;
+		case 'k':
+			return blackKing;
+			break;
+		default:
+			return empty;
+		
+		}
+		return empty;
+	}
+	
 	static inline bitboardIndex getMyPiecesfromPiece(const bitboardIndex& piece)
 	{
 		return  piece > separationBitmap ? blackPieces : whitePieces;

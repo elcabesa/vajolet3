@@ -115,9 +115,9 @@ namespace libChess
 		std::swap( _Us , _Them );
 	}
 	
-	inline void Position::_addPiece( const bitboardIndex piece, const tSquare s )
+	inline void Position::_addPiece( const bitboardIndex piece, const baseTypes::tSquare s )
 	{
-		//assert(s<squareNumber);
+		//assert(s<baseTypes::squareNumber);
 		//assert(piece<lastBitboard);
 		
 		const bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
@@ -132,11 +132,11 @@ namespace libChess
 		_bitBoard[ MyPieces ] += b;
 	}
 	
-	inline void Position::_removePiece(const bitboardIndex piece,const tSquare s)
+	inline void Position::_removePiece(const bitboardIndex piece,const baseTypes::tSquare s)
 	{
 
 		//assert(!isKing(piece));
-		//assert(s<squareNumber);
+		//assert(s<baseTypes::squareNumber);
 		//assert(piece<lastBitboard);
 		//assert(squares[s]!=empty);
 
@@ -155,10 +155,10 @@ namespace libChess
 
 	}
 	
-	inline void Position::_movePiece(const bitboardIndex piece, const tSquare from, const tSquare to)
+	inline void Position::_movePiece(const bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to)
 	{
-		//assert(from<squareNumber);
-		//assert(to<squareNumber);
+		//assert(from<baseTypes::squareNumber);
+		//assert(to<baseTypes::squareNumber);
 		//assert(piece<lastBitboard);
 		
 		//assert(squares[from]!=empty);
@@ -184,7 +184,7 @@ namespace libChess
 		HashKey hash;
 		const GameState& st = getActualStateConst();
 
-		for(auto t: tSquareRange())
+		for(auto t: baseTypes::tSquareRange())
 		{
 			if( _squares[t] != empty )
 			{
@@ -199,8 +199,8 @@ namespace libChess
 		
 		hash.changeCastlingRight( st.getCastleRights() );
 
-		tSquare epSq = st.getEpSquare();
-		if( epSq != squareNone )
+		baseTypes::tSquare epSq = st.getEpSquare();
+		if( epSq != baseTypes::squareNone )
 		{
 			hash.addEp(epSq);
 		}
@@ -235,7 +235,7 @@ namespace libChess
 			{
 				for ( unsigned int cnt = 0; cnt < getPieceCount( p ); ++cnt )
 				{
-					hash.addPiece( p, (tSquare)cnt );
+					hash.addPiece( p, (baseTypes::tSquare)cnt );
 				}
 			}
 		}
@@ -256,13 +256,13 @@ namespace libChess
 		const GameState& st = getActualStateConst();
 		
 		// write rank
-		for( const auto rank: tRankNegativeRange() )
+		for( const auto rank: baseTypes::tRankNegativeRange() )
 		{
 			unsigned int emptyFiles = 0u;
 			// for ech file
-			for( const auto file: tFileRange() )
+			for( const auto file: baseTypes::tFileRange() )
 			{
-				const tSquare sq = getSquareFromFileRank( file, rank );
+				const baseTypes::tSquare sq = getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
 				
 				// write piece...
@@ -288,7 +288,7 @@ namespace libChess
 				s += std::to_string(emptyFiles);
 			}
 			// append '/' if needed
-			if( rank != tRank::one )
+			if( rank != baseTypes::tRank::one )
 			{
 				s += "/";
 			}
@@ -337,13 +337,13 @@ namespace libChess
 		GameState symmSt = st;
 		
 		// write rank
-		for( const auto rank: tRankRange() )
+		for( const auto rank: baseTypes::tRankRange() )
 		{
 			unsigned int emptyFiles = 0u;
 			// for ech file
-			for( const auto file: tFileRange() ) 
+			for( const auto file: baseTypes::tFileRange() ) 
 			{
-				const tSquare sq =getSquareFromFileRank( file, rank );
+				const baseTypes::tSquare sq =getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
 				
 				// write piece...
@@ -378,7 +378,7 @@ namespace libChess
 				s += std::to_string(emptyFiles);
 			}
 			// append '/' if needed
-			if( rank != tRank::one )
+			if( rank != baseTypes::tRank::one )
 			{
 				s += "/";
 			}
@@ -406,9 +406,9 @@ namespace libChess
 		
 		s += " ";
 		// epsquare
-		const tSquare sq = st.getEpSquare();
-		const tFile symFile = getFile(sq);
-		tRank symRank = tRank::eight - getRank(sq);
+		const baseTypes::tSquare sq = st.getEpSquare();
+		const baseTypes::tFile symFile = baseTypes::getFile(sq);
+		baseTypes::tRank symRank = baseTypes::tRank::eight - getRank(sq);
 		symmSt.setEpSquare(getSquareFromFileRank( symFile, symRank ));
 		
 		s += symmSt.getEpSquareString();
@@ -432,14 +432,14 @@ namespace libChess
 		
 		std::string s = getFen() + "\n";
 		
-		for( const auto rank: tRankNegativeRange() )
+		for( const auto rank: baseTypes::tRankNegativeRange() )
 		{
 			s += "  +---+---+---+---+---+---+---+---+\n";
 			s += to_string(rank) +  " |";
 			
-			for( const auto file: tFileRange() )
+			for( const auto file: baseTypes::tFileRange() )
 			{
-				const tSquare sq =getSquareFromFileRank( file, rank );
+				const baseTypes::tSquare sq =getSquareFromFileRank( file, rank );
 				const bitboardIndex piece = getPieceAt( sq );
 				s += " " + getPieceName( piece ) + " |";
 			}
@@ -448,7 +448,7 @@ namespace libChess
 		}
 		s += "  +---+---+---+---+---+---+---+---+\n";
 		s += " ";
-		for(auto file: tFileRange())
+		for(auto file: baseTypes::tFileRange())
 		{
 			s += "   " + to_string(file);
 		}
@@ -494,8 +494,8 @@ namespace libChess
 	bool Position::setupFromFen(const std::string& fenStr)
 	{
 		char token;
-		tSquare sq = A8;
-		tFile file = A;
+		baseTypes::tSquare sq = baseTypes::A8;
+		baseTypes::tFile file = baseTypes::A;
 		
 		std::istringstream ss(fenStr);
 		ss >> std::noskipws;
@@ -508,102 +508,56 @@ namespace libChess
 		while( (ss >> token) && !std::isspace(token) )
 		{
 			
-			//std::cout<<to_string(sq)<<std::endl;
-			
 			if(token == '/')
 			{
 				
-				sq -= tSquare(16);
-				//std::cout<<"a capo "<<to_string(sq)<<std::endl;
-				file = A;
-				if( file < A || file > H || sq > H8 || sq < A1 )
+				sq -= baseTypes::tSquare(16);
+
+				file = baseTypes::A;
+				if( file < baseTypes::A || file > baseTypes::H || sq > baseTypes::H8 || sq < baseTypes::A1 )
 				{
-					//std::cout<<"argh 1"<<std::endl;
 					return false;
 				}
 				
 			}else if( isdigit(token) )
 			{
-				sq += tSquare( token - '0' ); // Advance the given number of files
-				file += tFile( token - '0' );
-				
-				/*if( file < A || file > H || sq > H8 || sq < A1 )
-				{
-					//std::cout<<"argh 2"<<std::endl;
-					return false;
-				}*/
+				sq += baseTypes::tSquare( token - '0' ); // Advance the given number of files
+				file += baseTypes::tFile( token - '0' );
 			} 
 			else
 			{
-				if( file < A || file > H || sq > H8 || sq < A1 )
+				if( file < baseTypes::A || file > baseTypes::H || sq > baseTypes::H8 || sq < baseTypes::A1 )
 				{
-					//std::cout<<"argh 3"<<std::endl;
 					return false;
 				}
 				// TODO try to use a function here that map char to index -> using PIECE_NAMES_FEN in bitBoardIndex.h
-				switch(token)
-				{
-				case 'P':
-					_addPiece( whitePawns, sq );
-					break;
-				case 'N':
-					_addPiece( whiteKnights, sq );
-					break;
-				case 'B':
-					_addPiece( whiteBishops, sq );
-					break;
-				case 'R':
-					_addPiece( whiteRooks, sq );
-					break;
-				case 'Q':
-					_addPiece( whiteQueens, sq );
-					break;
-				case 'K':
-					_addPiece( whiteKing, sq );
-					break;
-				case 'p':
-					_addPiece( blackPawns, sq );
-					break;
-				case 'n':
-					_addPiece( blackKnights, sq );
-					break;
-				case 'b':
-					_addPiece( blackBishops, sq );
-					break;
-				case 'r':
-					_addPiece( blackRooks, sq );
-					break;
-				case 'q':
-					_addPiece( blackQueens, sq );
-					break;
-				case 'k':
-					_addPiece( blackKing, sq );
-					break;
-				default:
-					return false;
 				
+				bitboardIndex piece = getPieceFromUci(token);
+				if( piece != empty )
+				{
+					_addPiece( piece, sq );
 				}
-				sq++;
+				else
+				{
+					return false;
+				}
+				++sq;
 			}
 			
 		}
-		if( sq != A2 )
+		if( sq != baseTypes::A2 )
 		{
-			std::cout<<"argh 4"<< to_string(sq) << std::endl;
 			return false;
 		}
 		
-		std::cout<<"get turn"<< std::endl;
 		// turn
 		ss >> token;
 		if( token == 'w' )
 		{
-			std::cout<<"white turn"<< std::endl;
 			st.setTurn(whiteTurn);
 		}
 		else if( token == 'b' )
 		{
-			std::cout<<"black turn"<< std::endl;
 			st.setTurn(blackTurn);
 		}
 		else
@@ -619,7 +573,6 @@ namespace libChess
 			return false;
 		}
 		
-		std::cout<<"get castle"<< std::endl;
 		// castle rights
 		st.clearAllCastleRights();
 		unsigned int crCounter = 0;
@@ -630,22 +583,18 @@ namespace libChess
 			{
 			case 'K':
 				++crCounter;
-				std::cout<<"wOO"<< std::endl;
 				st.setCastleRight( wCastleOO );
 				break;
 			case 'Q':
 				++crCounter;
-				std::cout<<"wOOO"<< std::endl;
 				st.setCastleRight( wCastleOOO);
 				break;
 			case 'k':
 				++crCounter;
-				std::cout<<"bOO"<< std::endl;
 				st.setCastleRight( bCastleOO);
 				break;
 			case 'q':
 				++crCounter;
-				std::cout<<"bOOO"<< std::endl;
 				st.setCastleRight( bCastleOOO);
 				break;
 			case '-':
@@ -660,26 +609,23 @@ namespace libChess
 			return false;
 		}
 		
-		std::cout<<"get ep"<< std::endl;
 		ss >> token;
 		
 		// parse epsquare
 		if( token == '-' )
 		{
-			std::cout<<"ep null"<< std::endl;
-			st.setEpSquare( squareNone );
+			st.setEpSquare( baseTypes::squareNone );
 		}
 		else
 		{
 			
-			std::cout<<"ep "<< std::endl;
 			char col,row;
 			if (
 				( (ss >> col) && (col >= 'a' && col <= 'h') )
 				&& ( (ss >> row) && ( row == '3' || row == '6' ) )
 				)
 			{
-				st.setEpSquare( (tSquare) ( ( col - 'a' ) + 8 * ( row - '1' ) ) );
+				st.setEpSquare( (baseTypes::tSquare) ( ( col - 'a' ) + 8 * ( row - '1' ) ) );
 				// todo add this code
 				/*if (!(getAttackersTo(x.epSquare) & bitBoard[whitePawns+x.nextMove]))
 				{
@@ -699,7 +645,7 @@ namespace libChess
 		{
 			return false;
 		}
-		std::cout<<"get fifty"<< std::endl;
+
 		int fmc;
 		ss >> std::skipws >> fmc;
 		st.setFiftyMoveCnt(fmc);
@@ -708,14 +654,13 @@ namespace libChess
 		{
 			st.setPliesCnt( int( st.getTurn() == blackTurn) );
 			st.resetFiftyMoveCnt();
-
-		}else
+		}
+		else
 		{
 			int plies;
 			ss >> plies;
 			plies = std::max( 2 * ( plies - 1), 0) + int( st.getTurn() == blackTurn );
 			st.setPliesCnt( plies );
-			
 		}
 		
 		st.resetCountersNullMove();

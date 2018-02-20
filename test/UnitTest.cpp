@@ -25,7 +25,7 @@ class EnvironmentInvocationCatcher : public ::testing::Environment
 protected:
 	virtual void SetUp()
 	{
-		libChess::inittSquare();
+		libChess::baseTypes::inittSquare();
 		libChess::BitMap::init();
 		libChess::HashKey::init();
 	}

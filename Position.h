@@ -32,7 +32,7 @@ namespace libChess
 		std::vector<GameState> _stateList;
 		// todo valutate the use of a iterator
 		GameState* _actualState;
-		std::array< bitboardIndex, squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
+		std::array< bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
 		std::array< BitMap, bitboardNumber > _bitBoard;     // bitboards indexed by bitboardIndex enum
 		// todo valutate the use of a iterator
 		BitMap *_Us,*_Them;	/*!< pointer to our & their pieces bitboard*/
@@ -50,9 +50,9 @@ namespace libChess
 		void _popState( void );
 		void _setUsThem( void );
 		void _swapUsThem();
-		void _addPiece( const bitboardIndex piece, const tSquare s );
-		void _removePiece(const bitboardIndex piece,const tSquare s);
-		void _movePiece(const bitboardIndex piece, const tSquare from, const tSquare to);
+		void _addPiece( const bitboardIndex piece, const baseTypes::tSquare s );
+		void _removePiece(const bitboardIndex piece,const baseTypes::tSquare s);
+		void _movePiece(const bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to);
 		HashKey _calcKey(void) const;
 		HashKey _calcPawnKey(void) const;
 		HashKey _calcMaterialKey(void) const;
@@ -69,11 +69,11 @@ namespace libChess
 		
 		const BitMap& getOccupationBitmap() const;
 		const BitMap& getBitmap(const bitboardIndex in) const;
-		tSquare getSquareOfThePiece(const bitboardIndex piece) const;
+		baseTypes::tSquare getSquareOfThePiece(const bitboardIndex piece) const;
 		const BitMap& getOurBitmap( const bitboardIndex piece )const;
 		const BitMap& getTheirBitmap( const bitboardIndex piece )const;
 		unsigned int getPieceCount(const bitboardIndex in) const;
-		bitboardIndex getPieceAt(const tSquare sq) const;
+		bitboardIndex getPieceAt(const baseTypes::tSquare sq) const;
 		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
@@ -108,12 +108,12 @@ namespace libChess
 		return getBitmap( in ).bitCnt();
 	}
 
-	inline bitboardIndex Position::getPieceAt(const tSquare sq) const
+	inline bitboardIndex Position::getPieceAt(const baseTypes::tSquare sq) const
 	{
 		return _squares[sq];
 	}
 	
-	inline tSquare Position::getSquareOfThePiece(const bitboardIndex piece) const
+	inline baseTypes::tSquare Position::getSquareOfThePiece(const bitboardIndex piece) const
 	{
 		return getBitmap(piece).firstOne();
 	}

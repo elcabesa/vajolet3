@@ -64,7 +64,7 @@ public:
 	Move(){}
 	Move(const Move& m): _packed(m._packed){}
 	explicit Move(const unsigned short i):_packed(i){}
-	Move(const tSquare _from, const tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
+	Move(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
 	
 	
 
@@ -75,8 +75,8 @@ public:
 	inline Move& operator = (const Move&m){ _packed = m._packed; return *this;}
 
 	
-	inline void setFrom(tSquare from){ _bit._from = from; }
-	inline void setTo(tSquare to){ _bit._to = to; }
+	inline void setFrom(baseTypes::tSquare from){ _bit._from = from; }
+	inline void setTo(baseTypes::tSquare to){ _bit._to = to; }
 	inline void setFlag(eflags fl){ _bit._flags = fl; }
 	inline void clearFlag(){ _bit._flags = fnone; }
 	inline void setPromotion(epromotion pr){ _bit._promotion = pr; }
@@ -99,8 +99,8 @@ public:
 	{
 		return _bit._flags == Move::fenpassant;
 	}
-	inline tSquare getFrom()const {return tSquare(_bit._from);}
-	inline tSquare getTo()const {return tSquare(_bit._to);}
+	inline baseTypes::tSquare getFrom()const {return baseTypes::tSquare(_bit._from);}
+	inline baseTypes::tSquare getTo()const {return baseTypes::tSquare(_bit._to);}
 	inline unsigned short getPacked()const {return _packed;}
 	
 	std::string to_string(void) const;
@@ -123,7 +123,7 @@ public:
 	extMove(){};
 	explicit extMove(const Move& m): Move(m){}
 	explicit extMove(const unsigned short i): Move(i){}
-	extMove(const tSquare _from, const tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
+	extMove(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
 	
 	inline bool operator < (const extMove& d1) const { return _score < d1._score;}
 };

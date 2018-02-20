@@ -24,6 +24,55 @@
 
 namespace libChess
 {
+	namespace baseTypes
+	{
+	
+	/*	\brief operator++ for tFile/tRank/tSquare
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	template <typename myType>
+	static inline myType& operator++(myType& r)
+	{
+		return r = (myType)( (int)r + 1 );
+	}
+	
+	template <typename myType>
+	static inline myType& operator--(myType& r)
+	{
+		return r = (myType)( (int)r - 1 );
+	}
+	
+	template <typename myType>
+	static inline myType operator++(myType& r,int)
+	{
+		myType n = r;
+		++r;
+		return n;
+	}
+	
+	template <typename myType>
+	static inline myType operator--(myType& r,int)
+	{
+		myType n = r;
+		--r;
+		return n;
+	}
+	
+	template <typename myType>
+	static inline myType operator+(const myType d1, const int d2) { return myType( (int)d1 + d2 ); }
+	
+	template <typename myType>
+	static inline myType operator-(const myType d1, const int d2) { return myType( (int)d1 - d2 ); }
+
+	template <class myType>
+	static inline myType& operator+=(myType& d1, const int d2) { d1 = d1 + d2; return d1; }
+	
+	template <class myType>
+	static inline myType& operator-=(myType& d1, const int d2) { d1 = d1 - d2; return d1; }
+	
+	
 
 	//-----------------------------------------------------
 	// tFile
@@ -45,73 +94,55 @@ namespace libChess
 		H
 	};
 
-	/*	\brief operators for tFile
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline tFile& operator++(tFile& r)
-	{
-		return r = (tFile)( (int)r + 1 );
-	}
+	template static tFile& operator++<tFile>(tFile& r);
+	template static tFile& operator--<tFile>(tFile& r);
+	template static tFile operator++<tFile>(tFile& r,int);
+	template static tFile operator--<tFile>(tFile& r,int);
+	
+	template static tFile operator+<tFile>(const tFile d1, const int d2);
+	template static tFile operator-<tFile>(const tFile d1, const int d2);
 
-	static inline tFile& operator--(tFile& r)
-	{
-		return r = (tFile)( (int)r - 1 );
-	}
+	template static tFile& operator+=<tFile>(tFile& d1, const int d2);
+	template static tFile& operator-=<tFile>(tFile& d1, const int d2);
 
-	static inline tFile operator++(tFile& r,int)
-	{
-		tFile n = r;
-		++r;
-		return n;
-	}
-
-	static inline tFile operator--(tFile& r,int)
-	{
-		tFile n = r;
-		--r;
-		return n;
-	}
-
-	static inline tFile operator+(const tFile d1, const int d2) { return tFile( (int)d1 + d2 ); }
-	static inline tFile operator-(const tFile d1, const int d2) { return tFile( (int)d1 - d2 ); }
-
-	inline tFile& operator+=(tFile& d1, const int d2) { d1 = d1 + d2; return d1; }
-	inline tFile& operator-=(tFile& d1, const int d2) { d1 = d1 - d2; return d1; }
+	
 
 	/*	\brief class used to iterate over a range of tFile
 		\author Marco Belli
 		\version 1.0
 		\date 17/08/2017
 	*/
-	class tFileRange{
+	class tFileRange
+	{
 
-	tFile min;
-	tFile Max;
 	public:
-	tFileRange(tFile _min = tFile::A, tFile _Max = tFile::H): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
+		
+		tFileRange(tFile min = tFile::A, tFile Max = tFile::H): _min(min), _Max( Max + 1 ){ if(_Max < _min) _Max = _min; }
 
-	class iterator: public std::iterator<
-								std::input_iterator_tag,	// iterator_category
-								tFile,					// value_type
-								tFile,
-								const tFile*,
-								tFile
-								>{
-			tFile t;
-			public:
-				explicit iterator(tFile _t = tFile::A) : t(_t) {}
-				iterator& operator++() { t += 1; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
-		};
+		class iterator: public std::iterator<
+									std::input_iterator_tag,	// iterator_category
+									tFile,					// value_type
+									tFile,
+									const tFile*,
+									tFile
+									>{
+				
+				public:
+					explicit iterator(tFile t = tFile::A) : _t(t) {}
+					iterator& operator++() { _t += 1; return *this;}
+					iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+					bool operator==(iterator other) const { return _t == other._t; }
+					bool operator!=(iterator other) const { return _t != other._t; }
+					reference operator*() const {return _t;}
+				private:
+					tFile _t;
+			};
 
-	iterator begin() {return iterator(min);}
-	iterator end() {return iterator(Max);}
-
+		iterator begin(){ return iterator(_min); }
+		iterator end(){ return iterator(_Max); }
+	private:
+		tFile _min;
+		tFile _Max;
 	};
 
 
@@ -156,39 +187,18 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
+	template static tRank& operator++<tRank>(tRank& r);
+	template static tRank& operator--<tRank>(tRank& r);
+	template static tRank operator++<tRank>(tRank& r,int);
+	template static tRank operator--<tRank>(tRank& r,int);
+	
+	template static tRank operator+<tRank>(const tRank d1, const int d2);
+	template static tRank operator-<tRank>(const tRank d1, const int d2);
 
-	static inline tRank& operator++(tRank& r)
-	{
-		return r = (tRank)( (int)r + 1 );
-	}
-
-	static inline tRank& operator--(tRank& r)
-	{
-		return r = (tRank)( (int)r - 1 );
-	}
-
-
-	static inline tRank operator++(tRank& r,int)
-	{
-		tRank n = r;
-		++r;
-		return n;
-	}
-
-	static inline tRank operator--(tRank& r,int)
-	{
-		tRank n = r;
-		--r;
-		return n;
-	}
-
-	static inline tRank operator+(const tRank d1, const int d2) { return tRank( (int)d1 + d2 ); }
-	static inline tRank operator-(const tRank d1, const int d2) { return tRank( (int)d1 - d2 ); }
+	template static tRank& operator+=<tRank>(tRank& d1, const int d2);
+	template static tRank& operator-=<tRank>(tRank& d1, const int d2);
 
 
-
-	inline tRank& operator+=(tRank& d1, const int d2) { d1 = d1 + d2; return d1; }
-	inline tRank& operator-=(tRank& d1, const int d2) { d1 = d1 - d2; return d1; }
 
 
 	/*	\brief class used to iterate over a range of tRank
@@ -196,32 +206,36 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	class tRankRange{
+	class tRankRange
+	{
 
-	tRank min;
-	tRank Max;
+	
 	public:
-	tRankRange(tRank _min = tRank::one, tRank _Max = tRank::eight): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
+		tRankRange(tRank min = tRank::one, tRank Max = tRank::eight): _min(min), _Max( Max + 1 ){if(_Max < _min) _Max = _min;}
 
-	class iterator: public std::iterator<
-								std::input_iterator_tag,	// iterator_category
-								tRank,					// value_type
-								tRank,
-								const tRank*,
-								tRank
-								>{
-			tRank t;
-			public:
-				explicit iterator(tRank _t = tRank::one) : t(_t) {}
-				iterator& operator++() { t += 1; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
-		};
+		class iterator: public std::iterator<
+									std::input_iterator_tag,	// iterator_category
+									tRank,					// value_type
+									tRank,
+									const tRank*,
+									tRank
+									>{
+				public:
+					explicit iterator(tRank t = tRank::one) : _t(t) {}
+					iterator& operator++() { _t += 1; return *this;}
+					iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+					bool operator==(iterator other) const { return _t == other._t; }
+					bool operator!=(iterator other) const { return _t != other._t; }
+					reference operator*() const {return _t;}
+				private:
+					tRank _t;
+			};
 
-	iterator begin() {return iterator(min);}
-	iterator end() {return iterator(Max);}
+		iterator begin(){ return iterator(_min); }
+		iterator end(){ return iterator(_Max); }
+	private:
+		tRank _min;
+		tRank _Max;
 
 	};
 	
@@ -316,45 +330,19 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-
-	inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 + (int)d2 ); }
-	inline tSquare operator-(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 - (int)d2 ); }
-	inline tSquare operator*(int i, const tSquare d) { return tSquare( i * (int)d ); }
-	inline tSquare operator*(const tSquare d, int i) { return tSquare( (int)d * i ); }
-	inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
-	inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
+	
+	template static tSquare& operator++<tSquare>(tSquare& r);
+	template static tSquare& operator--<tSquare>(tSquare& r);
+	template static tSquare operator++<tSquare>(tSquare& r,int);
+	template static tSquare operator--<tSquare>(tSquare& r,int);
 
 
-		/*	\brief operators for tRank
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-
-	static inline tSquare& operator++(tSquare& r)
-	{
-		return r = (tSquare)( (int)r + 1 );
-	}
-
-	static inline tSquare& operator--(tSquare& r)
-	{
-		return r = (tSquare)( (int)r - 1 );
-	}
-
-
-	static inline tSquare operator++(tSquare& r,int)
-	{
-		tSquare n = r;
-		++r;
-		return n;
-	}
-
-	static inline tSquare operator--(tSquare& r,int)
-	{
-		tSquare n = r;
-		--r;
-		return n;
-	}
+	static inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 + (int)d2 ); }
+	static inline tSquare operator-(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 - (int)d2 ); }
+	static inline tSquare operator*(int i, const tSquare d) { return tSquare( i * (int)d ); }
+	static inline tSquare operator*(const tSquare d, int i) { return tSquare( (int)d * i ); }
+	static inline tSquare& operator+=(tSquare& d1, const tSquare d2) { d1 = d1 + d2; return d1; }
+	static inline tSquare& operator-=(tSquare& d1, const tSquare d2) { d1 = d1 - d2; return d1; }
 
 
 	/*	\brief class used to iterate over a range of tSquare
@@ -468,7 +456,8 @@ namespace libChess
 	enum tColor : unsigned int
 	{
 		white = 0,
-		black = 1
+		black = 1,
+		colorNumber = 2
 	};
 
 	/*	\brief get color of a square
@@ -489,6 +478,7 @@ namespace libChess
 		\date 18/08/2017
 	*/
 	void inittSquare(void);
+	}
 
 }
 

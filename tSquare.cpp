@@ -18,7 +18,8 @@
 
 namespace libChess
 {
-
+	namespace baseTypes
+	{
 	unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
 	tColor SQUARE_COLOR[ tSquare::squareNumber ];
 
@@ -44,6 +45,7 @@ namespace libChess
 			
 		}
 		
+	}
 	}
 
 }

@@ -20,6 +20,7 @@
 #include "tSquare.h"
 #include "BitMap.h"
 #include "HashKeys.h"
+
 #include "Position.h"
 
 static void setIoBuffers()
@@ -30,7 +31,7 @@ static void setIoBuffers()
 
 static void init(void)
 {
-	libChess::inittSquare();
+	libChess::baseTypes::inittSquare();
 	libChess::BitMap::init();
 	libChess::HashKey::init();
 }
@@ -39,8 +40,9 @@ int main(void)
 {
 	setIoBuffers();
 	init();
+	
 	libChess::Position p;
-	p.setupFromFen("8/5p1k/6p1/1p5p/1P1Q3P/2P2PP1/5K2/3q4 b - - 6 59");
+	p.setupFromFen("bnrqb1k1/pppppp1p/6p1/6N1/2BBP3/2Q5/PPP5/1K5R w - - 0 13");
 	std::cout<<p.display()<<std::endl;
 
 	return 0;

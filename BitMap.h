@@ -22,244 +22,291 @@
 
 namespace libChess
 {
+	/*	\brief this class implement a 64bit representation of a board containing pieces
+		\author Marco Belli
+		\version 1.0
+		\date 20/02/2018
+	*/
+	class BitMap
+	{
+	public:
+		/*****************************************************************
+		*	constructors
+		******************************************************************/
+		BitMap(){};
+		BitMap ( const BitMap & ) = default;	
+		explicit BitMap(uint64_t b): _b(b){}
+		
+		/*****************************************************************
+		*	Operators
+		******************************************************************/
+		
+		inline bool operator ==(const BitMap& rhs) const { return _b == rhs._b;}
+		
+		inline BitMap& operator += (const baseTypes::tSquare sq) { _b |= getBitmapFromSquare(sq)._b; return (*this); }
+		inline BitMap& operator +=(const BitMap& x) { _b |= x._b; return (*this); }
+		
+		inline BitMap& operator &=(const BitMap& x) { _b &= x._b; return (*this); }
+		
+		inline BitMap& operator = (const baseTypes::tSquare sq) { _b = getBitmapFromSquare(sq)._b; return (*this); }
+		inline BitMap& operator = (const BitMap& x) { _b = x._b; return (*this); }
+		
+		inline BitMap operator +(const BitMap& rhs) const { return BitMap(_b | rhs._b); }
+		
+		inline BitMap operator &(const BitMap& rhs) const { return BitMap(_b & rhs._b); }
+		
+		inline BitMap operator ^(const baseTypes::tSquare sq) const { return BitMap(_b ^ getBitmapFromSquare(sq)._b); }
+		inline BitMap operator ^(const BitMap& rhs) const { return BitMap(_b ^ rhs._b); }
+		
+		inline BitMap& operator ^=(const baseTypes::tSquare sq) { _b ^= getBitmapFromSquare(sq)._b; return (*this); }
+		inline BitMap& operator ^=(const BitMap& x) { _b ^= x._b; return (*this); }
+		
+		/*****************************************************************
+		*	Iterator
+		******************************************************************/
+		class iterator: public std::iterator<
+								std::input_iterator_tag,	// iterator_category
+								baseTypes::tSquare,					// value_type
+								baseTypes::tSquare,					// difference type
+								const baseTypes::tSquare*,					// pointer
+								baseTypes::tSquare 					// reference
+								>{
+			public:
+				explicit iterator(const uint64_t b = 0ull) : _b(b) {}
+				iterator& operator++() { _b &= ( _b - 1 ); return *this;}
+				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+				bool operator==(iterator other) const { return _b == other._b; }
+				bool operator!=(iterator other) const { return _b != other._b; }
+				reference operator*() const {return (baseTypes::tSquare)__builtin_ctzll(_b);}
+			private:
+				uint64_t _b;
+		};
+		iterator begin() const {return iterator(_b);}
+		iterator end() const {return iterator(0);}
+		
+		/*****************************************************************
+		*	methods
+		******************************************************************/
 
-class BitMap
-{
-private:
-	uint64_t b;
-	static BitMap RANKMASK[ tSquare::squareNumber ];
-	static BitMap FILEMASK[ tSquare::squareNumber ];
-	static BitMap SQUARECOLOR[ 2 ];
-	static BitMap SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
-	static BitMap LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
-public:
+		/*	\brief clear the state of the bitboard and empty it
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		void clear();
+		
+		/*	\brief count the number of 1 bits in a 64 bit variable
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		int bitCnt() const;
+		
+		/*	\brief tell whether the bitboard is empty or not
+			\author Marco Belli
+			\version 1.0
+			\date 28/11/2017
+		*/
+		bool isEmpty() const;
 
-	BitMap(){};
-	BitMap ( const BitMap & ) = default;	
-	explicit BitMap(uint64_t _b): b(_b){}
+		/*	\brief get the index of the rightmost one bit
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		baseTypes::tSquare firstOne() const;
 
+		/*	\brief return true if the bitmap has more than one bit set
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		bool moreThanOneBit() const;
+
+		/*	\brief convert bitmpap to string
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		std::string to_string() const;
+
+		/*	\brief return true if the square is set in the bitmap
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		bool isSquareSet(const baseTypes::tSquare sq) const;
+
+		/*	\brief return true if the square is set in the bitmap
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		bool isSquareSet(const baseTypes::tFile f, const baseTypes::tRank r) const;
+		
+	private:
 	
-	inline void clear()
+		uint64_t _b; /*internal board representation*/
+		
+	public:
+
+		/*****************************************************************
+		*	static methods
+		******************************************************************/
+
+		/*	\brief return a BitMap with the nth bit set
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getBitmapFromSquare(const baseTypes::tSquare n);
+
+		/*	\brief return a BitMap with the nth bit set
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getBitmapFromSquare( const baseTypes::tFile f, const baseTypes::tRank r );
+
+		/*	\brief return a bitmap used to mask rank
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getRankMask(const baseTypes::tSquare n);
+
+		/*	\brief return a bitmap used to mask file
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getFileMask(const baseTypes::tSquare n);
+		
+		/*	\brief return a bitmap used to mask light or dark square
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getColorBitMap(const baseTypes::tColor c);
+		
+		/*	\brief get a bitmap with the squares between 2 squares
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static BitMap getSquaresBetween(const baseTypes::tSquare n1, const baseTypes::tSquare n2);
+		
+		/*	\brief tell whether 3 squares are aligned or not
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static bool areSquaresAligned(const baseTypes::tSquare s1, const baseTypes::tSquare s2, const baseTypes::tSquare s3);
+		
+		/*	\brief init the static variables used to speed up bitmap manipulations
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		static void init(void);
+		
+		/*****************************************************************
+		*	static members
+		******************************************************************/
+
+		static BitMap _RANKMASK[ baseTypes::tSquare::squareNumber ];
+		static BitMap _FILEMASK[ baseTypes::tSquare::squareNumber ];
+		static BitMap _SQUARECOLOR[ baseTypes::tColor::colorNumber ];
+		static BitMap _SQUARES_BETWEEN[ baseTypes::tSquare::squareNumber ][ baseTypes::tSquare::squareNumber ];
+		static BitMap _LINES[ baseTypes::tSquare::squareNumber ][ baseTypes::tSquare::squareNumber ];
+		
+		static void _initRankMask(void);
+		static void _initFileMask(void);
+		static void _initSquareColor(void);
+	};
+	
+	inline void BitMap::clear()
 	{
-		b = 0;
-	}
-	/*	\brief count the number of 1 bits in a 64 bit variable
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	inline int bitCnt() const
-	{
-		return __builtin_popcountll( b );
+		_b = 0ull;
 	}
 	
-	/*	\brief tell wheter the bitboard is empty or not
-		\author Marco Belli
-		\version 1.0
-		\date 28/11/2017
-	*/
-	inline bool isEmpty() const
+	inline int BitMap::bitCnt() const
 	{
-		return b == 0ull;
+		return __builtin_popcountll( _b );
+	}
+	
+	inline bool BitMap::isEmpty() const
+	{
+		return _b == 0ull;
 	}
 
-	/*	\brief get the index of the rightmost one bit
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	inline tSquare firstOne() const
+	inline baseTypes::tSquare BitMap::firstOne() const
 	{
-		assert(b !=0);
-		return (tSquare)__builtin_ctzll( b ) ;
+		assert(_b !=0);
+		return (baseTypes::tSquare)__builtin_ctzll( _b ) ;
 	}
 
-	/*	\brief return true if the bitmap has more than one bit set
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	inline bool moreThanOneBit() const
+	inline bool BitMap::moreThanOneBit() const
 	{
 		return bitCnt() > 1;
 	}
 
-
-	std::string to_string() const;
-
-	/*	\brief return a BitMap with the nth bit set
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getBitmapFromSquare(const tSquare n)
+	inline bool BitMap::isSquareSet(const baseTypes::tSquare sq) const
 	{
-		assert( n < tSquare::squareNumber );
+		return (_b & getBitmapFromSquare(sq)._b);
+	}
+
+	inline bool BitMap::isSquareSet(const baseTypes::tFile f, const baseTypes::tRank r) const
+	{
+		return (_b & getBitmapFromSquare( f, r )._b);
+	}
+	
+	inline BitMap BitMap::getBitmapFromSquare(const baseTypes::tSquare n)
+	{
+		assert( n < baseTypes::tSquare::squareNumber );
 		return BitMap( 1ull << n );
 	}
 
-	/*	\brief return a BitMap with the nth bit set
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getBitmapFromSquare( const tFile f, const tRank r )
+	inline BitMap BitMap::getBitmapFromSquare( const baseTypes::tFile f, const baseTypes::tRank r )
 	{
-		assert( f <= tFile::H );
-		assert( r <= tRank::eight );
-		assert( f >= tFile::A );
-		assert( r >= tRank::one );
+		assert( f <= baseTypes::tFile::H );
+		assert( r <= baseTypes::tRank::eight );
+		assert( f >= baseTypes::tFile::A );
+		assert( r >= baseTypes::tRank::one );
 		return BitMap(1ull << getSquareFromFileRank( f, r ) );
 	}
-
-	/*	\brief return true if the square is set in the bitmap
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	inline bool isSquareSet(const tSquare sq) const
-	{
-		return (b & getBitmapFromSquare(sq).b);
-	}
-
-	/*	\brief return true if the square is set in the bitmap
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	inline bool isSquareSet(const tFile f, const tRank r) const
-	{
-		return (b & getBitmapFromSquare( f, r ).b);
-	}
-
-	/* iterator */
-	class iterator: public std::iterator<
-	                        std::input_iterator_tag,	// iterator_category
-							tSquare,					// value_type
-							tSquare,					// difference type
-							const tSquare*,					// pointer
-							tSquare 					// reference
-							>{
-		uint64_t b;
-		public:
-			explicit iterator(const uint64_t _b = 0ull) : b(_b) {}
-			iterator& operator++() { b &= ( b - 1 ); return *this;}
-			iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-			bool operator==(iterator other) const { return b == other.b; }
-			bool operator!=(iterator other) const { return b != other.b; }
-			reference operator*() const {return (tSquare)__builtin_ctzll(b);}
-	};
-	iterator begin() const {return iterator(b);}
-	iterator end() const {return iterator(0);}
 	
-	/*class const_iterator: public std::iterator<
-	                        std::input_iterator_tag,	// iterator_category
-							const tSquare,				// value_type
-							const tSquare,				// difference type
-							const tSquare*,				// pointer
-							tSquare 					// reference
-							>{
-		uint64_t b;
-		public:
-			explicit const_iterator(const uint64_t _b = 0ull) : b(_b) {}
-			const_iterator& operator++() { b &= ( b - 1 ); return *this;}
-			const_iterator operator++(int) { const_iterator retval = *this; ++(*this); return retval;}
-			bool operator==(const_iterator other) const { return b == other.b; }
-			bool operator!=(const_iterator other) const { return b != other.b; }
-			reference operator*() const {return (tSquare)__builtin_ctzll(b);}
-	};
-	const_iterator begin() {return const_iterator(b);}
-	const_iterator end() {return const_iterator(0);}*/
-	
-	/* operators */
-	
-	inline bool operator ==(const BitMap& rhs) const { return b == rhs.b;}
-	
-	inline BitMap& operator += (const tSquare sq) { b |= getBitmapFromSquare(sq).b; return (*this); }
-	inline BitMap& operator +=(const BitMap& x) { b |= x.b; return (*this); }
-	
-	inline BitMap& operator &=(const BitMap& x) { b &= x.b; return (*this); }
-	
-	inline BitMap& operator = (const tSquare sq) { b = getBitmapFromSquare(sq).b; return (*this); }
-	inline BitMap& operator = (const BitMap& x) { b = x.b; return (*this); }
-	
-	inline BitMap operator +(const BitMap& rhs) const { return BitMap(b | rhs.b); }
-	
-	inline BitMap operator &(const BitMap& rhs) const { return BitMap(b & rhs.b); }
-	
-	inline BitMap operator ^(const tSquare sq) const { return BitMap(b ^ getBitmapFromSquare(sq).b); }
-	inline BitMap operator ^(const BitMap& rhs) const { return BitMap(b ^ rhs.b); }
-	
-	inline BitMap& operator ^=(const tSquare sq) { b ^= getBitmapFromSquare(sq).b; return (*this); }
-	inline BitMap& operator ^=(const BitMap& x) { b ^= x.b; return (*this); }
-
-	
-
-	/*	\brief return a bitmap used to mask rank
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getRankMask(const tSquare n)
+	inline BitMap BitMap::getRankMask(const baseTypes::tSquare n)
 	{
 		assert( n < squareNumber );
-		return (RANKMASK[ n ]);
+		return (_RANKMASK[ n ]);
 	}
-
-	/*	\brief return a bitmap used to mask file
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getFileMask(const tSquare n)
+	
+	inline BitMap BitMap::getFileMask(const baseTypes::tSquare n)
 	{
 		assert( n < squareNumber );
-		return (FILEMASK[ n ]);
+		return (_FILEMASK[ n ]);
 	}
 	
-	/*	\brief return a bitmap used to mask wlight or dark square
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getColorBitMap(const tColor c)
+	inline BitMap BitMap::getColorBitMap(const baseTypes::tColor c)
 	{
-		return SQUARECOLOR[ c ];
+		return _SQUARECOLOR[ c ];
 	}
 	
-	/*	\brief get a bitmap with the squares between 2 squares
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline BitMap getSquaresBetween(const tSquare n1, const tSquare n2)
+	inline BitMap BitMap::getSquaresBetween(const baseTypes::tSquare n1, const baseTypes::tSquare n2)
 	{
 		assert( n1 < squareNumber );
 		assert( n2 < squareNumber );
-		return SQUARES_BETWEEN[ n1 ][ n2 ];
+		return _SQUARES_BETWEEN[ n1 ][ n2 ];
 	}
-	
-	/*	\brief tell whether 3 squares are aligned or not
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	static inline bool areSquaresAligned(const tSquare s1, const tSquare s2, const tSquare s3)
+
+	inline bool BitMap::areSquaresAligned(const baseTypes::tSquare s1, const baseTypes::tSquare s2, const baseTypes::tSquare s3)
 	{
 		assert( s1 < squareNumber );
 		assert( s2 < squareNumber );
 		assert( s3 < squareNumber );
-		return LINES[ s1 ][ s2 ].isSquareSet( s3 );
+		return _LINES[ s1 ][ s2 ].isSquareSet( s3 );
 	}
-	
-	static void init(void);
-private:
-	static void _initRankMask(void);
-	static void _initFileMask(void);
-	static void _initSquareColor(void);
-};
-
-
 
 }
 

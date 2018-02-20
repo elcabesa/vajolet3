@@ -24,80 +24,80 @@ namespace {
 	
 	TEST(tFile,assign)
 	{
-		tFile f;
-		f = tFile::B;
-		ASSERT_EQ( tFile::B, f );
+		baseTypes::tFile f;
+		f = baseTypes::tFile::B;
+		ASSERT_EQ( baseTypes::tFile::B, f );
 		
-		tFile g = f;
-		ASSERT_EQ( tFile::B, g );
-		g = tFile::F;
-		ASSERT_EQ( tFile::F, g );
+		baseTypes::tFile g = f;
+		ASSERT_EQ( baseTypes::tFile::B, g );
+		g = baseTypes::tFile::F;
+		ASSERT_EQ( baseTypes::tFile::F, g );
 	}
 	
 	TEST(tFile, tFileIncrement)
 	{
-		tFile f = tFile::B;
-		ASSERT_EQ( tFile::B, f++ );
-		ASSERT_EQ( tFile::C, f );
-		ASSERT_EQ( tFile::D, ++f );
-		ASSERT_EQ( tFile::D, f );
+		baseTypes::tFile f = baseTypes::tFile::B;
+		ASSERT_EQ( baseTypes::tFile::B, f++ );
+		ASSERT_EQ( baseTypes::tFile::C, f );
+		ASSERT_EQ( baseTypes::tFile::D, ++f );
+		ASSERT_EQ( baseTypes::tFile::D, f );
 		
 	}
 	
 	TEST(tFile, tFileDecrement)
 	{
-		tFile f = tFile::E;
-		ASSERT_EQ( tFile::E, f-- );
-		ASSERT_EQ( tFile::D, f );
-		ASSERT_EQ( tFile::C, --f );
-		ASSERT_EQ( tFile::C, f );
+		baseTypes::tFile f = baseTypes::tFile::E;
+		ASSERT_EQ( baseTypes::tFile::E, f-- );
+		ASSERT_EQ( baseTypes::tFile::D, f );
+		ASSERT_EQ( baseTypes::tFile::C, --f );
+		ASSERT_EQ( baseTypes::tFile::C, f );
 		
 	}
 	
 	TEST(tFile, tFileSum)
 	{
-		tFile f = tFile::E;
-		ASSERT_EQ( tFile::G, f + 2 );
+		baseTypes::tFile f = baseTypes::tFile::E;
+		ASSERT_EQ( baseTypes::tFile::G, f + 2 );
 	}
 	
 	TEST(tFile, tFileSub)
 	{
-		tFile f = tFile::E;
-		ASSERT_EQ( tFile::B, f - 3 );
+		baseTypes::tFile f = baseTypes::tFile::E;
+		ASSERT_EQ( baseTypes::tFile::B, f - 3 );
 	}
 	
 	TEST(tFile, tFileDistance)
 	{
-		tFile f = tFile::E;
-		tFile g = tFile::E;
+		baseTypes::tFile f = baseTypes::tFile::E;
+		baseTypes::tFile g = baseTypes::tFile::E;
 		ASSERT_EQ( 0, distance( f, g ) );
 		
-		f = tFile::A;
-		g = tFile::D;
+		f = baseTypes::tFile::A;
+		g = baseTypes::tFile::D;
 		ASSERT_EQ( 3, distance( f, g ) );
 		
-		f = tFile::D;
-		g = tFile::A;
+		f = baseTypes::tFile::D;
+		g = baseTypes::tFile::A;
 		ASSERT_EQ( 3, distance( f, g ) );
 	}
 	
 	TEST(tFile, tFileSum2)
 	{
-		tFile f = tFile::E;
-		ASSERT_EQ( tFile::G, f+= 2 );
+		baseTypes::tFile f = baseTypes::tFile::E;
+		ASSERT_EQ( baseTypes::tFile::G, f+= 2 );
 	}
 	
 	TEST(tFile, tFileSub2)
 	{
-		tFile f = tFile::E;
-		ASSERT_EQ( tFile::B, f-= 3 );
+		baseTypes::tFile f = baseTypes::tFile::E;
+		ASSERT_EQ( baseTypes::tFile::B, f-= 3 );
 	}
 	
 	TEST(tFile, iterate)
 	{
 		unsigned int i = 0;
 
-		for(auto t: tFileRange())
+		for(auto t: baseTypes::tFileRange())
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -110,9 +110,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tFile::B);
+		unsigned int i = (int)(baseTypes::tFile::B);
 
-		for(auto t: tFileRange(tFile::B,tFile::E))
+		for(auto t: baseTypes::tFileRange(baseTypes::tFile::B,baseTypes::tFile::E))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -126,9 +126,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tFile::A);
+		unsigned int i = (int)(baseTypes::tFile::A);
 
-		for(auto t: tFileRange(tFile::A,tFile::B))
+		for(auto t: baseTypes::tFileRange(baseTypes::tFile::A,baseTypes::tFile::B))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -142,9 +142,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tFile::E);
+		unsigned int i = (int)(baseTypes::tFile::E);
 
-		for(auto t: tFileRange(tFile::E,tFile::E))
+		for(auto t: baseTypes::tFileRange(baseTypes::tFile::E,baseTypes::tFile::E))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -158,9 +158,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tFile::E);
+		unsigned int i = (int)(baseTypes::tFile::E);
 
-		for(auto t: tFileRange(tFile::E,tFile::D))
+		for(auto t: baseTypes::tFileRange(baseTypes::tFile::E,baseTypes::tFile::D))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -174,9 +174,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tFile::E);
+		unsigned int i = (int)(baseTypes::tFile::E);
 
-		for(auto t: tFileRange(tFile::E,tFile::A))
+		for(auto t: baseTypes::tFileRange(baseTypes::tFile::E,baseTypes::tFile::A))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -188,22 +188,22 @@ namespace {
 	
 	TEST(tFile, to_string)
 	{
-		tFile f = tFile::E;
+		baseTypes::tFile f = baseTypes::tFile::E;
 		ASSERT_STREQ( "e", to_string(f).c_str() );
 	}
 	
 	TEST(tFile, distance)
 	{
-		tFile f = tFile::E;
-		tFile g = tFile::E;
+		baseTypes::tFile f = baseTypes::tFile::E;
+		baseTypes::tFile g = baseTypes::tFile::E;
 		ASSERT_EQ( 0, distance( f,g ));
 		
-		f = tFile::A;
-		g = tFile::D;
+		f = baseTypes::tFile::A;
+		g = baseTypes::tFile::D;
 		ASSERT_EQ( 3, distance( f,g ));
 		
-		f = tFile::D;
-		g = tFile::A;
+		f = baseTypes::tFile::D;
+		g = baseTypes::tFile::A;
 		ASSERT_EQ( 3, distance( f,g ));
 	}
 	
@@ -211,80 +211,80 @@ namespace {
 		
 	TEST(tRank,assign)
 	{
-		tRank f;
-		f = tRank::two;
-		ASSERT_EQ( tRank::two, f );
+		baseTypes::tRank f;
+		f = baseTypes::tRank::two;
+		ASSERT_EQ( baseTypes::tRank::two, f );
 		
-		tRank g = f;
-		ASSERT_EQ( tRank::two, g );
-		g = tRank::four;
-		ASSERT_EQ( tRank::four, g );
+		baseTypes::tRank g = f;
+		ASSERT_EQ( baseTypes::tRank::two, g );
+		g = baseTypes::tRank::four;
+		ASSERT_EQ( baseTypes::tRank::four, g );
 	}
 	
 	TEST(tRank, tRankIncrement)
 	{
-		tRank f = tRank::two;
-		ASSERT_EQ( tRank::two, f++ );
-		ASSERT_EQ( tRank::three, f );
-		ASSERT_EQ( tRank::four, ++f );
-		ASSERT_EQ( tRank::four, f );
+		baseTypes::tRank f = baseTypes::tRank::two;
+		ASSERT_EQ( baseTypes::tRank::two, f++ );
+		ASSERT_EQ( baseTypes::tRank::three, f );
+		ASSERT_EQ( baseTypes::tRank::four, ++f );
+		ASSERT_EQ( baseTypes::tRank::four, f );
 		
 	}
 	
 	TEST(tRank, tRankDecrement)
 	{
-		tRank f = tRank::seven;
-		ASSERT_EQ( tRank::seven, f-- );
-		ASSERT_EQ( tRank::six, f );
-		ASSERT_EQ( tRank::five, --f );
-		ASSERT_EQ( tRank::five, f );
+		baseTypes::tRank f = baseTypes::tRank::seven;
+		ASSERT_EQ( baseTypes::tRank::seven, f-- );
+		ASSERT_EQ( baseTypes::tRank::six, f );
+		ASSERT_EQ( baseTypes::tRank::five, --f );
+		ASSERT_EQ( baseTypes::tRank::five, f );
 		
 	}
 	
 	TEST(tRank, tRankSum)
 	{
-		tRank f = tRank::four;
-		ASSERT_EQ( tRank::six, f + 2 );
+		baseTypes::tRank f = baseTypes::tRank::four;
+		ASSERT_EQ( baseTypes::tRank::six, f + 2 );
 	}
 	
 	TEST(tRank, tRankSub)
 	{
-		tRank f = tRank::eight;
-		ASSERT_EQ( tRank::five, f - 3 );
+		baseTypes::tRank f = baseTypes::tRank::eight;
+		ASSERT_EQ( baseTypes::tRank::five, f - 3 );
 	}
 	
 	TEST(tRank, tRankDistance)
 	{
-		tRank f = tRank::four;
-		tRank g = tRank::four;
+		baseTypes::tRank f = baseTypes::tRank::four;
+		baseTypes::tRank g = baseTypes::tRank::four;
 		ASSERT_EQ( 0, distance( f, g ) );
 		
-		f = tRank::four;
-		g = tRank::one;
+		f = baseTypes::tRank::four;
+		g = baseTypes::tRank::one;
 		ASSERT_EQ( 3, distance( f, g ) );
 		
-		f = tRank::one;
-		g = tRank::four;
+		f = baseTypes::tRank::one;
+		g = baseTypes::tRank::four;
 		ASSERT_EQ( 3, distance( f, g ) );
 	}
 	
 	TEST(tRank, tRankSum2)
 	{
-		tRank f = tRank::five;
-		ASSERT_EQ( tRank::seven, f+= 2 );
+		baseTypes::tRank f = baseTypes::tRank::five;
+		ASSERT_EQ( baseTypes::tRank::seven, f+= 2 );
 	}
 	
 	TEST(tRank, tRankSub2)
 	{
-		tRank f = tRank::four;
-		ASSERT_EQ( tRank::one, f-= 3 );
+		baseTypes::tRank f = baseTypes::tRank::four;
+		ASSERT_EQ( baseTypes::tRank::one, f-= 3 );
 	}
 	
 	TEST(tRank, iterate)
 	{
 		unsigned int i = 0;
 
-		for(auto t: tRankRange())
+		for(auto t: baseTypes::tRankRange())
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -297,9 +297,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::two);
+		unsigned int i = (int)(baseTypes::tRank::two);
 
-		for(auto t: tRankRange(tRank::two,tRank::five))
+		for(auto t: baseTypes::tRankRange(baseTypes::tRank::two,baseTypes::tRank::five))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -313,9 +313,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::one);
+		unsigned int i = (int)(baseTypes::tRank::one);
 
-		for(auto t: tRankRange(tRank::one,tRank::two))
+		for(auto t: baseTypes::tRankRange(baseTypes::tRank::one,baseTypes::tRank::two))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -329,9 +329,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::seven);
+		unsigned int i = (int)(baseTypes::tRank::seven);
 
-		for(auto t: tRankRange(tRank::seven,tRank::seven))
+		for(auto t: baseTypes::tRankRange(baseTypes::tRank::seven,baseTypes::tRank::seven))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -345,9 +345,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::seven);
+		unsigned int i = (int)(baseTypes::tRank::seven);
 
-		for(auto t: tRankRange(tRank::seven,tRank::six))
+		for(auto t: baseTypes::tRankRange(baseTypes::tRank::seven,baseTypes::tRank::six))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -361,9 +361,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::eight);
+		unsigned int i = (int)(baseTypes::tRank::eight);
 
-		for(auto t: tRankRange(tRank::eight,tRank::one))
+		for(auto t: baseTypes::tRankRange(baseTypes::tRank::eight,baseTypes::tRank::one))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -377,28 +377,30 @@ namespace {
 	
 	TEST(tRank, iterateNeg)
 	{
-		unsigned int i = 0;
+		int i = 7;
+		unsigned int count = 0;
 
-		for(auto t: tRankNegativeRange())
+		for(auto t: baseTypes::tRankNegativeRange())
 		{
-			ASSERT_EQ((unsigned int)t, 7 - i );
-			i++;
-			if(i>1000) break;
+			ASSERT_EQ((unsigned int)t, i );
+			--i;
+			++count;
+			if(count>1000) break;
 		}
-		ASSERT_EQ(i, 8u);
+		ASSERT_EQ(count, 8u);
 	}
 	
 	TEST(tRank, iterateNegRange0)
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::two);
+		unsigned int i = (int)(baseTypes::tRank::five);
 
-		for(auto t: tRankRange(tRank::two,tRank::five))
+		for(auto t: baseTypes::tRankNegativeRange(baseTypes::tRank::two,baseTypes::tRank::five))
 		{
 			ASSERT_EQ((unsigned int)t, i );
-			i++;
-			count++;
+			--i;
+			++count;
 			if(count>1000) break;
 		}
 		ASSERT_EQ(count, 4u);
@@ -408,13 +410,13 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::one);
+		unsigned int i = (int)(baseTypes::tRank::two);
 
-		for(auto t: tRankRange(tRank::one,tRank::two))
+		for(auto t: baseTypes::tRankNegativeRange(baseTypes::tRank::one,baseTypes::tRank::two))
 		{
 			ASSERT_EQ((unsigned int)t, i );
-			i++;
-			count++;
+			--i;
+			++count;
 			if(count>1000) break;
 		}
 		ASSERT_EQ(count, 2u);
@@ -425,13 +427,13 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::seven);
+		unsigned int i = (int)(baseTypes::tRank::seven);
 
-		for(auto t: tRankRange(tRank::seven,tRank::seven))
+		for(auto t: baseTypes::tRankNegativeRange(baseTypes::tRank::seven,baseTypes::tRank::seven))
 		{
 			ASSERT_EQ((unsigned int)t, i );
-			i++;
-			count++;
+			--i;
+			++count;
 			if(count>1000) break;
 		}
 		ASSERT_EQ(count, 1u);
@@ -441,13 +443,13 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::seven);
+		unsigned int i = (int)(baseTypes::tRank::seven);
 
-		for(auto t: tRankRange(tRank::seven,tRank::six))
+		for(auto t: baseTypes::tRankNegativeRange(baseTypes::tRank::seven,baseTypes::tRank::six))
 		{
-			ASSERT_EQ((unsigned int)t, 7 - i );
-			i++;
-			count++;
+			ASSERT_EQ((unsigned int)t, i );
+			--i;
+			++count;
 			if(count>1000) break;
 		}
 		ASSERT_EQ(count, 0u);
@@ -457,13 +459,13 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tRank::eight);
+		unsigned int i = (int)(baseTypes::tRank::eight);
 
-		for(auto t: tRankRange(tRank::eight,tRank::one))
+		for(auto t: baseTypes::tRankNegativeRange(baseTypes::tRank::eight,baseTypes::tRank::one))
 		{
-			ASSERT_EQ((unsigned int)t, 7 - i );
-			i++;
-			count++;
+			ASSERT_EQ((unsigned int)t, i );
+			--i;
+			++count;
 			if(count>1000) break;
 		}
 		ASSERT_EQ(count, 0u);
@@ -473,127 +475,127 @@ namespace {
 	
 	TEST(tRank, to_string)
 	{
-		tRank f = tRank::two;
+		baseTypes::tRank f = baseTypes::tRank::two;
 		ASSERT_STREQ( "2", to_string(f).c_str() );
 	}
 	
 	TEST(tRank, distance)
 	{
-		tRank f = tRank::seven;
-		tRank g = tRank::seven;
+		baseTypes::tRank f = baseTypes::tRank::seven;
+		baseTypes::tRank g = baseTypes::tRank::seven;
 		ASSERT_EQ( 0, distance( f,g ));
 		
-		f = tRank::one;
-		g = tRank::four;
+		f = baseTypes::tRank::one;
+		g = baseTypes::tRank::four;
 		ASSERT_EQ( 3, distance( f,g ));
 		
-		f = tRank::four;
-		g = tRank::one;
+		f = baseTypes::tRank::four;
+		g = baseTypes::tRank::one;
 		ASSERT_EQ( 3, distance( f,g ));
 	}
 
 	TEST(tSquare, assign)
 	{
-		tSquare t;
-		t = tSquare::C3;
-		ASSERT_EQ(t, tSquare::C3);
+		baseTypes::tSquare t;
+		t = baseTypes::tSquare::C3;
+		ASSERT_EQ(t, baseTypes::tSquare::C3);
 
-		t = tSquare::A1;
-		ASSERT_EQ(t, tSquare::A1);
+		t = baseTypes::tSquare::A1;
+		ASSERT_EQ(t, baseTypes::tSquare::A1);
 
-		t = tSquare::F6;
-		ASSERT_EQ(t, tSquare::F6);
+		t = baseTypes::tSquare::F6;
+		ASSERT_EQ(t, baseTypes::tSquare::F6);
 	}
 
 	
 	TEST(tSquare, sum)
 	{
-		tSquare t1,t2;
-		t1 = tSquare::C3;
-		t2 = tSquare::north;
-		ASSERT_EQ(t1+t2, tSquare::C4);
+		baseTypes::tSquare t1,t2;
+		t1 = baseTypes::tSquare::C3;
+		t2 = baseTypes::tSquare::north;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::C4);
 
-		t1 = tSquare::G7;
-		t2 = tSquare::northEast;
-		ASSERT_EQ(t1+t2, tSquare::H8);
+		t1 = baseTypes::tSquare::G7;
+		t2 = baseTypes::tSquare::northEast;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::H8);
 
-		t1 = tSquare::E4;
-		t2 = tSquare::east;
-		ASSERT_EQ(t1+t2, tSquare::F4);
+		t1 = baseTypes::tSquare::E4;
+		t2 = baseTypes::tSquare::east;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::F4);
 
-		t1 = tSquare::D2;
-		t2 = tSquare::sudEast;
-		ASSERT_EQ(t1+t2, tSquare::E1);
+		t1 = baseTypes::tSquare::D2;
+		t2 = baseTypes::tSquare::sudEast;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::E1);
 
-		t1 = tSquare::B2;
-		t2 = tSquare::sud;
-		ASSERT_EQ(t1+t2, tSquare::B1);
+		t1 = baseTypes::tSquare::B2;
+		t2 = baseTypes::tSquare::sud;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::B1);
 
-		t1 = tSquare::D2;
-		t2 = tSquare::sudOvest;
-		ASSERT_EQ(t1+t2, tSquare::C1);
+		t1 = baseTypes::tSquare::D2;
+		t2 = baseTypes::tSquare::sudOvest;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::C1);
 
-		t1 = tSquare::B4;
-		t2 = tSquare::ovest;
-		ASSERT_EQ(t1+t2, tSquare::A4);
+		t1 = baseTypes::tSquare::B4;
+		t2 = baseTypes::tSquare::ovest;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::A4);
 
-		t1 = tSquare::H5;
-		t2 = tSquare::northOvest;
-		ASSERT_EQ(t1+t2, tSquare::G6);
+		t1 = baseTypes::tSquare::H5;
+		t2 = baseTypes::tSquare::northOvest;
+		ASSERT_EQ(t1+t2, baseTypes::tSquare::G6);
 	}
 	
 	TEST(tSquare, sum2)
 	{
-		tSquare t;
-		t = tSquare::C3;
-		t += tSquare::north;
-		ASSERT_EQ(tSquare::C4, t );
+		baseTypes::tSquare t;
+		t = baseTypes::tSquare::C3;
+		t += baseTypes::tSquare::north;
+		ASSERT_EQ(baseTypes::tSquare::C4, t );
 	}
 	
 	TEST(tSquare, subtracion)
 	{
-		tSquare t= tSquare::F6;
-		ASSERT_EQ(tSquare::F5, t - tSquare::north );
+		baseTypes::tSquare t= baseTypes::tSquare::F6;
+		ASSERT_EQ(baseTypes::tSquare::F5, t - baseTypes::tSquare::north );
 	}
 
 	TEST(tSquare, subtracion2)
 	{
-		tSquare t= tSquare::F6;
-		t -= tSquare::north;
-		ASSERT_EQ(t, tSquare::F5);
+		baseTypes::tSquare t= baseTypes::tSquare::F6;
+		t -= baseTypes::tSquare::north;
+		ASSERT_EQ(t, baseTypes::tSquare::F5);
 	}
 
 	TEST(tSquare, multiply)
 	{
-		tSquare t= tSquare::A1;
-		t += 5*tSquare::north;
-		ASSERT_EQ(t, tSquare::A6);
+		baseTypes::tSquare t= baseTypes::tSquare::A1;
+		t += 5*baseTypes::tSquare::north;
+		ASSERT_EQ(t, baseTypes::tSquare::A6);
 	}
 	
 	TEST(tSquare, multiply2)
 	{
-		tSquare t= tSquare::A1;
-		t += tSquare::north * 5;
-		ASSERT_EQ(t, tSquare::A6);
+		baseTypes::tSquare t= baseTypes::tSquare::A1;
+		t += baseTypes::tSquare::north * 5;
+		ASSERT_EQ(t, baseTypes::tSquare::A6);
 	}
 	
 	TEST(tSquare, tSquareIncrement)
 	{
-		tSquare f = tSquare::E4;
-		ASSERT_EQ( tSquare::E4, f++ );
-		ASSERT_EQ( tSquare::F4, f );
-		ASSERT_EQ( tSquare::G4, ++f );
-		ASSERT_EQ( tSquare::G4, f );
+		baseTypes::tSquare f = baseTypes::tSquare::E4;
+		ASSERT_EQ( baseTypes::tSquare::E4, f++ );
+		ASSERT_EQ( baseTypes::tSquare::F4, f );
+		ASSERT_EQ( baseTypes::tSquare::G4, ++f );
+		ASSERT_EQ( baseTypes::tSquare::G4, f );
 		
 	}
 	
 	TEST(tSquare, tSquareDecrement)
 	{
-		tSquare f = tSquare::E4;
-		ASSERT_EQ( tSquare::E4, f-- );
-		ASSERT_EQ( tSquare::D4, f );
-		ASSERT_EQ( tSquare::C4, --f );
-		ASSERT_EQ( tSquare::C4, f );
+		baseTypes::tSquare f = baseTypes::tSquare::E4;
+		ASSERT_EQ( baseTypes::tSquare::E4, f-- );
+		ASSERT_EQ( baseTypes::tSquare::D4, f );
+		ASSERT_EQ( baseTypes::tSquare::C4, --f );
+		ASSERT_EQ( baseTypes::tSquare::C4, f );
 		
 	}
 
@@ -601,7 +603,7 @@ namespace {
 	{
 		unsigned int i = 0;
 
-		for(auto t: tSquareRange())
+		for(auto t: baseTypes::tSquareRange())
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -615,9 +617,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tSquare::E2);
+		unsigned int i = (int)(baseTypes::tSquare::E2);
 
-		for(auto t: tSquareRange(tSquare::E2,tSquare::B6))
+		for(auto t: baseTypes::tSquareRange(baseTypes::tSquare::E2,baseTypes::tSquare::B6))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -631,9 +633,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tSquare::E2);
+		unsigned int i = (int)(baseTypes::tSquare::E2);
 
-		for(auto t: tSquareRange(tSquare::E2,tSquare::F2))
+		for(auto t: baseTypes::tSquareRange(baseTypes::tSquare::E2,baseTypes::tSquare::F2))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -647,9 +649,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tSquare::E2);
+		unsigned int i = (int)(baseTypes::tSquare::E2);
 
-		for(auto t: tSquareRange(tSquare::E2,tSquare::E2))
+		for(auto t: baseTypes::tSquareRange(baseTypes::tSquare::E2,baseTypes::tSquare::E2))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -663,9 +665,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tSquare::E2);
+		unsigned int i = (int)(baseTypes::tSquare::E2);
 
-		for(auto t: tSquareRange(tSquare::E2,tSquare::D2))
+		for(auto t: baseTypes::tSquareRange(baseTypes::tSquare::E2,baseTypes::tSquare::D2))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -679,9 +681,9 @@ namespace {
 	{
 
 		unsigned int count = 0;
-		unsigned int i = (int)(tSquare::E2);
+		unsigned int i = (int)(baseTypes::tSquare::E2);
 
-		for(auto t: tSquareRange(tSquare::E2,tSquare::A1))
+		for(auto t: baseTypes::tSquareRange(baseTypes::tSquare::E2,baseTypes::tSquare::A1))
 		{
 			ASSERT_EQ((unsigned int)t,i);
 			i++;
@@ -694,53 +696,53 @@ namespace {
 
 	TEST(tSquare, getFileRankColor)
 	{
-		tSquare t = tSquare::A2;
-		ASSERT_EQ(getFile(t),tFile::A);
-		ASSERT_EQ(getRank(t),tRank::two);
-		ASSERT_EQ(getColor(t),tColor::white);
+		baseTypes::tSquare t = baseTypes::tSquare::A2;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::A);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::two);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
 
-		t = tSquare::F6;
-		ASSERT_EQ(getFile(t),tFile::F);
-		ASSERT_EQ(getRank(t),tRank::six);
-		ASSERT_EQ(getColor(t),tColor::black);
+		t = baseTypes::tSquare::F6;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::F);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::six);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
 			
-		t = tSquare::G8;
-		ASSERT_EQ(getFile(t),tFile::G);
-		ASSERT_EQ(getRank(t),tRank::eight);
-		ASSERT_EQ(getColor(t),tColor::white);
+		t = baseTypes::tSquare::G8;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::G);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::eight);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
 		
-		t = tSquare::D4;
-		ASSERT_EQ(getFile(t),tFile::D);
-		ASSERT_EQ(getRank(t),tRank::four);
-		ASSERT_EQ(getColor(t),tColor::black);
+		t = baseTypes::tSquare::D4;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::D);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::four);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
 		
-		t = tSquare::D5;
-		ASSERT_EQ(getFile(t),tFile::D);
-		ASSERT_EQ(getRank(t),tRank::five);
-		ASSERT_EQ(getColor(t),tColor::white);
+		t = baseTypes::tSquare::D5;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::D);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::five);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
 		
-		t = tSquare::E4;
-		ASSERT_EQ(getFile(t),tFile::E);
-		ASSERT_EQ(getRank(t),tRank::four);
-		ASSERT_EQ(getColor(t),tColor::white);
+		t = baseTypes::tSquare::E4;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::E);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::four);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
 		
-		t = tSquare::E5;
-		ASSERT_EQ(getFile(t),tFile::E);
-		ASSERT_EQ(getRank(t),tRank::five);
-		ASSERT_EQ(getColor(t),tColor::black);
+		t = baseTypes::tSquare::E5;
+		ASSERT_EQ(getFile(t),baseTypes::tFile::E);
+		ASSERT_EQ(getRank(t),baseTypes::tRank::five);
+		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
 		
 		
 	}
 
 	TEST(tSquare, to_string)
 	{
-		tSquare t = tSquare::A2;
+		baseTypes::tSquare t = baseTypes::tSquare::A2;
 
 		ASSERT_EQ(to_string(getFile(t)),std::string("a"));
 		ASSERT_EQ(to_string(getRank(t)),std::string("2"));
 		ASSERT_EQ(to_string(t),std::string("a2"));
 
-		t = tSquare::F6;
+		t = baseTypes::tSquare::F6;
 		ASSERT_EQ( to_string( getFile(t) ), std::string("f") );
 		ASSERT_EQ( to_string( getRank(t) ), std::string("6") );
 		ASSERT_EQ( to_string( t ),std::string("f6"));
@@ -749,34 +751,34 @@ namespace {
 
 	TEST(tSquare, gettSquareFromFileRank)
 	{
-		ASSERT_EQ( getSquareFromFileRank( tFile::A, tRank::six ), tSquare::A6 );
-		ASSERT_EQ( getSquareFromFileRank( tFile::F, tRank::two ), tSquare::F2 );
-		ASSERT_EQ( getSquareFromFileRank( tFile::A, tRank::one ), tSquare::A1 );
-		ASSERT_EQ( getSquareFromFileRank( tFile::H, tRank::eight ), tSquare::H8 );
-		ASSERT_EQ( getSquareFromFileRank( tFile::G, tRank::three ), tSquare::G3 );
-		ASSERT_EQ( getSquareFromFileRank( tFile::C, tRank::seven ), tSquare::C7 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::A, baseTypes::tRank::six ), baseTypes::tSquare::A6 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::F, baseTypes::tRank::two ), baseTypes::tSquare::F2 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::A, baseTypes::tRank::one ), baseTypes::tSquare::A1 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::H, baseTypes::tRank::eight ), baseTypes::tSquare::H8 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::G, baseTypes::tRank::three ), baseTypes::tSquare::G3 );
+		ASSERT_EQ( getSquareFromFileRank( baseTypes::tFile::C, baseTypes::tRank::seven ), baseTypes::tSquare::C7 );
 
 	}
 
 	TEST(tSquare, distance)
 	{
-		ASSERT_EQ( distance( tSquare::A1, tSquare::H8 ), 7u );
-		ASSERT_EQ( distance( tSquare::H8, tSquare::A1 ), 7u );
-		ASSERT_EQ( distance( tSquare::F6, tSquare::F6 ), 0u );
-		ASSERT_EQ( distance( tSquare::F4, tSquare::F7 ), 3u );
-		ASSERT_EQ( distance( tSquare::D4, tSquare::F7 ), 3u );
-		ASSERT_EQ( distance( tSquare::F7, tSquare::D4 ), 3u );
-		ASSERT_EQ( distance( tSquare::D4, tSquare::D5 ), 1u );
-		ASSERT_EQ( distance( tSquare::D4, tSquare::E4 ), 1u );
+		ASSERT_EQ( distance( baseTypes::tSquare::A1, baseTypes::tSquare::H8 ), 7u );
+		ASSERT_EQ( distance( baseTypes::tSquare::H8, baseTypes::tSquare::A1 ), 7u );
+		ASSERT_EQ( distance( baseTypes::tSquare::F6, baseTypes::tSquare::F6 ), 0u );
+		ASSERT_EQ( distance( baseTypes::tSquare::F4, baseTypes::tSquare::F7 ), 3u );
+		ASSERT_EQ( distance( baseTypes::tSquare::D4, baseTypes::tSquare::F7 ), 3u );
+		ASSERT_EQ( distance( baseTypes::tSquare::F7, baseTypes::tSquare::D4 ), 3u );
+		ASSERT_EQ( distance( baseTypes::tSquare::D4, baseTypes::tSquare::D5 ), 1u );
+		ASSERT_EQ( distance( baseTypes::tSquare::D4, baseTypes::tSquare::E4 ), 1u );
 	}
 	
 	TEST(tColor, assign)
 	{
-		tColor c = tColor::white;
-		ASSERT_EQ(tColor::white, c);
+		baseTypes::tColor c = baseTypes::tColor::white;
+		ASSERT_EQ(baseTypes::tColor::white, c);
 		
-		c = tColor::black;
-		ASSERT_EQ(tColor::black, c);
+		c = baseTypes::tColor::black;
+		ASSERT_EQ(baseTypes::tColor::black, c);
 	}
 	
 }

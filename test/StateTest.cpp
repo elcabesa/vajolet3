@@ -30,7 +30,7 @@ namespace libChess
 	{
 		public:
 
-		void setEpSquare( const tSquare sq){ GameState::setEpSquare(sq);}
+		void setEpSquare( const baseTypes::tSquare sq){ GameState::setEpSquare(sq);}
 
 	
 	};
@@ -45,8 +45,8 @@ namespace {
 	TEST(GameState, setEpSquare)
 	{
 		GameStateFixture st;
-		st.setEpSquare(tSquare::E3);
-		ASSERT_EQ( tSquare::E3, st.getEpSquare() );
+		st.setEpSquare(baseTypes::tSquare::E3);
+		ASSERT_EQ( baseTypes::tSquare::E3, st.getEpSquare() );
 	}
 	
 }

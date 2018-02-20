@@ -16,7 +16,6 @@
 */
 #include <iostream>
 
-#include "tSquare.h"
 #include "Move.h"
 #include "Position.h"
 
@@ -34,9 +33,9 @@ namespace libChess
 			return s;
 		}
 		// from
-		s += libChess::to_string(getFrom());
+		s += libChess::baseTypes::to_string(getFrom());
 		// to
-		s += libChess::to_string(getTo());
+		s += libChess::baseTypes::to_string(getTo());
 		//promotion
 		if( isPromotionMove() )
 		{

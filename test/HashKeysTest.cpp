@@ -42,7 +42,7 @@ namespace {
 	TEST(HashKeys, assign)
 	{
 		HashKey x;
-		x.movePiece(whiteRooks,tSquare::A1,tSquare::F3);
+		x.movePiece(whiteRooks,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
 		
 		HashKey y;
 		y = x;
@@ -59,9 +59,9 @@ namespace {
 		// todo change to number of pieces to constant
 		for( auto i : bitboardIndexRange() )
 		{
-			for(auto from: tSquareRange())
+			for(auto from: baseTypes::tSquareRange())
 			{
-				for(auto to: tSquareRange())
+				for(auto to: baseTypes::tSquareRange())
 				{
 					x.movePiece(i,from,to);
 					if( from == to )
@@ -89,9 +89,9 @@ namespace {
 		// todo change to number of pieces to constant
 		for( auto i : bitboardIndexRange() )
 		{
-			for(auto from: tSquareRange())
+			for(auto from: baseTypes::tSquareRange())
 			{
-				for(auto to: tSquareRange())
+				for(auto to: baseTypes::tSquareRange())
 				{
 					z = x;
 					x.addPiece( i, from );
@@ -116,7 +116,7 @@ namespace {
 	TEST(HashKeys, changeSide)
 	{
 		HashKey x;
-		x.movePiece(blackKnights,tSquare::A1,tSquare::F3);
+		x.movePiece(blackKnights,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
 		
 		HashKey y = x;
 		x.changeSide();
@@ -131,7 +131,7 @@ namespace {
 		ASSERT_EQ( y, x );
 		
 
-		for(auto ep: tSquareRange())
+		for(auto ep: baseTypes::tSquareRange())
 		{
 			y = x;
 			x.addEp(ep);	
@@ -146,7 +146,7 @@ namespace {
 		ASSERT_EQ( y, x);
 		
 
-		for(auto ep: tSquareRange())
+		for(auto ep: baseTypes::tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
@@ -161,14 +161,14 @@ namespace {
 		ASSERT_EQ( y, x );
 		
 
-		for(auto ep: tSquareRange())
+		for(auto ep: baseTypes::tSquareRange())
 		{
 			y = x;
 			x.addEp(ep);	
 			ASSERT_NE( y, x );
 		}
 		
-		for(auto ep: tSquareRange())
+		for(auto ep: baseTypes::tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
@@ -206,7 +206,7 @@ namespace {
 			ASSERT_EQ( y, z );
 		}
 		
-		for(auto ep: tSquareRange())
+		for(auto ep: baseTypes::tSquareRange())
 		{
 			y = x;
 			x.removeEp(ep);	
@@ -217,10 +217,10 @@ namespace {
 	TEST(HashKeys, Concatenate)
 	{
 		HashKey x;
-		HashKey& y = x.changeSide().addPiece(bitboardIndex::whiteKing, tSquare::E1);
+		HashKey& y = x.changeSide().addPiece(bitboardIndex::whiteKing, baseTypes::tSquare::E1);
 		
 		HashKey z;
-		z.addPiece(bitboardIndex::whiteKing, tSquare::E1);
+		z.addPiece(bitboardIndex::whiteKing, baseTypes::tSquare::E1);
 		z.changeSide();
 		
 		ASSERT_EQ( y, z );

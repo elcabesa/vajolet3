@@ -49,12 +49,12 @@ public:
 	
 	inline HashKey exclusion(void)const{ return HashKey(_key ^ _exclusion); }
 	
-	inline HashKey& movePiece(const bitboardIndex p , const tSquare fromSq, const tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
-	inline HashKey& addPiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p]; return *this;};
-	inline HashKey& removePiece(const bitboardIndex p, const tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& movePiece(const bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
+	inline HashKey& addPiece(const bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& removePiece(const bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
 	inline HashKey& changeSide(void){_key ^= _side; return *this;};
-	inline HashKey& addEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
-	inline HashKey& removeEp(const tSquare sq){_key ^= _ep[sq]; return *this;};
+	inline HashKey& addEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
+	inline HashKey& removeEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
 	inline HashKey& changeCastlingRight(const eCastle cr){_key ^= _castlingRight[cr]; return *this;};
 	
 	
@@ -64,18 +64,18 @@ private:
 	static const unsigned int _CastlingRightBit = 4;
 	static const unsigned int _CastlingRightSize = 1<<_CastlingRightBit;
 	static const unsigned int _KeyNum = bitboardNumber;
-	static uint64_t _keys[tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
+	static uint64_t _keys[baseTypes::tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
 	static uint64_t _side;									// side to move (black)
-	static uint64_t _ep[tSquare::squareNumber];				// ep targets (only 16 used)
+	static uint64_t _ep[baseTypes::tSquare::squareNumber];				// ep targets (only 16 used)
 	static uint64_t _castlingRight[_CastlingRightSize];		// white king-side castling right
 	static uint64_t _exclusion;
 
 public:
 
 	static void init();       // initialize the random data
-	//static inline uint64_t getKeys(const tSquare sq,const /*piece*/ unsigned int p){ return _keys[sq][p];};
+	//static inline uint64_t getKeys(const baseTypes::tSquare sq,const /*piece*/ unsigned int p){ return _keys[sq][p];};
 	//static inline uint64_t getSide(){ return _side;};
-	//static inline uint64_t getEp(const tSquare sq){ return _ep[sq];};
+	//static inline uint64_t getEp(const baseTypes::tSquare sq){ return _ep[sq];};
 	//static inline uint64_t getCastlingRight(const unsigned int cr){ return _castlingRight[cr];};
 	//static inline uint64_t getExclusion(){ return _exclusion;};
 };

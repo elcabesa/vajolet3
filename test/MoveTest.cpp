@@ -40,40 +40,40 @@ namespace {
 	TEST(Move, constructor3)
 	{
 		{
-			Move x(tSquare::A2, tSquare::D6);
+			Move x(baseTypes::tSquare::A2, baseTypes::tSquare::D6);
 			
-			ASSERT_EQ( tSquare::A2, x.getFrom());
-			ASSERT_EQ( tSquare::D6, x.getTo());
+			ASSERT_EQ( baseTypes::tSquare::A2, x.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::D6, x.getTo());
 			ASSERT_FALSE(x.isPromotionMove());
 			ASSERT_FALSE(x.isCastleMove());
 			ASSERT_FALSE(x.isEnPassantMove());
 		}
 		
 		{
-			Move y(tSquare::D2, tSquare::C1, Move::fenpassant);
+			Move y(baseTypes::tSquare::D2, baseTypes::tSquare::C1, Move::fenpassant);
 			
-			ASSERT_EQ( tSquare::D2, y.getFrom());
-			ASSERT_EQ( tSquare::C1, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::D2, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::C1, y.getTo());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_TRUE(y.isEnPassantMove());
 		}
 		
 		{
-			Move y(tSquare::E1, tSquare::G1, Move::fcastle);
+			Move y(baseTypes::tSquare::E1, baseTypes::tSquare::G1, Move::fcastle);
 			
-			ASSERT_EQ( tSquare::E1, y.getFrom());
-			ASSERT_EQ( tSquare::G1, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E1, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::G1, y.getTo());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_TRUE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
 		}
 		
 		{
-			Move y(tSquare::E7, tSquare::E8, Move::fpromotion);
+			Move y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -81,10 +81,10 @@ namespace {
 		}
 		
 		{
-			Move y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promQueen);
+			Move y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promQueen);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -92,10 +92,10 @@ namespace {
 		}
 		
 		{
-			Move y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promRook);
+			Move y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promRook);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -103,10 +103,10 @@ namespace {
 		}
 		
 		{
-			Move y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promBishop);
+			Move y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -114,10 +114,10 @@ namespace {
 		}
 		
 		{
-			Move y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promKnight);
+			Move y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promKnight);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -179,10 +179,10 @@ namespace {
 	
 	TEST(Move, assign2)
 	{
-		Move x(tSquare::A2, tSquare::D6);
+		Move x(baseTypes::tSquare::A2, baseTypes::tSquare::D6);
 		Move y = x;
-		ASSERT_EQ( tSquare::A2, y.getFrom());
-		ASSERT_EQ( tSquare::D6, y.getTo());
+		ASSERT_EQ( baseTypes::tSquare::A2, y.getFrom());
+		ASSERT_EQ( baseTypes::tSquare::D6, y.getTo());
 		ASSERT_FALSE(y.isPromotionMove());
 		ASSERT_FALSE(y.isCastleMove());
 		ASSERT_FALSE(y.isEnPassantMove());
@@ -190,11 +190,11 @@ namespace {
 	
 	TEST(Move, set1)
 	{
-		Move x(tSquare::A8, tSquare::B2);
+		Move x(baseTypes::tSquare::A8, baseTypes::tSquare::B2);
 		Move y;
 		
-		y.setFrom(tSquare::A8);
-		y.setTo(tSquare::B2);
+		y.setFrom(baseTypes::tSquare::A8);
+		y.setTo(baseTypes::tSquare::B2);
 		y.setFlag(Move::fnone);
 		y.setPromotion(Move::promQueen);
 		
@@ -204,11 +204,11 @@ namespace {
 	
 	TEST(Move, set2)
 	{
-		Move x(tSquare::E1, tSquare::G1, Move::fcastle);
+		Move x(baseTypes::tSquare::E1, baseTypes::tSquare::G1, Move::fcastle);
 		Move y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::G1);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::G1);
 		y.setFlag(Move::fcastle);
 		y.setPromotion(Move::promQueen);
 		
@@ -218,11 +218,11 @@ namespace {
 	
 	TEST(Move, set3)
 	{
-		Move x(tSquare::E1, tSquare::A8, Move::fpromotion, Move::promBishop);
+		Move x(baseTypes::tSquare::E1, baseTypes::tSquare::A8, Move::fpromotion, Move::promBishop);
 		Move y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::A8);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::A8);
 		y.setFlag(Move::fpromotion);
 		y.setPromotion(Move::promBishop);
 		
@@ -232,11 +232,11 @@ namespace {
 	
 	TEST(Move, clearFlag)
 	{
-		Move x(tSquare::E1, tSquare::A8, Move::fnone, Move::promBishop);
+		Move x(baseTypes::tSquare::E1, baseTypes::tSquare::A8, Move::fnone, Move::promBishop);
 		Move y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::A8);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::A8);
 		y.setFlag(Move::fpromotion);
 		y.setPromotion(Move::promBishop);
 		
@@ -248,16 +248,16 @@ namespace {
 	
 	TEST(Move, to_string)
 	{
-		Move x(tSquare::E1, tSquare::A8);
+		Move x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		ASSERT_STREQ( "e1a8", x.to_string().c_str() );
 		
-		Move y(tSquare::D7, tSquare::E8, Move::fpromotion, Move::promBishop);
+		Move y(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 		ASSERT_STREQ( "d7e8b", y.to_string().c_str() );
 		
-		Move z(tSquare::D7, tSquare::E8, Move::fcastle, Move::promBishop);
+		Move z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fcastle, Move::promBishop);
 		ASSERT_STREQ( "d7e8", z.to_string().c_str() );
 		
-		Move w(tSquare::A1, tSquare::A1);
+		Move w(baseTypes::tSquare::A1, baseTypes::tSquare::A1);
 		ASSERT_STREQ( "0000", w.to_string().c_str() );
 		
 	}
@@ -279,40 +279,40 @@ namespace {
 	TEST(extMove, constructor3)
 	{
 		{
-			extMove x(tSquare::A2, tSquare::D6);
+			extMove x(baseTypes::tSquare::A2, baseTypes::tSquare::D6);
 			
-			ASSERT_EQ( tSquare::A2, x.getFrom());
-			ASSERT_EQ( tSquare::D6, x.getTo());
+			ASSERT_EQ( baseTypes::tSquare::A2, x.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::D6, x.getTo());
 			ASSERT_FALSE(x.isPromotionMove());
 			ASSERT_FALSE(x.isCastleMove());
 			ASSERT_FALSE(x.isEnPassantMove());
 		}
 		
 		{
-			extMove y(tSquare::D2, tSquare::C1, Move::fenpassant);
+			extMove y(baseTypes::tSquare::D2, baseTypes::tSquare::C1, Move::fenpassant);
 			
-			ASSERT_EQ( tSquare::D2, y.getFrom());
-			ASSERT_EQ( tSquare::C1, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::D2, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::C1, y.getTo());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_TRUE(y.isEnPassantMove());
 		}
 		
 		{
-			extMove y(tSquare::E1, tSquare::G1, Move::fcastle);
+			extMove y(baseTypes::tSquare::E1, baseTypes::tSquare::G1, Move::fcastle);
 			
-			ASSERT_EQ( tSquare::E1, y.getFrom());
-			ASSERT_EQ( tSquare::G1, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E1, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::G1, y.getTo());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_TRUE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
 		}
 		
 		{
-			extMove y(tSquare::E7, tSquare::E8, Move::fpromotion);
+			extMove y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -320,10 +320,10 @@ namespace {
 		}
 		
 		{
-			extMove y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promQueen);
+			extMove y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promQueen);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -331,10 +331,10 @@ namespace {
 		}
 		
 		{
-			extMove y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promRook);
+			extMove y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promRook);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -342,10 +342,10 @@ namespace {
 		}
 		
 		{
-			extMove y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promBishop);
+			extMove y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -353,10 +353,10 @@ namespace {
 		}
 		
 		{
-			extMove y(tSquare::E7, tSquare::E8, Move::fpromotion, Move::promKnight);
+			extMove y(baseTypes::tSquare::E7, baseTypes::tSquare::E8, Move::fpromotion, Move::promKnight);
 			
-			ASSERT_EQ( tSquare::E7, y.getFrom());
-			ASSERT_EQ( tSquare::E8, y.getTo());
+			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
+			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -418,10 +418,10 @@ namespace {
 	
 	TEST(extMove, assign2)
 	{
-		extMove x(tSquare::A2, tSquare::D6);
+		extMove x(baseTypes::tSquare::A2, baseTypes::tSquare::D6);
 		extMove y = x;
-		ASSERT_EQ( tSquare::A2, y.getFrom());
-		ASSERT_EQ( tSquare::D6, y.getTo());
+		ASSERT_EQ( baseTypes::tSquare::A2, y.getFrom());
+		ASSERT_EQ( baseTypes::tSquare::D6, y.getTo());
 		ASSERT_FALSE(y.isPromotionMove());
 		ASSERT_FALSE(y.isCastleMove());
 		ASSERT_FALSE(y.isEnPassantMove());
@@ -429,11 +429,11 @@ namespace {
 	
 	TEST(extMove, set1)
 	{
-		extMove x(tSquare::A8, tSquare::B2);
+		extMove x(baseTypes::tSquare::A8, baseTypes::tSquare::B2);
 		extMove y;
 		
-		y.setFrom(tSquare::A8);
-		y.setTo(tSquare::B2);
+		y.setFrom(baseTypes::tSquare::A8);
+		y.setTo(baseTypes::tSquare::B2);
 		y.setFlag(Move::fnone);
 		y.setPromotion(Move::promQueen);
 		
@@ -443,11 +443,11 @@ namespace {
 	
 	TEST(extMove, set2)
 	{
-		extMove x(tSquare::E1, tSquare::G1, Move::fcastle);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::G1, Move::fcastle);
 		extMove y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::G1);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::G1);
 		y.setFlag(Move::fcastle);
 		y.setPromotion(Move::promQueen);
 		
@@ -457,11 +457,11 @@ namespace {
 	
 	TEST(extMove, set3)
 	{
-		extMove x(tSquare::E1, tSquare::A8, Move::fpromotion, Move::promBishop);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8, Move::fpromotion, Move::promBishop);
 		extMove y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::A8);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::A8);
 		y.setFlag(Move::fpromotion);
 		y.setPromotion(Move::promBishop);
 		
@@ -471,11 +471,11 @@ namespace {
 	
 	TEST(extMove, clearFlag)
 	{
-		extMove x(tSquare::E1, tSquare::A8, Move::fnone, Move::promBishop);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8, Move::fnone, Move::promBishop);
 		extMove y;
 		
-		y.setFrom(tSquare::E1);
-		y.setTo(tSquare::A8);
+		y.setFrom(baseTypes::tSquare::E1);
+		y.setTo(baseTypes::tSquare::A8);
 		y.setFlag(Move::fpromotion);
 		y.setPromotion(Move::promBishop);
 		
@@ -487,23 +487,23 @@ namespace {
 	
 	TEST(extMove, to_string)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		ASSERT_STREQ( "e1a8", x.to_string().c_str() );
 		
-		extMove y(tSquare::D7, tSquare::E8, Move::fpromotion, Move::promBishop);
+		extMove y(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 		ASSERT_STREQ( "d7e8b", y.to_string().c_str() );
 		
-		extMove z(tSquare::D7, tSquare::E8, Move::fcastle, Move::promBishop);
+		extMove z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fcastle, Move::promBishop);
 		ASSERT_STREQ( "d7e8", z.to_string().c_str() );
 		
 	}
 	
 	TEST(extMove, extEqual)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		x.setScore(320);
 		
-		extMove y(tSquare::E1, tSquare::A8);
+		extMove y(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		y.setScore(-200);
 		
 		ASSERT_TRUE( x == y );
@@ -513,10 +513,10 @@ namespace {
 	
 	TEST(extMove, extEqual2)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		x.setScore(320);
 		
-		extMove y(tSquare::E2, tSquare::A8);
+		extMove y(baseTypes::tSquare::E2, baseTypes::tSquare::A8);
 		y.setScore(-200);
 		
 		ASSERT_FALSE( x == y );
@@ -526,10 +526,10 @@ namespace {
 	
 	TEST(extMove, extEqual3)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		x.setScore(320);
 		
-		Move y(tSquare::E1, tSquare::A8);
+		Move y(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		
 		ASSERT_TRUE( x == y );
 
@@ -538,10 +538,10 @@ namespace {
 	
 	TEST(extMove, extEqual4)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
 		x.setScore(320);
 		
-		Move y(tSquare::E2, tSquare::A8);
+		Move y(baseTypes::tSquare::E2, baseTypes::tSquare::A8);
 
 		
 		ASSERT_FALSE( x == y );
@@ -552,8 +552,8 @@ namespace {
 	
 	TEST(extMove, comparison)
 	{
-		extMove x(tSquare::E1, tSquare::A8);
-		extMove y(tSquare::E2, tSquare::A8);
+		extMove x(baseTypes::tSquare::E1, baseTypes::tSquare::A8);
+		extMove y(baseTypes::tSquare::E2, baseTypes::tSquare::A8);
 		
 		x.setScore(320);
 		y.setScore(-200);
