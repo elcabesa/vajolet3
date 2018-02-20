@@ -35,6 +35,79 @@ namespace {
 		ASSERT_EQ( bitboardIndex::blackPieces, g );
 	}
 	
+	TEST(bitboardIndex, getPieceName)
+	{
+		bitboardIndex b;
+		b = bitboardIndex::occupiedSquares;
+		ASSERT_STREQ( " ", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whiteKing;
+		ASSERT_STREQ( "K", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whiteQueens;
+		ASSERT_STREQ( "Q", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whiteRooks;
+		ASSERT_STREQ( "R", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whiteBishops;
+		ASSERT_STREQ( "B", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whiteKnights;
+		ASSERT_STREQ( "N", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whitePawns;
+		ASSERT_STREQ( "P", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::whitePieces;
+		ASSERT_STREQ( " ", getPieceName(b).c_str() );
+
+		b = bitboardIndex::separationBitmap;
+		ASSERT_STREQ( " ", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackKing;
+		ASSERT_STREQ( "k", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackQueens;
+		ASSERT_STREQ( "q", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackRooks;
+		ASSERT_STREQ( "r", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackBishops;
+		ASSERT_STREQ( "b", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackKnights;
+		ASSERT_STREQ( "n", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackPawns;
+		ASSERT_STREQ( "p", getPieceName(b).c_str() );
+		
+		b = bitboardIndex::blackPieces;
+		ASSERT_STREQ( " ", getPieceName(b).c_str() );
+		
+	}
+	
+	TEST(bitboardIndex, getPieceFromUci)
+	{
+		ASSERT_EQ( bitboardIndex::whitePawns, getPieceFromUci('P') );
+		ASSERT_EQ( bitboardIndex::whiteKnights, getPieceFromUci('N') );
+		ASSERT_EQ( bitboardIndex::whiteBishops, getPieceFromUci('B') );
+		ASSERT_EQ( bitboardIndex::whiteRooks, getPieceFromUci('R') );
+		ASSERT_EQ( bitboardIndex::whiteQueens, getPieceFromUci('Q') );
+		ASSERT_EQ( bitboardIndex::whiteKing, getPieceFromUci('K') );
+		ASSERT_EQ( bitboardIndex::blackPawns, getPieceFromUci('p') );
+		ASSERT_EQ( bitboardIndex::blackKnights, getPieceFromUci('n') );
+		ASSERT_EQ( bitboardIndex::blackBishops, getPieceFromUci('b') );
+		ASSERT_EQ( bitboardIndex::blackRooks, getPieceFromUci('r') );
+		ASSERT_EQ( bitboardIndex::blackQueens, getPieceFromUci('q') );
+		ASSERT_EQ( bitboardIndex::blackKing, getPieceFromUci('k') );
+		
+		ASSERT_EQ( bitboardIndex::empty, getPieceFromUci('M') );
+		ASSERT_EQ( bitboardIndex::empty, getPieceFromUci('v') );
+		ASSERT_EQ( bitboardIndex::empty, getPieceFromUci('5') );
+	}
+	
 	TEST(bitboardIndex, Increment)
 	{
 		bitboardIndex f = bitboardIndex::whiteRooks;
