@@ -41,6 +41,16 @@ namespace {
 		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::E5));
 	}
 	
+	TEST(BitMap, constructor3)
+	{
+		BitMap x = BitMap(7);
+		BitMap y(x);
+		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::A1));
+		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::E5));
+	}
+	
 	TEST(BitMap, clear)
 	{
 		BitMap x = BitMap(7);

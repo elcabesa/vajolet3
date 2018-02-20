@@ -74,8 +74,6 @@ namespace libChess
 			public:
 				explicit iterator(const uint64_t b = 0ull) : _b(b) {}
 				iterator& operator++() { _b &= ( _b - 1 ); return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return _b == other._b; }
 				bool operator!=(iterator other) const { return _b != other._b; }
 				reference operator*() const {return (baseTypes::tSquare)__builtin_ctzll(_b);}
 			private:

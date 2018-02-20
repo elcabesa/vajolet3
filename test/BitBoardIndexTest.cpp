@@ -244,4 +244,46 @@ namespace {
 		}
 		ASSERT_EQ(count, 0u);
 	}
+	
+	TEST(bitboardIndex, getMyPiecesfromPiece)
+	{
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteKing ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteQueens ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteRooks ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteBishops ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteKnights ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whitePawns ) );
+		
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackKing ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackQueens ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackRooks ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackBishops ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackKnights ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackPawns ) );
+
+	}
+	
+	TEST(bitboardIndex, isValidPiece)
+	{
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whiteKing ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whiteQueens ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whiteRooks ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whiteBishops ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whiteKnights ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::whitePawns ) );
+		
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackKing ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackQueens ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackRooks ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackBishops ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackKnights ) );
+		ASSERT_TRUE(isValidPiece( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isValidPiece( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isValidPiece( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isValidPiece( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isValidPiece( bitboardIndex::blackPieces ) );
+
+	}
+	
 }

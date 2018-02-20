@@ -224,32 +224,35 @@ namespace libChess
 		\date 17/08/2017
 	*/
 	
-	class bitboardIndexRange{
+	class bitboardIndexRange
+	{
 
-	bitboardIndex min;
-	bitboardIndex Max;
+	
 	public:
-	bitboardIndexRange(bitboardIndex _min = bitboardIndex::occupiedSquares, bitboardIndex _Max = bitboardIndex::blackPieces): min(_min), Max( _Max + 1 ){if(Max < min) Max = min;}
+		bitboardIndexRange(bitboardIndex min = bitboardIndex::occupiedSquares, bitboardIndex Max = bitboardIndex::blackPieces): _min(min), _Max( Max + 1 ){ if(_Max < _min) _Max = _min; }
 
-	class iterator: public std::iterator<
+		class iterator: public std::iterator<
 														std::input_iterator_tag,	// iterator_category
 								bitboardIndex,					// value_type
 								bitboardIndex,
 								const bitboardIndex*,
 								bitboardIndex
 								>{
-			bitboardIndex t;
 			public:
-				explicit iterator(bitboardIndex _t = bitboardIndex::occupiedSquares) : t(_t) {}
-				iterator& operator++() { t += 1; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
+				explicit iterator(bitboardIndex t = bitboardIndex::occupiedSquares) : _t(t){}
+				iterator& operator++() { _t += 1; return *this;}
+				bool operator!=(iterator other) const { return _t != other._t; }
+				reference operator*() const {return _t;}
+			private:
+				bitboardIndex _t;
 		};
 
-	iterator begin() {return iterator(min);}
-	iterator end() {return iterator(Max);}
+		iterator begin() {return iterator(_min);}
+		iterator end() {return iterator(_Max);}
+	
+	private:
+		bitboardIndex _min;
+		bitboardIndex _Max;
 
 	};
 	
