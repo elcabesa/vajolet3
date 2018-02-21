@@ -24,7 +24,7 @@
 //---------------------------------
 #include "Vajolet.h"
 #include "tSquare.h"
-#include "bitBoardIndex.h"
+#include "BitBoardIndex.h"
 
 namespace libChess
 {
