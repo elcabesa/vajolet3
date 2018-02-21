@@ -24,7 +24,7 @@
 //---------------------------------
 #include "Vajolet.h"
 #include "tSquare.h"
-#include "BitBoardIndex.h"
+#include "bitboardIndex.h"
 
 namespace libChess
 {
@@ -49,13 +49,13 @@ public:
 	
 	inline HashKey exclusion(void)const{ return HashKey(_key ^ _exclusion); }
 	
-	inline HashKey& movePiece(const bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
-	inline HashKey& addPiece(const bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
-	inline HashKey& removePiece(const bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& movePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
+	inline HashKey& addPiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
+	inline HashKey& removePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
 	inline HashKey& changeSide(void){_key ^= _side; return *this;};
 	inline HashKey& addEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
 	inline HashKey& removeEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
-	inline HashKey& changeCastlingRight(const eCastle cr){_key ^= _castlingRight[cr]; return *this;};
+	inline HashKey& changeCastlingRight(const baseTypes::eCastle cr){_key ^= _castlingRight[cr]; return *this;};
 	
 	
 	
@@ -63,7 +63,7 @@ private:
 	
 	static const unsigned int _CastlingRightBit = 4;
 	static const unsigned int _CastlingRightSize = 1<<_CastlingRightBit;
-	static const unsigned int _KeyNum = bitboardNumber;
+	static const unsigned int _KeyNum = baseTypes::bitboardNumber;
 	static uint64_t _keys[baseTypes::tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
 	static uint64_t _side;									// side to move (black)
 	static uint64_t _ep[baseTypes::tSquare::squareNumber];				// ep targets (only 16 used)

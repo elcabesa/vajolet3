@@ -39,7 +39,7 @@ namespace libChess
 		//promotion
 		if( isPromotionMove() )
 		{
-			s += getPieceName( blackQueens + getPromotionType() );
+			s += getPieceName( baseTypes::blackQueens + getPromotionType() );
 		}
 		return s;
 	}

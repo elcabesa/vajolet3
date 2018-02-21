@@ -18,7 +18,7 @@
 #include "gtest/gtest.h"
 #include "./../BitBoardIndex.h"
 
-using namespace libChess;
+using namespace libChess::baseTypes;
 
 namespace {
 		

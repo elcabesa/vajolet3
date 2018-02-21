@@ -26,7 +26,7 @@ protected:
 	virtual void SetUp()
 	{
 		libChess::baseTypes::inittSquare();
-		libChess::BitMap::init();
+		libChess::baseTypes::BitMap::init();
 		libChess::HashKey::init();
 	}
 

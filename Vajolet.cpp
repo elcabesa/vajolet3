@@ -32,7 +32,7 @@ static void setIoBuffers()
 static void init(void)
 {
 	libChess::baseTypes::inittSquare();
-	libChess::BitMap::init();
+	libChess::baseTypes::BitMap::init();
 	libChess::HashKey::init();
 }
 

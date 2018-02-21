@@ -50,7 +50,7 @@ namespace {
 	TEST(HashKeys, assign)
 	{
 		HashKey x;
-		x.movePiece(whiteRooks,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
+		x.movePiece(baseTypes::whiteRooks,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
 		
 		HashKey y;
 		y = x;
@@ -65,7 +65,7 @@ namespace {
 		ASSERT_EQ( y, x);
 		
 		// todo change to number of pieces to constant
-		for( auto i : bitboardIndexRange() )
+		for( auto i : baseTypes::bitboardIndexRange() )
 		{
 			for(auto from: baseTypes::tSquareRange())
 			{
@@ -95,7 +95,7 @@ namespace {
 		ASSERT_EQ( z, x );
 		
 		// todo change to number of pieces to constant
-		for( auto i : bitboardIndexRange() )
+		for( auto i : baseTypes::bitboardIndexRange() )
 		{
 			for(auto from: baseTypes::tSquareRange())
 			{
@@ -124,7 +124,7 @@ namespace {
 	TEST(HashKeys, changeSide)
 	{
 		HashKey x;
-		x.movePiece(blackKnights,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
+		x.movePiece(baseTypes::blackKnights,baseTypes::tSquare::A1,baseTypes::tSquare::F3);
 		
 		HashKey y = x;
 		x.changeSide();
@@ -201,15 +201,15 @@ namespace {
 		{
 			y = x;
 			z = x;
-			y.changeCastlingRight((eCastle)i);
+			y.changeCastlingRight((baseTypes::eCastle)i);
 			
 			if( i != 0 ){ ASSERT_NE( y, x ); }
 			else{ ASSERT_EQ( y, x ); }
 			
-			if( i & 1 ){ z.changeCastlingRight( (eCastle)1 ); }
-			if( i & 2 ){ z.changeCastlingRight( (eCastle)2 ); }
-			if( i & 4 ){ z.changeCastlingRight( (eCastle)4 ); }
-			if( i & 8 ){ z.changeCastlingRight( (eCastle)8 ); }
+			if( i & 1 ){ z.changeCastlingRight( (baseTypes::eCastle)1 ); }
+			if( i & 2 ){ z.changeCastlingRight( (baseTypes::eCastle)2 ); }
+			if( i & 4 ){ z.changeCastlingRight( (baseTypes::eCastle)4 ); }
+			if( i & 8 ){ z.changeCastlingRight( (baseTypes::eCastle)8 ); }
 			
 			ASSERT_EQ( y, z );
 		}
@@ -225,10 +225,10 @@ namespace {
 	TEST(HashKeys, Concatenate)
 	{
 		HashKey x;
-		HashKey& y = x.changeSide().addPiece(bitboardIndex::whiteKing, baseTypes::tSquare::E1);
+		HashKey& y = x.changeSide().addPiece(baseTypes::bitboardIndex::whiteKing, baseTypes::tSquare::E1);
 		
 		HashKey z;
-		z.addPiece(bitboardIndex::whiteKing, baseTypes::tSquare::E1);
+		z.addPiece(baseTypes::bitboardIndex::whiteKing, baseTypes::tSquare::E1);
 		z.changeSide();
 		
 		ASSERT_EQ( y, z );

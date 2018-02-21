@@ -21,276 +21,277 @@
 
 namespace libChess
 {
-		
-	BitMap BitMap::_RANKMASK[ baseTypes::tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
-	BitMap BitMap::_FILEMASK[ baseTypes::tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
-	BitMap BitMap::_SQUARECOLOR[ baseTypes::tColor::colorNumber ] = { BitMap(0ull), BitMap(0ull) };
-	BitMap BitMap::_SQUARES_BETWEEN[ baseTypes::tSquare::squareNumber ][ baseTypes::tSquare::squareNumber ];
-	BitMap BitMap::_LINES[ baseTypes::tSquare::squareNumber ][ baseTypes::tSquare::squareNumber ];
-
-	/*	\brief return a string representing a bitmap
-		\author Marco Belli
-		\version 1.0
-		\date 17/06/2017
-	*/
-	std::string BitMap::to_string() const
+	namespace baseTypes
 	{
-		std::string s;
 		
-		for( auto rank : baseTypes::tRankNegativeRange() )
+		/*	\brief return a string representing a bitmap
+			\author Marco Belli
+			\version 1.0
+			\date 17/06/2017
+		*/
+		std::string BitMap::to_string() const
 		{
-			// rank names
-			s += std::to_string( (int)rank + 1) + " ";
+			std::string s;
 			
-			//rank data
-			for( auto file : baseTypes::tFileRange() )
+			for( auto rank : tRankNegativeRange() )
 			{
-				if ( this->isSquareSet( file, rank ) )
+				// rank names
+				s += std::to_string( (int)rank + 1) + " ";
+				
+				//rank data
+				for( auto file : tFileRange() )
 				{
-					s += '1';
+					if ( this->isSquareSet( file, rank ) )
+					{
+						s += '1';
+					}
+					else
+					{
+						s += '.';
+					}
+
+				}
+				s += "\n";
+			}
+			// file names
+			s +=  "  abcdefgh";
+			return (s);
+		}
+
+		void BitMap::_initRankMask(void)
+		{
+			for( auto sq: tSquareRange() )
+			{
+				
+				tRank rank = getRank( sq );
+				
+				//===========================================================================
+				//initialize 8-bit rank mask
+				//===========================================================================
+				
+				_RANKMASK[ sq ] = BitMap(0ull);
+				
+				for( auto file: tFileRange() )
+				{
+					_RANKMASK[ sq ] += getSquareFromFileRank( file, rank );
+				}
+			}	
+		}
+
+		void BitMap::_initFileMask(void)
+		{
+			for( auto sq: tSquareRange() )
+			{
+				tFile file = getFile( sq );
+				
+				//===========================================================================
+				//initialize 8-bit file mask
+				//===========================================================================
+				
+				_FILEMASK[ sq ] = BitMap(0ull);
+				
+				for( auto rank: tRankRange() )
+				{
+					_FILEMASK[ sq ] += getSquareFromFileRank( file, rank );
+				}
+			}
+		}
+
+		void BitMap::_initSquareColor(void)
+		{
+			_SQUARECOLOR[0] = BitMap(0ull);
+			_SQUARECOLOR[1] = BitMap(0ull);
+			
+			for( auto sq: tSquareRange() )
+			{
+				//===========================================================================
+				//initialize SQUARECOLOR
+				//===========================================================================
+				_SQUARECOLOR[ getColor(sq) ] += sq;
+				
+			}
+		}
+
+
+
+		/*	\brief initalize help data
+			\author Marco Belli
+			\version 1.0
+			\date 17/06/2017
+		*/
+		void BitMap::init(void)
+		{
+			BitMap _DIAGA1H8MASK[ tSquare::squareNumber ];
+			BitMap _DIAGA8H1MASK[ tSquare::squareNumber ];
+			
+			
+			_initRankMask();
+			_initFileMask();
+			_initSquareColor();
+			
+			for( auto sq: tSquareRange() )
+			{
+				tFile file = getFile( sq );
+				tRank rank = getRank( sq );
+				
+				
+				//===========================================================================
+				//Initialize 8-bit diagonal mask
+				//===========================================================================
+				
+				_DIAGA1H8MASK[ sq ] = BitMap(0ull);
+				_DIAGA8H1MASK[ sq ] = BitMap(0ull);
+				
+				
+				int diaga8h1 = file + rank; // from 0 to 14, longest diagonal = 7
+				if (diaga8h1 < 8)  // lower half, diagonals 0 to 7
+				{
+					for (int square = 0 ; square <= diaga8h1 ; square ++)
+					{
+						_DIAGA8H1MASK[ sq ] += getSquareFromFileRank( tFile( square ), tRank( diaga8h1 - square ) ) ;
+					}
+				}
+				else  // upper half, diagonals 8 to 14
+				{
+					for (int square = 0 ; square < 15 - diaga8h1 ; square ++)
+					{
+						_DIAGA8H1MASK[ sq ] += getSquareFromFileRank( tFile( diaga8h1 + square - 7 ), tRank( 7 - square ) );
+					}
+				}
+
+				int diaga1h8 = file - rank; // from -7 to +7, longest diagonal = 0
+				if (diaga1h8 > -1)  // lower half, diagonals 0 to 7
+				{
+					for (int square = 0 ; square <= 7 - diaga1h8 ; square ++)
+					{
+						_DIAGA1H8MASK[ sq ] += getSquareFromFileRank( tFile( diaga1h8 + square ), tRank( square ) );
+					}
 				}
 				else
 				{
-					s += '.';
-				}
-
-			}
-			s += "\n";
-		}
-		// file names
-		s +=  "  abcdefgh";
-		return (s);
-	}
-
-	void BitMap::_initRankMask(void)
-	{
-		for( auto sq: baseTypes::tSquareRange() )
-		{
-			
-			baseTypes::tRank rank = getRank( sq );
-			
-			//===========================================================================
-			//initialize 8-bit rank mask
-			//===========================================================================
-			
-			_RANKMASK[ sq ] = BitMap(0ull);
-			
-			for( auto file: baseTypes::tFileRange() )
-			{
-				_RANKMASK[ sq ] += getSquareFromFileRank( file, rank );
-			}
-		}	
-	}
-
-	void BitMap::_initFileMask(void)
-	{
-		for( auto sq: baseTypes::tSquareRange() )
-		{
-			baseTypes::tFile file = getFile( sq );
-			
-			//===========================================================================
-			//initialize 8-bit file mask
-			//===========================================================================
-			
-			_FILEMASK[ sq ] = BitMap(0ull);
-			
-			for( auto rank: baseTypes::tRankRange() )
-			{
-				_FILEMASK[ sq ] += getSquareFromFileRank( file, rank );
-			}
-		}
-	}
-
-	void BitMap::_initSquareColor(void)
-	{
-		_SQUARECOLOR[0] = BitMap(0ull);
-		_SQUARECOLOR[1] = BitMap(0ull);
-		
-		for( auto sq: baseTypes::tSquareRange() )
-		{
-			//===========================================================================
-			//initialize SQUARECOLOR
-			//===========================================================================
-			_SQUARECOLOR[ getColor(sq) ] += sq;
-			
-		}
-	}
-
-
-
-	/*	\brief initalize help data
-		\author Marco Belli
-		\version 1.0
-		\date 17/06/2017
-	*/
-	void BitMap::init(void)
-	{
-		BitMap _DIAGA1H8MASK[ baseTypes::tSquare::squareNumber ];
-		BitMap _DIAGA8H1MASK[ baseTypes::tSquare::squareNumber ];
-		
-		
-		_initRankMask();
-		_initFileMask();
-		_initSquareColor();
-		
-		for( auto sq: baseTypes::tSquareRange() )
-		{
-			baseTypes::tFile file = getFile( sq );
-			baseTypes::tRank rank = getRank( sq );
-			
-			
-			//===========================================================================
-			//Initialize 8-bit diagonal mask
-			//===========================================================================
-			
-			_DIAGA1H8MASK[ sq ] = BitMap(0ull);
-			_DIAGA8H1MASK[ sq ] = BitMap(0ull);
-			
-			
-			int diaga8h1 = file + rank; // from 0 to 14, longest diagonal = 7
-			if (diaga8h1 < 8)  // lower half, diagonals 0 to 7
-			{
-				for (int square = 0 ; square <= diaga8h1 ; square ++)
-				{
-					_DIAGA8H1MASK[ sq ] += getSquareFromFileRank( baseTypes::tFile( square ), baseTypes::tRank( diaga8h1 - square ) ) ;
-				}
-			}
-			else  // upper half, diagonals 8 to 14
-			{
-				for (int square = 0 ; square < 15 - diaga8h1 ; square ++)
-				{
-					_DIAGA8H1MASK[ sq ] += getSquareFromFileRank( baseTypes::tFile( diaga8h1 + square - 7 ), baseTypes::tRank( 7 - square ) );
-				}
-			}
-
-			int diaga1h8 = file - rank; // from -7 to +7, longest diagonal = 0
-			if (diaga1h8 > -1)  // lower half, diagonals 0 to 7
-			{
-				for (int square = 0 ; square <= 7 - diaga1h8 ; square ++)
-				{
-					_DIAGA1H8MASK[ sq ] += getSquareFromFileRank( baseTypes::tFile( diaga1h8 + square ), baseTypes::tRank( square ) );
-				}
-			}
-			else
-			{
-				for (int square = 0 ; square <= 7 + diaga1h8 ; square ++)
-				{
-					_DIAGA1H8MASK[ sq ] += getSquareFromFileRank( baseTypes::tFile(square), baseTypes::tRank( square - diaga1h8 ) );
-				}
-			}
-		}
-		
-		for( auto sq1: baseTypes::tSquareRange() )
-		{
-			for( auto sq2: baseTypes::tSquareRange() )
-			{
-				_LINES[ sq1 ][ sq2 ] = BitMap(0ull);
-				_SQUARES_BETWEEN[ sq1 ][ sq2 ] = BitMap(0ull);
-				
-				if( sq1 != sq2 )
-				{
-					if( getFile( sq1 ) == getFile( sq2 ) )
+					for (int square = 0 ; square <= 7 + diaga1h8 ; square ++)
 					{
-						// stessa colonna
-
-						_LINES[ sq1 ][ sq2 ] = _FILEMASK[ sq1 ];
-						if( getRank( sq2 ) > getRank( sq1 ) ) // in salita
-						{
-							baseTypes::tRank temp = getRank( sq1 ) + 1;
-							while( temp < getRank( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
-								++temp;
-							}
-						}
-						if( getRank( sq2 ) < getRank( sq1 ) ) // in discesa
-						{
-							baseTypes::tRank temp = getRank( sq1 ) - 1;
-							while( temp > getRank( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
-								--temp;
-							}
-						}
+						_DIAGA1H8MASK[ sq ] += getSquareFromFileRank( tFile(square), tRank( square - diaga1h8 ) );
 					}
-					if( getRank( sq1 ) == getRank( sq2 ) )
-					{
-						_LINES[ sq1 ][ sq2 ] = _RANKMASK[ sq1 ];
-						if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
-						{
-							baseTypes::tFile temp = getFile( sq1 ) + 1;
-							while( temp < getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
-								++temp;
-							}
-						}
-						if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
-						{
-							baseTypes::tFile temp = getFile( sq1 ) - 1;
-							while( temp > getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
-								--temp;
-							}
-						}
-					}
-					if( _DIAGA1H8MASK[ sq1 ].isSquareSet( sq2 ) )
-					{
-						_LINES[ sq1 ][ sq2 ] = _DIAGA1H8MASK[ sq1 ];
-						if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
-						{
-							baseTypes::tFile temp = getFile( sq1 ) + 1;
-							baseTypes::tRank temp2 = getRank( sq1 ) + 1;
-							while( temp < getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-								++temp;
-								++temp2;
-							}
-						}
-						if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
-						{
-							baseTypes::tFile temp = getFile( sq1 ) - 1;
-							baseTypes::tRank temp2 = getRank( sq1 ) - 1;
-							while( temp > getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-								--temp;
-								--temp2;
-							}
-						}
-					}
-					if(_DIAGA8H1MASK[ sq1 ].isSquareSet( sq2 ) )
-					{
-						_LINES[ sq1 ][ sq2 ] = _DIAGA8H1MASK[ sq1 ];
-						if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
-						{
-							baseTypes::tFile temp = getFile( sq1 ) + 1;
-							baseTypes::tRank temp2 = getRank( sq1 ) - 1;
-							while( temp < getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-								++temp;
-								--temp2;
-							}
-						}
-						if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
-						{
-							baseTypes::tFile temp = getFile( sq1 ) - 1;
-							baseTypes::tRank temp2 = getRank( sq1 ) + 1;
-							while( temp > getFile( sq2 ) )
-							{
-								_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
-								--temp;
-								++temp2;
-							}
-						}
-					}
+				}
+			}
+			
+			for( auto sq1: tSquareRange() )
+			{
+				for( auto sq2: tSquareRange() )
+				{
+					_LINES[ sq1 ][ sq2 ] = BitMap(0ull);
+					_SQUARES_BETWEEN[ sq1 ][ sq2 ] = BitMap(0ull);
 					
-				}
-			}
-		}	
-	}
+					if( sq1 != sq2 )
+					{
+						if( getFile( sq1 ) == getFile( sq2 ) )
+						{
+							// stessa colonna
 
+							_LINES[ sq1 ][ sq2 ] = _FILEMASK[ sq1 ];
+							if( getRank( sq2 ) > getRank( sq1 ) ) // in salita
+							{
+								tRank temp = getRank( sq1 ) + 1;
+								while( temp < getRank( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
+									++temp;
+								}
+							}
+							if( getRank( sq2 ) < getRank( sq1 ) ) // in discesa
+							{
+								tRank temp = getRank( sq1 ) - 1;
+								while( temp > getRank( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( getFile( sq1 ), temp );
+									--temp;
+								}
+							}
+						}
+						if( getRank( sq1 ) == getRank( sq2 ) )
+						{
+							_LINES[ sq1 ][ sq2 ] = _RANKMASK[ sq1 ];
+							if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
+							{
+								tFile temp = getFile( sq1 ) + 1;
+								while( temp < getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
+									++temp;
+								}
+							}
+							if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
+							{
+								tFile temp = getFile( sq1 ) - 1;
+								while( temp > getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, getRank( sq1 ) );
+									--temp;
+								}
+							}
+						}
+						if( _DIAGA1H8MASK[ sq1 ].isSquareSet( sq2 ) )
+						{
+							_LINES[ sq1 ][ sq2 ] = _DIAGA1H8MASK[ sq1 ];
+							if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
+							{
+								tFile temp = getFile( sq1 ) + 1;
+								tRank temp2 = getRank( sq1 ) + 1;
+								while( temp < getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
+									++temp;
+									++temp2;
+								}
+							}
+							if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
+							{
+								tFile temp = getFile( sq1 ) - 1;
+								tRank temp2 = getRank( sq1 ) - 1;
+								while( temp > getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
+									--temp;
+									--temp2;
+								}
+							}
+						}
+						if(_DIAGA8H1MASK[ sq1 ].isSquareSet( sq2 ) )
+						{
+							_LINES[ sq1 ][ sq2 ] = _DIAGA8H1MASK[ sq1 ];
+							if( getFile( sq2 ) > getFile( sq1 ) ) // in salita
+							{
+								tFile temp = getFile( sq1 ) + 1;
+								tRank temp2 = getRank( sq1 ) - 1;
+								while( temp < getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
+									++temp;
+									--temp2;
+								}
+							}
+							if( getFile( sq2 ) < getFile( sq1 ) ) // in discesa
+							{
+								tFile temp = getFile( sq1 ) - 1;
+								tRank temp2 = getRank( sq1 ) + 1;
+								while( temp > getFile( sq2 ) )
+								{
+									_SQUARES_BETWEEN[ sq1 ][ sq2 ] += getSquareFromFileRank( temp, temp2 );
+									--temp;
+									++temp2;
+								}
+							}
+						}					
+					}
+				}
+			}	
+		}
+		
+		BitMap BitMap::_RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
+		BitMap BitMap::_FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
+		BitMap BitMap::_SQUARECOLOR[ tColor::colorNumber ] = { BitMap(0ull), BitMap(0ull) };
+		BitMap BitMap::_SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
+		BitMap BitMap::_LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
+	}
 }

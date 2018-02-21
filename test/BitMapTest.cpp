@@ -18,7 +18,7 @@
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
 
-using namespace libChess;
+using namespace libChess::baseTypes;
 
 
 namespace {
@@ -26,29 +26,29 @@ namespace {
 	TEST(BitMap, constructor1)
 	{
 		BitMap x = BitMap(5);
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::A1));
-		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::B1));
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::C1));
-		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::E5));
+		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
 	}
 	
 	TEST(BitMap, constructor2)
 	{
 		BitMap x = BitMap(7);
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::A1));
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::B1));
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::C1));
-		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::E5));
+		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
 	}
 	
 	TEST(BitMap, constructor3)
 	{
 		BitMap x = BitMap(7);
 		BitMap y(x);
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::A1));
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::B1));
-		ASSERT_TRUE( x.isSquareSet(baseTypes::tSquare::C1));
-		ASSERT_FALSE( x.isSquareSet(baseTypes::tSquare::E5));
+		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
 	}
 	
 	TEST(BitMap, clear)
@@ -74,11 +74,11 @@ namespace {
 
 	TEST(BitMap, FirstOne)
 	{
-		//ASSERT_EQ( BitMap(0).firstOne(), baseTypes::tSquare::A1); // sure?? machine dependant??
-		ASSERT_EQ( BitMap(1).firstOne(), baseTypes::tSquare::A1);
-		ASSERT_EQ( BitMap(0x803000100C803008ull).firstOne(), baseTypes::tSquare::D1);
-		ASSERT_EQ( BitMap(3458769736543240192ull).firstOne(), baseTypes::tSquare::D3);
-		ASSERT_EQ( BitMap(0xFFFFFFFFFFFFFFFFull).firstOne(), baseTypes::tSquare::A1);
+		//ASSERT_EQ( BitMap(0).firstOne(), tSquare::A1); // sure?? machine dependant??
+		ASSERT_EQ( BitMap(1).firstOne(), tSquare::A1);
+		ASSERT_EQ( BitMap(0x803000100C803008ull).firstOne(), tSquare::D1);
+		ASSERT_EQ( BitMap(3458769736543240192ull).firstOne(), tSquare::D3);
+		ASSERT_EQ( BitMap(0xFFFFFFFFFFFFFFFFull).firstOne(), tSquare::A1);
 	}
 
 	TEST(BitMap, moreThanOneBit)
@@ -95,37 +95,37 @@ namespace {
 
 	TEST(BitMap, getBitmapFromSquare)
 	{
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tSquare::A3 ), BitMap(0x10000ull));
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tSquare::H8 ), BitMap(0x8000000000000000ull));
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tSquare::A1 ), BitMap(0x0000000000000001ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::A3 ), BitMap(0x10000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::H8 ), BitMap(0x8000000000000000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tSquare::A1 ), BitMap(0x0000000000000001ull));
 
 	}
 
 	TEST(BitMap, getBitmapFromSquare2)
 	{
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tFile::A, baseTypes::tRank::three ), BitMap(0x10000ull));
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tFile::H, baseTypes::tRank::eight ), BitMap(0x8000000000000000ull));
-		ASSERT_EQ( BitMap::getBitmapFromSquare( baseTypes::tFile::A, baseTypes::tRank::one ), BitMap(0x0000000000000001ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::A, tRank::three ), BitMap(0x10000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::H, tRank::eight ), BitMap(0x8000000000000000ull));
+		ASSERT_EQ( BitMap::getBitmapFromSquare( tFile::A, tRank::one ), BitMap(0x0000000000000001ull));
 	}
 
 	TEST(BitMap, isSquareSet)
 	{
 		BitMap b(3458769736543240192ull);
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::A1 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::C3 ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::D3 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::E3 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::A5 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::F5 ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::G5 ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::H5 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::B6 ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::C6 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::D6 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::E7 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::B8 ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::E8 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::H8 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::A1 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::C3 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::D3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::E3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::A5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::F5 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::G5 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::H5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B6 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::C6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::D6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::E7 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B8 ) );
+		ASSERT_TRUE( b.isSquareSet( tSquare::E8 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::H8 ) );
 
 
 	}
@@ -133,28 +133,28 @@ namespace {
 	TEST(BitMap, isSquareSet2)
 	{
 		BitMap b(3458769736543240192ull);
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::A, baseTypes::tRank::one ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::C, baseTypes::tRank::three ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tFile::D, baseTypes::tRank::three ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::E, baseTypes::tRank::three ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::A, baseTypes::tRank::five ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::F, baseTypes::tRank::five ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tFile::G, baseTypes::tRank::five ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tFile::H, baseTypes::tRank::five ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::B, baseTypes::tRank::six ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tFile::C, baseTypes::tRank::six ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::D, baseTypes::tRank::six ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::E, baseTypes::tRank::seven ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::B, baseTypes::tRank::eight ) );
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tFile::E, baseTypes::tRank::eight ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tFile::H, baseTypes::tRank::eight ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::A, tRank::one ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::C, tRank::three ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::D, tRank::three ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::E, tRank::three ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::A, tRank::five ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::F, tRank::five ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::G, tRank::five ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::H, tRank::five ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::B, tRank::six ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::C, tRank::six ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::D, tRank::six ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::E, tRank::seven ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::B, tRank::eight ) );
+		ASSERT_TRUE( b.isSquareSet( tFile::E, tRank::eight ) );
+		ASSERT_FALSE( b.isSquareSet( tFile::H, tRank::eight ) );
 
 
 	}
 
 	TEST(BitMap, iterator)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(3458769736543240192ull);
 		for(const auto& t : b)
 		{
@@ -162,25 +162,25 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 8u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::D3 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::H3 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::B4 );
-		ASSERT_EQ( v[3], baseTypes::tSquare::G5 );
-		ASSERT_EQ( v[4], baseTypes::tSquare::H5 );
-		ASSERT_EQ( v[5], baseTypes::tSquare::C6 );
-		ASSERT_EQ( v[6], baseTypes::tSquare::E8 );
-		ASSERT_EQ( v[7], baseTypes::tSquare::F8 );
+		ASSERT_EQ( v[0], tSquare::D3 );
+		ASSERT_EQ( v[1], tSquare::H3 );
+		ASSERT_EQ( v[2], tSquare::B4 );
+		ASSERT_EQ( v[3], tSquare::G5 );
+		ASSERT_EQ( v[4], tSquare::H5 );
+		ASSERT_EQ( v[5], tSquare::C6 );
+		ASSERT_EQ( v[6], tSquare::E8 );
+		ASSERT_EQ( v[7], tSquare::F8 );
 
 
 	}
 
 	TEST(BitMap, getRankMask)
 	{
-		for (baseTypes::tFile file = baseTypes::tFile::A; file <= baseTypes::tFile::H; file++)
+		for (tFile file = tFile::A; file <= tFile::H; file++)
 		{
-			for (baseTypes::tRank rank = baseTypes::tRank::one; rank <= baseTypes::tRank::eight; rank++)
+			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
 			{
-				std::vector<baseTypes::tSquare>v;
+				std::vector<tSquare>v;
 				BitMap b = BitMap::getRankMask( getSquareFromFileRank( file, rank) );
 				for(const auto t : b)
 				{
@@ -188,25 +188,25 @@ namespace {
 
 				}
 				ASSERT_EQ( v.size(), 8u );
-				ASSERT_EQ( v[0], getSquareFromFileRank( baseTypes::tFile::A, rank) );
-				ASSERT_EQ( v[1], getSquareFromFileRank( baseTypes::tFile::B, rank) );
-				ASSERT_EQ( v[2], getSquareFromFileRank( baseTypes::tFile::C, rank) );
-				ASSERT_EQ( v[3], getSquareFromFileRank( baseTypes::tFile::D, rank) );
-				ASSERT_EQ( v[4], getSquareFromFileRank( baseTypes::tFile::E, rank) );
-				ASSERT_EQ( v[5], getSquareFromFileRank( baseTypes::tFile::F, rank) );
-				ASSERT_EQ( v[6], getSquareFromFileRank( baseTypes::tFile::G, rank) );
-				ASSERT_EQ( v[7], getSquareFromFileRank( baseTypes::tFile::H, rank) );
+				ASSERT_EQ( v[0], getSquareFromFileRank( tFile::A, rank) );
+				ASSERT_EQ( v[1], getSquareFromFileRank( tFile::B, rank) );
+				ASSERT_EQ( v[2], getSquareFromFileRank( tFile::C, rank) );
+				ASSERT_EQ( v[3], getSquareFromFileRank( tFile::D, rank) );
+				ASSERT_EQ( v[4], getSquareFromFileRank( tFile::E, rank) );
+				ASSERT_EQ( v[5], getSquareFromFileRank( tFile::F, rank) );
+				ASSERT_EQ( v[6], getSquareFromFileRank( tFile::G, rank) );
+				ASSERT_EQ( v[7], getSquareFromFileRank( tFile::H, rank) );
 			}
 		}
 	}
 
 	TEST(BitMap, getFileMask)
 	{
-		for (baseTypes::tFile file = baseTypes::tFile::A; file <= baseTypes::tFile::H; file++)
+		for (tFile file = tFile::A; file <= tFile::H; file++)
 		{
-			for (baseTypes::tRank rank = baseTypes::tRank::one; rank <= baseTypes::tRank::eight; rank++)
+			for (tRank rank = tRank::one; rank <= tRank::eight; rank++)
 			{
-				std::vector<baseTypes::tSquare>v;
+				std::vector<tSquare>v;
 				BitMap b = BitMap::getFileMask( getSquareFromFileRank( file, rank) );
 				for(const auto t : b)
 				{
@@ -214,40 +214,40 @@ namespace {
 
 				}
 				ASSERT_EQ( v.size(), 8u );
-				ASSERT_EQ( v[0], getSquareFromFileRank( file, baseTypes::tRank::one) );
-				ASSERT_EQ( v[1], getSquareFromFileRank( file, baseTypes::tRank::two) );
-				ASSERT_EQ( v[2], getSquareFromFileRank( file, baseTypes::tRank::three) );
-				ASSERT_EQ( v[3], getSquareFromFileRank( file, baseTypes::tRank::four) );
-				ASSERT_EQ( v[4], getSquareFromFileRank( file, baseTypes::tRank::five) );
-				ASSERT_EQ( v[5], getSquareFromFileRank( file, baseTypes::tRank::six) );
-				ASSERT_EQ( v[6], getSquareFromFileRank( file, baseTypes::tRank::seven) );
-				ASSERT_EQ( v[7], getSquareFromFileRank( file, baseTypes::tRank::eight) );
+				ASSERT_EQ( v[0], getSquareFromFileRank( file, tRank::one) );
+				ASSERT_EQ( v[1], getSquareFromFileRank( file, tRank::two) );
+				ASSERT_EQ( v[2], getSquareFromFileRank( file, tRank::three) );
+				ASSERT_EQ( v[3], getSquareFromFileRank( file, tRank::four) );
+				ASSERT_EQ( v[4], getSquareFromFileRank( file, tRank::five) );
+				ASSERT_EQ( v[5], getSquareFromFileRank( file, tRank::six) );
+				ASSERT_EQ( v[6], getSquareFromFileRank( file, tRank::seven) );
+				ASSERT_EQ( v[7], getSquareFromFileRank( file, tRank::eight) );
 			}
 		}
 	}
 	
 	TEST(BitMap, getColorBitMap)
 	{	
-		ASSERT_EQ( BitMap::getColorBitMap(baseTypes::tColor::black), BitMap(0xAA55AA55AA55AA55ull) );
-		ASSERT_EQ( BitMap::getColorBitMap(baseTypes::tColor::white), BitMap(0x55AA55AA55AA55AAull) );
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::black), BitMap(0xAA55AA55AA55AA55ull) );
+		ASSERT_EQ( BitMap::getColorBitMap(tColor::white), BitMap(0x55AA55AA55AA55AAull) );
 		
 	}
 	
 	TEST(BitMap, areSquaresAligned)
 	{
-		ASSERT_TRUE( BitMap::areSquaresAligned( baseTypes::tSquare::D3, baseTypes::tSquare::F5, baseTypes::tSquare::B1 ) );
-		ASSERT_FALSE( BitMap::areSquaresAligned( baseTypes::tSquare::C1, baseTypes::tSquare::C7, baseTypes::tSquare::B4 ) );
+		ASSERT_TRUE( BitMap::areSquaresAligned( tSquare::D3, tSquare::F5, tSquare::B1 ) );
+		ASSERT_FALSE( BitMap::areSquaresAligned( tSquare::C1, tSquare::C7, tSquare::B4 ) );
 	}
 	
 	TEST(BitMap, getSquaresBetween)
 	{
-		BitMap b = BitMap::getSquaresBetween( baseTypes::tSquare::B7, baseTypes::tSquare::D5);
-		ASSERT_TRUE( b.isSquareSet( baseTypes::tSquare::C6 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::B7 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::D5 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::A8 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::F3 ) );
-		ASSERT_FALSE( b.isSquareSet( baseTypes::tSquare::G7 ) );
+		BitMap b = BitMap::getSquaresBetween( tSquare::B7, tSquare::D5);
+		ASSERT_TRUE( b.isSquareSet( tSquare::C6 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::B7 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::D5 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::A8 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::F3 ) );
+		ASSERT_FALSE( b.isSquareSet( tSquare::G7 ) );
 		
 	}
 	
@@ -269,19 +269,19 @@ namespace {
 	
 	TEST(BitMap, operatorPlusEqual)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D4;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D4;
 		for(const auto t : b)
 		{
 			v.push_back(t);
 		}
 
 		ASSERT_EQ( v.size(), 2u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::F6 );
+		ASSERT_EQ( v[0], tSquare::D4 );
+		ASSERT_EQ( v[1], tSquare::F6 );
 	}
 	
 	TEST(BitMap, operatorComparison)
@@ -302,16 +302,16 @@ namespace {
 	
 	TEST(BitMap, operatorPlusEqual2)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F8;
-		b2+= baseTypes::tSquare::D5;
+		b2+= tSquare::A2;
+		b2+= tSquare::F8;
+		b2+= tSquare::D5;
 		
 		b += b2;
 		for(const auto t : b)
@@ -320,26 +320,26 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 5u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::D5 );
-		ASSERT_EQ( v[3], baseTypes::tSquare::F6 );
-		ASSERT_EQ( v[4], baseTypes::tSquare::F8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::D5 );
+		ASSERT_EQ( v[3], tSquare::F6 );
+		ASSERT_EQ( v[4], tSquare::F8 );
 	}
 	
 	TEST(BitMap, operatorandEqual)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F6;
-		b2+= baseTypes::tSquare::D5;
-		b2+= baseTypes::tSquare::E8;
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
 		
 		b &= b2;
 		for(const auto t : b)
@@ -348,16 +348,16 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 2u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::D5 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::F6 );
+		ASSERT_EQ( v[0], tSquare::D5 );
+		ASSERT_EQ( v[1], tSquare::F6 );
 
 	}
 	
 	TEST(BitMap, operatorEqual)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b = baseTypes::tSquare::F6;
+		b = tSquare::F6;
 		
 		
 
@@ -367,16 +367,16 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 1u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::F6 );
+		ASSERT_EQ( v[0], tSquare::F6 );
 	}
 	
 	TEST(BitMap, operatorEqual2)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D4;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D4;
 		
 		BitMap b2;
 		b2 = b;
@@ -386,22 +386,22 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 2u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::F6 );
+		ASSERT_EQ( v[0], tSquare::D4 );
+		ASSERT_EQ( v[1], tSquare::F6 );
 	}
 	
 	TEST(BitMap, operatorPlus)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F8;
-		b2+= baseTypes::tSquare::D5;
+		b2+= tSquare::A2;
+		b2+= tSquare::F8;
+		b2+= tSquare::D5;
 		
 		BitMap b3 = b + b2;
 		for(const auto t : b3)
@@ -410,26 +410,26 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 5u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::D5 );
-		ASSERT_EQ( v[3], baseTypes::tSquare::F6 );
-		ASSERT_EQ( v[4], baseTypes::tSquare::F8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::D5 );
+		ASSERT_EQ( v[3], tSquare::F6 );
+		ASSERT_EQ( v[4], tSquare::F8 );
 	}
 	
 	TEST(BitMap, operatorAnd)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F6;
-		b2+= baseTypes::tSquare::D5;
-		b2+= baseTypes::tSquare::E8;
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
 		
 		BitMap b3 = b & b2;
 		for(const auto t : b3)
@@ -438,24 +438,24 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 2u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::D5 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::F6 );
+		ASSERT_EQ( v[0], tSquare::D5 );
+		ASSERT_EQ( v[1], tSquare::F6 );
 
 	}
 	
 	TEST(BitMap, operatorXor)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F6;
-		b2+= baseTypes::tSquare::D5;
-		b2+= baseTypes::tSquare::E8;
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
 		
 		BitMap b3 = b ^ b2;
 		for(const auto t : b3)
@@ -464,49 +464,49 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 3u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::E8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
 
 	}
 	
 	TEST(BitMap, operatorXor2)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
-		BitMap b3 = b ^ baseTypes::tSquare::A2;
-		b3 = b3 ^ baseTypes::tSquare::F6;
-		b3 = b3 ^ baseTypes::tSquare::D5;
-		b3 = b3 ^ baseTypes::tSquare::E8;
+		BitMap b3 = b ^ tSquare::A2;
+		b3 = b3 ^ tSquare::F6;
+		b3 = b3 ^ tSquare::D5;
+		b3 = b3 ^ tSquare::E8;
 		for(const auto t : b3)
 		{
 			v.push_back(t);
 		}
 
 		ASSERT_EQ( v.size(), 3u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::E8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
 
 	}
 	
 	TEST(BitMap, operatorXorEqual)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
 		BitMap b2(0);
-		b2+= baseTypes::tSquare::A2;
-		b2+= baseTypes::tSquare::F6;
-		b2+= baseTypes::tSquare::D5;
-		b2+= baseTypes::tSquare::E8;
+		b2+= tSquare::A2;
+		b2+= tSquare::F6;
+		b2+= tSquare::D5;
+		b2+= tSquare::E8;
 		
 		 b ^= b2;
 		for(const auto t : b)
@@ -515,33 +515,33 @@ namespace {
 		}
 
 		ASSERT_EQ( v.size(), 3u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::E8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
 
 	}
 	
 	TEST(BitMap, operatorXorEqual2)
 	{
-		std::vector<baseTypes::tSquare>v;
+		std::vector<tSquare>v;
 		BitMap b(0);
-		b+= baseTypes::tSquare::F6;
-		b+= baseTypes::tSquare::D4;
-		b+= baseTypes::tSquare::D5;
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
 		
-		b ^= baseTypes::tSquare::A2;
-		b ^= baseTypes::tSquare::F6;
-		b ^= baseTypes::tSquare::D5;
-		b ^= baseTypes::tSquare::E8;
+		b ^= tSquare::A2;
+		b ^= tSquare::F6;
+		b ^= tSquare::D5;
+		b ^= tSquare::E8;
 		for(const auto t : b)
 		{
 			v.push_back(t);
 		}
 
 		ASSERT_EQ( v.size(), 3u );
-		ASSERT_EQ( v[0], baseTypes::tSquare::A2 );
-		ASSERT_EQ( v[1], baseTypes::tSquare::D4 );
-		ASSERT_EQ( v[2], baseTypes::tSquare::E8 );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::E8 );
 
 	}
 	

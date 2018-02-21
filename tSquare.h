@@ -21,56 +21,13 @@
 #include <iostream>
 #include <string>
 #include "Vajolet.h"
+#include "BaseTypeTemplate.h"
 
 namespace libChess
 {
 	namespace baseTypes
 	{
 	
-	/*	\brief operator++ for tFile/tRank/tSquare
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	template <typename myType>
-	static inline myType& operator++(myType& r)
-	{
-		return r = (myType)( (int)r + 1 );
-	}
-	
-	template <typename myType>
-	static inline myType& operator--(myType& r)
-	{
-		return r = (myType)( (int)r - 1 );
-	}
-	
-	template <typename myType>
-	static inline myType operator++(myType& r,int)
-	{
-		myType n = r;
-		++r;
-		return n;
-	}
-	
-	template <typename myType>
-	static inline myType operator--(myType& r,int)
-	{
-		myType n = r;
-		--r;
-		return n;
-	}
-	
-	template <typename myType>
-	static inline myType operator+(const myType d1, const int d2) { return myType( (int)d1 + d2 ); }
-	
-	template <typename myType>
-	static inline myType operator-(const myType d1, const int d2) { return myType( (int)d1 - d2 ); }
-
-	template <class myType>
-	static inline myType& operator+=(myType& d1, const int d2) { d1 = d1 + d2; return d1; }
-	
-	template <class myType>
-	static inline myType& operator-=(myType& d1, const int d2) { d1 = d1 - d2; return d1; }
 	
 	
 
@@ -112,38 +69,9 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	class tFileRange
-	{
-
-	public:
-		
-		tFileRange(tFile min = tFile::A, tFile Max = tFile::H): _min(min), _Max( Max + 1 ){ if(_Max < _min) _Max = _min; }
-
-		class iterator: public std::iterator<
-									std::input_iterator_tag,	// iterator_category
-									tFile,					// value_type
-									tFile,
-									const tFile*,
-									tFile
-									>{
-				
-				public:
-					explicit iterator(tFile t = tFile::A) : _t(t) {}
-					iterator& operator++() { _t += 1; return *this;}
-					iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-					bool operator==(iterator other) const { return _t == other._t; }
-					bool operator!=(iterator other) const { return _t != other._t; }
-					reference operator*() const {return _t;}
-				private:
-					tFile _t;
-			};
-
-		iterator begin(){ return iterator(_min); }
-		iterator end(){ return iterator(_Max); }
-	private:
-		tFile _min;
-		tFile _Max;
-	};
+	template class baseTypeRange<tFile, tFile::A, tFile::H>;
+	using tFileRange = baseTypeRange<tFile, tFile::A, tFile::H>;
+	
 
 
 	/*	\brief convert file to string
@@ -199,81 +127,23 @@ namespace libChess
 	template static tRank& operator-=<tRank>(tRank& d1, const int d2);
 
 
-
+	/*	\brief class used to iterate over a range of tRank
+		\author Marco Belli
+		\version 1.0
+		\date 17/08/2017
+	*/
+	template class baseTypeRange<tRank, tRank::one, tRank::eight>;
+	using tRankRange = baseTypeRange<tRank, tRank::one, tRank::eight>;
 
 	/*	\brief class used to iterate over a range of tRank
 		\author Marco Belli
 		\version 1.0
 		\date 17/08/2017
 	*/
-	class tRankRange
-	{
-
 	
-	public:
-		tRankRange(tRank min = tRank::one, tRank Max = tRank::eight): _min(min), _Max( Max + 1 ){if(_Max < _min) _Max = _min;}
+	template class baseTypeNegativeRange<tRank, tRank::one, tRank::eight>;
+	using tRankNegativeRange = baseTypeNegativeRange<tRank, tRank::one, tRank::eight>;
 
-		class iterator: public std::iterator<
-									std::input_iterator_tag,	// iterator_category
-									tRank,					// value_type
-									tRank,
-									const tRank*,
-									tRank
-									>{
-				public:
-					explicit iterator(tRank t = tRank::one) : _t(t) {}
-					iterator& operator++() { _t += 1; return *this;}
-					iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-					bool operator==(iterator other) const { return _t == other._t; }
-					bool operator!=(iterator other) const { return _t != other._t; }
-					reference operator*() const {return _t;}
-				private:
-					tRank _t;
-			};
-
-		iterator begin(){ return iterator(_min); }
-		iterator end(){ return iterator(_Max); }
-	private:
-		tRank _min;
-		tRank _Max;
-
-	};
-	
-	/*	\brief class used to iterate over a range of tRank
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	class tRankNegativeRange{
-
-	tRank min;
-	tRank Max;
-	public:
-	tRankNegativeRange(tRank _min = tRank::one, tRank _Max = tRank::eight): min( _min - 1 ), Max( _Max ){if(Max < min) Max = min;}
-
-	class iterator: public std::iterator<
-								std::input_iterator_tag,	// iterator_category
-								tRank,					// value_type
-								tRank,
-								const tRank*,
-								tRank
-								>{
-			tRank t;
-			public:
-				explicit iterator(tRank _t = tRank::one) : t(_t) {}
-				iterator& operator++() { t -= 1; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
-		};
-
-	iterator begin() {return iterator(Max);}
-	iterator end() {return iterator(min);}
-
-	};
-	
-	
 
 	/*	\brief convert rank to string
 		\author Marco Belli
@@ -350,38 +220,9 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	class tSquareRange{
-
-	tSquare min;
-	tSquare Max;
-	public:
-	tSquareRange(tSquare _min = tSquare::A1, tSquare _Max = tSquare::H8): min(_min), Max( _Max + tSquare::east ){if(Max < min) Max = min;}
-
-	class iterator: public std::iterator<
-								std::input_iterator_tag,	// iterator_category
-								tSquare,					// value_type
-								tSquare,
-								const tSquare*,
-								tSquare
-								>{
-			tSquare t;
-			public:
-				explicit iterator(tSquare _t = tSquare::A1) : t(_t) {}
-				iterator& operator++() { t += tSquare::east; return *this;}
-				iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-				bool operator==(iterator other) const { return t == other.t; }
-				bool operator!=(iterator other) const { return t != other.t; }
-				reference operator*() const {return t;}
-		};
-
-	iterator begin() {return iterator(min);}
-	iterator end() {return iterator(Max);}
-
-	};
-
-
-
-
+	template class baseTypeRange<tSquare, tSquare::A1, tSquare::H8>;
+	using tSquareRange = baseTypeRange<tSquare, tSquare::A1, tSquare::H8>;
+	
 	/*	\brief get file of a square
 		\author Marco Belli
 		\version 1.0

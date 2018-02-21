@@ -25,7 +25,7 @@ namespace libChess
 	{
 		_clearStateList();
 		
-		_getActualState().setTurn( whiteTurn );
+		_getActualState().setTurn( baseTypes::whiteTurn );
 		
 		_setUsThem();
 	}
@@ -69,7 +69,7 @@ namespace libChess
 	{
 		for (auto& piece : _squares)
 		{
-			piece = empty;
+			piece = baseTypes::empty;
 		}
 		for (auto& b : _bitBoard)
 		{
@@ -104,7 +104,7 @@ namespace libChess
 	
 	inline void Position::_setUsThem(void)
 	{
-		eTurn turn = getActualStateConst().getTurn();
+		baseTypes::eTurn turn = getActualStateConst().getTurn();
 		
 		_Us = &_bitBoard[ turn ];
 		_Them = &_bitBoard[ getSwitchedTurn(turn) ];
@@ -115,24 +115,24 @@ namespace libChess
 		std::swap( _Us , _Them );
 	}
 	
-	inline void Position::_addPiece( const bitboardIndex piece, const baseTypes::tSquare s )
+	inline void Position::_addPiece( const baseTypes::bitboardIndex piece, const baseTypes::tSquare s )
 	{
 		//assert(s<baseTypes::squareNumber);
 		//assert(piece<lastBitboard);
 		
-		const bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
 		// todo check if it's fast enough
-		const BitMap b = BitMap::getBitmapFromSquare(s);
+		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
 		//assert(squares[s]==empty);
 
 		_squares[ s ] = piece;
 		_bitBoard[ piece ] += b;
-		_bitBoard[ occupiedSquares ] += b;
+		_bitBoard[ baseTypes::occupiedSquares ] += b;
 		_bitBoard[ MyPieces ] += b;
 	}
 	
-	inline void Position::_removePiece(const bitboardIndex piece,const baseTypes::tSquare s)
+	inline void Position::_removePiece(const baseTypes::bitboardIndex piece,const baseTypes::tSquare s)
 	{
 
 		//assert(!isKing(piece));
@@ -144,18 +144,18 @@ namespace libChess
 		// do_move() and then replace it in undo_move() we will put it at the end of
 		// the list and not in its original place, it means index[] and pieceList[]
 		// are not guaranteed to be invariant to a do_move() + undo_move() sequence.
-		const bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
 		
-		const BitMap b = BitMap::getBitmapFromSquare(s);
+		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
-		_squares[ s ] = empty;
-		_bitBoard[ occupiedSquares ] ^= b;
+		_squares[ s ] = baseTypes::empty;
+		_bitBoard[ baseTypes::occupiedSquares ] ^= b;
 		_bitBoard[ piece ] ^= b;
 		_bitBoard[ MyPieces ] ^= b;
 
 	}
 	
-	inline void Position::_movePiece(const bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to)
+	inline void Position::_movePiece(const baseTypes::bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to)
 	{
 		//assert(from<baseTypes::squareNumber);
 		//assert(to<baseTypes::squareNumber);
@@ -163,14 +163,14 @@ namespace libChess
 		
 		//assert(squares[from]!=empty);
 		//assert(squares[to]==empty);
-		const bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
 		
-		const BitMap fromTo = BitMap::getBitmapFromSquare( from ) ^ to;
+		const baseTypes::BitMap fromTo = baseTypes::BitMap::getBitmapFromSquare( from ) ^ to;
 		
-		_squares[from] = empty;
+		_squares[from] = baseTypes::empty;
 		_squares[to] = piece;
 		
-		_bitBoard[occupiedSquares] ^= fromTo;
+		_bitBoard[baseTypes::occupiedSquares] ^= fromTo;
 		_bitBoard[piece] ^= fromTo;
 		_bitBoard[MyPieces] ^= fromTo;
 		
@@ -186,13 +186,13 @@ namespace libChess
 
 		for(auto t: baseTypes::tSquareRange())
 		{
-			if( _squares[t] != empty )
+			if( _squares[t] != baseTypes::empty )
 			{
 				hash.addPiece( _squares[t], t );
 			}
 		}
 
-		if( st.getTurn() == blackTurn )
+		if( st.getTurn() == baseTypes::blackTurn )
 		{
 			hash.changeSide();
 		}
@@ -213,14 +213,14 @@ namespace libChess
 	{
 		HashKey hash(1);
 		
-		for(const auto t : getBitmap( whitePawns ) )
+		for(const auto t : getBitmap( baseTypes::whitePawns ) )
 		{
-			hash.addPiece( whitePawns, t );
+			hash.addPiece( baseTypes::whitePawns, t );
 		}
 		
-		for(const auto t : getBitmap( blackPawns ) )
+		for(const auto t : getBitmap( baseTypes::blackPawns ) )
 		{
-			hash.addPiece( blackPawns, t );
+			hash.addPiece( baseTypes::blackPawns, t );
 		}
 		return hash;
 	}
@@ -229,9 +229,9 @@ namespace libChess
 	HashKey Position::_calcMaterialKey(void) const
 	{
 		HashKey hash;
-		for( const auto p: bitboardIndexRange())
+		for( const auto p: baseTypes::bitboardIndexRange())
 		{
-			if ( isValidPiece(p) )
+			if ( baseTypes::isValidPiece(p) )
 			{
 				for ( unsigned int cnt = 0; cnt < getPieceCount( p ); ++cnt )
 				{
@@ -263,7 +263,7 @@ namespace libChess
 			for( const auto file: baseTypes::tFileRange() )
 			{
 				const baseTypes::tSquare sq = getSquareFromFileRank( file, rank );
-				const bitboardIndex piece = getPieceAt( sq );
+				const baseTypes::bitboardIndex piece = getPieceAt( sq );
 				
 				// write piece...
 				if( isValidPiece(piece) )
@@ -297,7 +297,7 @@ namespace libChess
 		
 		// turn
 		s += " ";
-		if( st.getTurn() == blackTurn )
+		if( st.getTurn() == baseTypes::blackTurn )
 		{
 			s += "b";
 		}
@@ -344,7 +344,7 @@ namespace libChess
 			for( const auto file: baseTypes::tFileRange() ) 
 			{
 				const baseTypes::tSquare sq =getSquareFromFileRank( file, rank );
-				const bitboardIndex piece = getPieceAt( sq );
+				const baseTypes::bitboardIndex piece = getPieceAt( sq );
 				
 				// write piece...
 				if( isValidPiece(piece) )
@@ -356,16 +356,16 @@ namespace libChess
 					}
 					emptyFiles = 0u;
 					
-					bitboardIndex symPiece = piece;
-					if( isBlackPiece( symPiece ) )
+					baseTypes::bitboardIndex symPiece = piece;
+					if( baseTypes::isBlackPiece( symPiece ) )
 					{
-						symPiece -= separationBitmap;
+						symPiece -= baseTypes::separationBitmap;
 					}
 					else
 					{
-						symPiece += separationBitmap;
+						symPiece += baseTypes::separationBitmap;
 					}
-					s += getPieceName( symPiece );
+					s += baseTypes::getPieceName( symPiece );
 				}
 				else
 				{
@@ -386,7 +386,7 @@ namespace libChess
 		
 		// turn
 		s += " ";
-		if( st.getTurn() == blackTurn )
+		if( st.getTurn() == baseTypes::blackTurn )
 		{
 			s += "w";
 		}
@@ -398,10 +398,10 @@ namespace libChess
 		
 		// castling rights
 		symmSt.clearAllCastleRights();
-		if( st.hasCastleRight( wCastleOO ) ) symmSt.setCastleRight(  bCastleOO );
-		if( st.hasCastleRight( wCastleOOO ) ) symmSt.setCastleRight(  bCastleOOO );
-		if( st.hasCastleRight( bCastleOO ) ) symmSt.setCastleRight(  wCastleOO );
-		if( st.hasCastleRight( bCastleOOO ) ) symmSt.setCastleRight(  wCastleOOO );
+		if( st.hasCastleRight( baseTypes::wCastleOO ) ) symmSt.setCastleRight( baseTypes::bCastleOO );
+		if( st.hasCastleRight( baseTypes::wCastleOOO ) ) symmSt.setCastleRight( baseTypes::bCastleOOO );
+		if( st.hasCastleRight( baseTypes::bCastleOO ) ) symmSt.setCastleRight( baseTypes::wCastleOO );
+		if( st.hasCastleRight( baseTypes::bCastleOOO ) ) symmSt.setCastleRight( baseTypes::wCastleOOO );
 		s += symmSt.getCastleRightsString();
 		
 		s += " ";
@@ -440,8 +440,8 @@ namespace libChess
 			for( const auto file: baseTypes::tFileRange() )
 			{
 				const baseTypes::tSquare sq =getSquareFromFileRank( file, rank );
-				const bitboardIndex piece = getPieceAt( sq );
-				s += " " + getPieceName( piece ) + " |";
+				const baseTypes::bitboardIndex piece = getPieceAt( sq );
+				s += " " + baseTypes::getPieceName( piece ) + " |";
 			}
 			s += "\n";
 			
@@ -454,7 +454,7 @@ namespace libChess
 		}
 		s += "\n";
 
-		s += (st.getTurn() == whiteTurn ? "WHITE TO MOVE" : "BLACK TO MOVE");
+		s += (st.getTurn() == baseTypes::whiteTurn ? "WHITE TO MOVE" : "BLACK TO MOVE");
 		s += "\n";
 		s += "50 move counter ";
 		s += std::to_string( st.getFiftyMoveCnt() ) + "\n";
@@ -532,8 +532,8 @@ namespace libChess
 				}
 				// TODO try to use a function here that map char to index -> using PIECE_NAMES_FEN in bitBoardIndex.h
 				
-				bitboardIndex piece = getPieceFromUci(token);
-				if( piece != empty )
+				baseTypes::bitboardIndex piece = baseTypes::getPieceFromUci(token);
+				if( piece != baseTypes::empty )
 				{
 					_addPiece( piece, sq );
 				}
@@ -554,11 +554,11 @@ namespace libChess
 		ss >> token;
 		if( token == 'w' )
 		{
-			st.setTurn(whiteTurn);
+			st.setTurn(baseTypes::whiteTurn);
 		}
 		else if( token == 'b' )
 		{
-			st.setTurn(blackTurn);
+			st.setTurn(baseTypes::blackTurn);
 		}
 		else
 		{
@@ -583,19 +583,19 @@ namespace libChess
 			{
 			case 'K':
 				++crCounter;
-				st.setCastleRight( wCastleOO );
+				st.setCastleRight( baseTypes::wCastleOO );
 				break;
 			case 'Q':
 				++crCounter;
-				st.setCastleRight( wCastleOOO);
+				st.setCastleRight( baseTypes::wCastleOOO);
 				break;
 			case 'k':
 				++crCounter;
-				st.setCastleRight( bCastleOO);
+				st.setCastleRight( baseTypes::bCastleOO);
 				break;
 			case 'q':
 				++crCounter;
-				st.setCastleRight( bCastleOOO);
+				st.setCastleRight( baseTypes::bCastleOOO);
 				break;
 			case '-':
 				break;
@@ -652,14 +652,14 @@ namespace libChess
 		
 		if( ss.eof() )
 		{
-			st.setPliesCnt( int( st.getTurn() == blackTurn) );
+			st.setPliesCnt( int( st.getTurn() == baseTypes::blackTurn) );
 			st.resetFiftyMoveCnt();
 		}
 		else
 		{
 			int plies;
 			ss >> plies;
-			plies = std::max( 2 * ( plies - 1), 0) + int( st.getTurn() == blackTurn );
+			plies = std::max( 2 * ( plies - 1), 0) + int( st.getTurn() == baseTypes::blackTurn );
 			st.setPliesCnt( plies );
 		}
 		
