@@ -22,7 +22,7 @@
 #include <array>
 #include "State.h"
 #include "BitMap.h"
-#include "bitboardIndex.h"
+#include "BitBoardIndex.h"
 
 namespace libChess
 {
