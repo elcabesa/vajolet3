@@ -245,21 +245,21 @@ namespace {
 		ASSERT_EQ(count, 0u);
 	}
 	
-	TEST(bitboardIndex, getMyPiecesfromPiece)
+	TEST(bitboardIndex, getMyPiecesFromPiece)
 	{
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteKing ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteQueens ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteRooks ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteBishops ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whiteKnights ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesfromPiece( bitboardIndex::whitePawns ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteKing ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteQueens ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteRooks ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteBishops ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteKnights ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whitePawns ) );
 		
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackKing ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackQueens ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackRooks ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackBishops ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackKnights ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesfromPiece( bitboardIndex::blackPawns ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackKing ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackQueens ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackRooks ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackBishops ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackKnights ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackPawns ) );
 
 	}
 	
@@ -284,6 +284,196 @@ namespace {
 		ASSERT_FALSE(isValidPiece( bitboardIndex::separationBitmap ) );
 		ASSERT_FALSE(isValidPiece( bitboardIndex::blackPieces ) );
 
+	}
+	
+	TEST(bitboardIndex, isPawn)
+	{
+		ASSERT_FALSE(isPawn( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::whiteKnights ) );
+		ASSERT_TRUE(isPawn( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isPawn( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::blackKnights ) );
+		ASSERT_TRUE(isPawn( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isPawn( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isKing)
+	{
+		ASSERT_TRUE(isKing( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whitePawns ) );
+		
+		ASSERT_TRUE(isKing( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isKing( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isKing( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isKing( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isKing( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isQueen)
+	{
+		ASSERT_FALSE(isQueen( bitboardIndex::whiteKing ) );
+		ASSERT_TRUE(isQueen( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isQueen( bitboardIndex::blackKing ) );
+		ASSERT_TRUE(isQueen( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isQueen( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isRook)
+	{
+		ASSERT_FALSE(isRook( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isRook( bitboardIndex::whiteQueens ) );
+		ASSERT_TRUE(isRook( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isRook( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isRook( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isRook( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isRook( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isRook( bitboardIndex::blackQueens ) );
+		ASSERT_TRUE(isRook( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isRook( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isRook( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isRook( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isRook( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isRook( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isRook( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isRook( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isBishop)
+	{
+		ASSERT_FALSE(isBishop( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::whiteRooks ) );
+		ASSERT_TRUE(isBishop( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isBishop( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::blackRooks ) );
+		ASSERT_TRUE(isBishop( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isBishop( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isKnight)
+	{
+		ASSERT_FALSE(isKnight( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::whiteBishops ) );
+		ASSERT_TRUE(isKnight( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isKnight( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::blackBishops ) );
+		ASSERT_TRUE(isKnight( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isKnight( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isBlackPiece)
+	{
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whiteKing ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whiteQueens ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whiteRooks ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whiteBishops ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whiteKnights ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whitePawns ) );
+		
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackKing ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackQueens ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackRooks ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackBishops ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackKnights ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackPawns ) );
+		
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::whitePieces ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::separationBitmap ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(bitboardIndex, isWhitePiece)
+	{
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whiteKing ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whiteQueens ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whiteRooks ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whiteBishops ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whiteKnights ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whitePawns ) );
+		
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackKing ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackQueens ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackRooks ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackBishops ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackKnights ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackPawns ) );
+		
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::occupiedSquares ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::whitePieces ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackPieces ) );
+
+	}
+	
+	TEST(eTurn, getSwitchedTurn)
+	{
+		ASSERT_EQ( whiteTurn, getSwitchedTurn(blackTurn) );
+		ASSERT_EQ( blackTurn, getSwitchedTurn(whiteTurn) );;
 	}
 	
 }

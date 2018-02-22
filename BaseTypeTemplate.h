@@ -104,10 +104,14 @@ namespace libChess
 		static inline myType& operator-=(myType& d1, const int d2) { d1 = d1 - d2; return d1; }
 		
 		
+		/*	\brief range class used to iterate in for(auto a: range())
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
 		template<typename type, type minValue, type maxValue> class baseTypeRange
 		{
 
-		
 		public:
 			baseTypeRange(type min = minValue, type Max = maxValue): _min(min), _Max( Max + 1 ){ if(_Max < _min) _Max = _min; }
 
@@ -131,6 +135,11 @@ namespace libChess
 
 		};
 		
+		/*	\brief range class used to backward iterate in for(auto a: range())
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
 		template<typename type, type minValue, type maxValue> class baseTypeNegativeRange
 		{
 

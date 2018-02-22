@@ -39,6 +39,14 @@ namespace {
 	
 	TEST(Move, constructor3)
 	{
+		Move x(41233);
+		Move y(x);
+		
+		ASSERT_EQ( 41233, y.getPacked() );
+	}
+	
+	TEST(Move, constructor4)
+	{
 		{
 			Move x(baseTypes::tSquare::A2, baseTypes::tSquare::D6);
 			
@@ -129,13 +137,6 @@ namespace {
 	}
 	
 	
-	TEST(Move, copyConstructor)
-	{
-		Move x(905);
-		Move y(x);
-		ASSERT_EQ( y.getPacked(), x.getPacked() );
-	}
-	
 	TEST(Move, Equal)
 	{
 		Move x(905);
@@ -186,6 +187,13 @@ namespace {
 		ASSERT_FALSE(y.isPromotionMove());
 		ASSERT_FALSE(y.isCastleMove());
 		ASSERT_FALSE(y.isEnPassantMove());
+	}
+	
+	TEST(Move, assign3)
+	{
+		Move x(4533);
+		x = 12;
+		ASSERT_EQ( 12, x.getPacked());
 	}
 	
 	TEST(Move, set1)

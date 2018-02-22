@@ -25,109 +25,176 @@
 namespace libChess
 {
 	
-/*!	\brief struct move
-    \author Marco Belli
-	\version 1.0
-	\date 08/11/2013
- */
-class Move
-{
-protected:
-	union
+	/*!	\brief class move
+		\author Marco Belli
+		\version 1.0
+		\date 22/02/2018
+	 */
+	class Move
 	{
-		struct
+	public:
+		enum eflags
 		{
-			unsigned _from		:6;
-			unsigned _to		:6;
-			unsigned _promotion	:2;
-			unsigned _flags		:2;
-		}_bit;
-		unsigned short _packed;
+			fnone,
+			fpromotion,
+			fenpassant,
+			fcastle,
+		};
+
+		enum epromotion
+		{
+			promQueen,
+			promRook,
+			promBishop,
+			promKnight,
+		};
+		
+		/*****************************************************************
+		*	constructors
+		******************************************************************/
+		Move(){}
+		Move(const Move& m): _packed(m._packed){}
+		explicit Move(const unsigned short i):_packed(i){}
+		Move(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
+		
+		/*****************************************************************
+		*	Operators
+		******************************************************************/
+		inline bool operator == (const Move& d1) const { return _packed == d1._packed;}
+		inline bool operator != (const Move& d1) const { return _packed != d1._packed;}
+		inline Move& operator = (const unsigned short b) { _packed = b; return *this;}
+		inline Move& operator = (const Move&m){ _packed = m._packed; return *this;}
+
+		/*****************************************************************
+		*	setter methods
+		******************************************************************/
+		void setFrom(baseTypes::tSquare from);
+		void setTo(baseTypes::tSquare to);
+		void setFlag(eflags fl);
+		void clearFlag();
+		void setPromotion(epromotion pr);
+		
+		/*****************************************************************
+		*	getter methods
+		******************************************************************/
+		epromotion getPromotionType() const;
+		baseTypes::tSquare getFrom() const;
+		baseTypes::tSquare getTo() const;
+		unsigned short getPacked() const;
+		
+		/*****************************************************************
+		*	other methods
+		******************************************************************/
+		bool isPromotionMove() const;
+		bool isCastleMove() const;
+		bool isEnPassantMove() const;
+		std::string to_string() const;
+		
+		/*****************************************************************
+		*	static methods
+		******************************************************************/
+		// todo , si può fare private e poi avere metodi per fare clean e confronto?
+		static const Move NOMOVE;
+		
+		/*****************************************************************
+		*	private members
+		******************************************************************/
+
+	protected:
+		union
+		{
+			struct
+			{
+				unsigned _from		:6;
+				unsigned _to		:6;
+				unsigned _promotion	:2;
+				unsigned _flags		:2;
+			}_bit;
+			unsigned short _packed;
+		};
+
+
 	};
 	
-public:
-
-	enum eflags{
-		fnone,
-		fpromotion,
-		fenpassant,
-		fcastle,
-	};
-
-	enum epromotion{
-		promQueen,
-		promRook,
-		promBishop,
-		promKnight,
-	};
+	inline void Move::setFrom(baseTypes::tSquare from){ _bit._from = from; }
+	inline void Move::setTo(baseTypes::tSquare to){ _bit._to = to; }
+	inline void Move::setFlag(eflags fl){ _bit._flags = fl; }
+	inline void Move::clearFlag(){ _bit._flags = fnone; }
+	inline void Move::setPromotion(epromotion pr){ _bit._promotion = pr; }
 	
-	Move(){}
-	Move(const Move& m): _packed(m._packed){}
-	explicit Move(const unsigned short i):_packed(i){}
-	Move(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
-	
-	
-
-
-	inline bool operator == (const Move& d1) const { return _packed == d1._packed;}
-	inline bool operator != (const Move& d1) const { return _packed != d1._packed;}
-	inline Move& operator = (const unsigned short b) { _packed = b; return *this;}
-	inline Move& operator = (const Move&m){ _packed = m._packed; return *this;}
-
-	
-	inline void setFrom(baseTypes::tSquare from){ _bit._from = from; }
-	inline void setTo(baseTypes::tSquare to){ _bit._to = to; }
-	inline void setFlag(eflags fl){ _bit._flags = fl; }
-	inline void clearFlag(){ _bit._flags = fnone; }
-	inline void setPromotion(epromotion pr){ _bit._promotion = pr; }
-	
-	inline epromotion getPromotionType() const
+	inline Move::epromotion Move::getPromotionType() const
 	{
 		return (epromotion)(_bit._promotion);
 	}
 	
-	inline bool isPromotionMove() const
+	inline bool Move::isPromotionMove() const
 	{
 		return _bit._flags == Move::fpromotion;
 	}
 	
-	inline bool isCastleMove() const
+	inline bool Move::isCastleMove() const
 	{
 		return _bit._flags == Move::fcastle;
 	}
-	inline bool isEnPassantMove() const
+	
+	inline bool Move::isEnPassantMove() const
 	{
 		return _bit._flags == Move::fenpassant;
 	}
-	inline baseTypes::tSquare getFrom()const {return baseTypes::tSquare(_bit._from);}
-	inline baseTypes::tSquare getTo()const {return baseTypes::tSquare(_bit._to);}
-	inline unsigned short getPacked()const {return _packed;}
 	
-	std::string to_string(void) const;
-
-
-
-};
-
-extern const Move NOMOVE;
-
-
-class extMove: public Move
-{
-private:
-	Score _score;
-public:
-	/*Score inline getScore() const { return _score;}*/
-	void inline setScore(const Score s){ _score = s;}
+	inline baseTypes::tSquare Move::getFrom()const
+	{
+		return baseTypes::tSquare(_bit._from);
 	
-	extMove(){};
-	explicit extMove(const Move& m): Move(m){}
-	explicit extMove(const unsigned short i): Move(i){}
-	extMove(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
+	}
+	inline baseTypes::tSquare Move::getTo()const
+	{
+		return baseTypes::tSquare(_bit._to);
+	}
 	
-	inline bool operator < (const extMove& d1) const { return _score < d1._score;}
-};
+	inline unsigned short Move::getPacked()const
+	{
+		return _packed;
+	}
 
+	
+
+	/*!	\brief struct extMove
+		\author Marco Belli
+		\version 1.0
+		\date 22/02/2018
+	 */
+	class extMove: public Move
+	{
+	
+	public:
+		
+		
+		/*****************************************************************
+		*	constructors
+		******************************************************************/
+		extMove(){};
+		explicit extMove(const Move& m): Move(m){}
+		explicit extMove(const unsigned short i): Move(i){}
+		extMove(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
+		
+		/*****************************************************************
+		*	Operators
+		******************************************************************/
+		inline bool operator < (const extMove& d1) const { return _score < d1._score;}
+		
+		/*Score inline getScore() const { return _score;}*/
+		
+		/*****************************************************************
+		*	setter methods
+		******************************************************************/
+		void setScore(const Score s);
+		
+	private:
+		Score _score;
+	};
+	
+	void inline extMove::setScore(const Score s){ _score = s;}
 
 }
 

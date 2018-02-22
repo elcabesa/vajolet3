@@ -120,7 +120,7 @@ namespace libChess
 		//assert(s<baseTypes::squareNumber);
 		//assert(piece<lastBitboard);
 		
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
 		// todo check if it's fast enough
 		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
@@ -144,7 +144,7 @@ namespace libChess
 		// do_move() and then replace it in undo_move() we will put it at the end of
 		// the list and not in its original place, it means index[] and pieceList[]
 		// are not guaranteed to be invariant to a do_move() + undo_move() sequence.
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
 		
 		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
@@ -163,7 +163,7 @@ namespace libChess
 		
 		//assert(squares[from]!=empty);
 		//assert(squares[to]==empty);
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesfromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
 		
 		const baseTypes::BitMap fromTo = baseTypes::BitMap::getBitmapFromSquare( from ) ^ to;
 		
@@ -664,7 +664,7 @@ namespace libChess
 		}
 		
 		st.resetCountersNullMove();
-		st.setCurrentMove( NOMOVE );
+		st.setCurrentMove( Move::NOMOVE );
 		st.resetCapturedPiece();
 		/*
 		// todo readd those methods

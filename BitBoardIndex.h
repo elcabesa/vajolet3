@@ -25,9 +25,11 @@ namespace libChess
 {
 	namespace baseTypes
 	{
-	
-	
-	
+		/*! \brief piece index used to index pieces and bitboard all over the code 
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
 		enum bitboardIndex
 		{
 			occupiedSquares = 0,			//0		00000000
@@ -65,15 +67,25 @@ namespace libChess
 
 		};
 		
-		static inline std::string getPieceName( bitboardIndex in )
+		/*! \brief function that get UCI piece character from piece index
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		static inline std::string getPieceName( const bitboardIndex in )
 		{
-			static std::string PIECE_NAMES_FEN[] = {" ","K","Q","R","B","N","P"," "," ","k","q","r","b","n","p"," "};
+			static std::string PIECE_NAMES_FEN[] = { " ","K","Q","R","B","N","P"," "," ","k","q","r","b","n","p"," " };
 			
 			assert( in < bitboardNumber );
-			return std::string(PIECE_NAMES_FEN[ in ]);
+			return std::string( PIECE_NAMES_FEN[ in ] );
 		}
 		
-		static inline bitboardIndex getPieceFromUci( char token )
+		/*! \brief function that get UCI piece character from piece index
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		static inline bitboardIndex getPieceFromUci( const char token )
 		{
 			switch(token)
 			{
@@ -120,70 +132,99 @@ namespace libChess
 			return empty;
 		}
 		
-		static inline bitboardIndex getMyPiecesfromPiece(const bitboardIndex& piece)
+		/*! \brief function that get UCI piece character from piece index
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		static inline bitboardIndex getMyPiecesFromPiece( const bitboardIndex& piece )
 		{
-			return  piece > separationBitmap ? blackPieces : whitePieces;
+			return  ( piece > separationBitmap ) ? blackPieces : whitePieces;
 		}
 		
-		static inline bool isValidPiece(const bitboardIndex& piece)
+		static inline bool isValidPiece( const bitboardIndex& piece )
 		{
-			return  (piece != occupiedSquares) && (piece != whitePieces) && (piece != separationBitmap) && (piece != blackPieces);
+			return  ( piece != occupiedSquares ) && ( piece != whitePieces ) && ( piece != separationBitmap ) && ( piece != blackPieces );
 		}
 		
 		/*! \brief tell if the piece is a pawn
 			\author Marco Belli
 			\version 1.0
-			\date 27/10/2013
+			\date 22/02/2018
 		*/
-		inline static bool isPawn(bitboardIndex piece)
+		inline static bool isPawn( const bitboardIndex piece )
 		{
-			return (piece&7) == Pawns;
+			return ( piece & 7 ) == Pawns;
 		}
+		
 		/*! \brief tell if the piece is a king
 			\author Marco Belli
 			\version 1.0
-			\date 27/10/2013
+			\date 22/02/2018
 		*/
-		inline static bool isKing(bitboardIndex piece)
+		inline static bool isKing( const bitboardIndex piece )
 		{
-			return (piece&7) == King;
+			return ( piece & 7 ) == King;
 		}
+		
 		/*! \brief tell if the piece is a queen
 			\author Marco Belli
 			\version 1.0
-			\date 04/11/2013
+			\date 22/02/2018
 		*/
-		inline static bool isQueen(bitboardIndex piece)
+		inline static bool isQueen( const bitboardIndex piece )
 		{
-			return (piece&7) == Queens;
+			return ( piece & 7 ) == Queens;
 		}
+		
 		/*! \brief tell if the piece is a rook
 			\author Marco Belli
 			\version 1.0
-			\date 04/11/2013
+			\date 22/02/2018
 		*/
-		inline static bool isRook(bitboardIndex piece)
+		inline static bool isRook( const bitboardIndex piece )
 		{
-			return (piece&7) == Rooks;
+			return ( piece & 7 ) == Rooks;
 		}
+		
 		/*! \brief tell if the piece is a bishop
 			\author Marco Belli
 			\version 1.0
-			\date 04/11/2013
+			\date 22/02/2018
 		*/
-		inline static bool isBishop(bitboardIndex piece)
+		inline static bool isBishop( const bitboardIndex piece )
 		{
-			return (piece&7) == Bishops;
+			return ( piece & 7 ) == Bishops;
 		}
 		
-		static inline bool isBlackPiece(const bitboardIndex& piece)
+		/*! \brief tell if the piece is a knight
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		inline static bool isKnight( const bitboardIndex piece )
 		{
-			return  piece & 8;
+			return ( piece & 7 ) == Knights;
 		}
 		
-		static inline bool isWhitePiece(const bitboardIndex& piece)
+		/*! \brief tell if the piece is black
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		static inline bool isBlackPiece( const bitboardIndex piece )
 		{
-			return  piece < separationBitmap;
+			return ( piece & 8 ) ;
+		}
+		
+		/*! \brief tell if the piece is white
+			\author Marco Belli
+			\version 1.0
+			\date 22/02/2018
+		*/
+		static inline bool isWhitePiece( const bitboardIndex  piece )
+		{
+			return ( piece < separationBitmap );
 		}
 
 		/*	\brief operators for bitboardIndex
@@ -210,18 +251,33 @@ namespace libChess
 		*/
 		template class baseTypeRange<bitboardIndex, bitboardIndex::occupiedSquares, bitboardIndex::blackPieces>;
 		using bitboardIndexRange = baseTypeRange<bitboardIndex, bitboardIndex::occupiedSquares, bitboardIndex::blackPieces>;
-			
-		enum eTurn	// color turn. ( it's also used as offset to access bitmaps by index)
+		
+		/*	\brief enum for turn, also used as offset to access bitmap by index
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		enum eTurn
 		{
 			whiteTurn = 0,
 			blackTurn = (int)blackKing - (int)whiteKing
 		};
 		
-		inline eTurn getSwitchedTurn(eTurn t)
+		/*	\brief return the switched turn
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		inline eTurn getSwitchedTurn( const eTurn t )
 		{
-			return (eTurn)(blackTurn - t);
+			return ( eTurn )( blackTurn - t );
 		}
 
+		/*	\brief enum with the castle rights definitions
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
 		enum eCastle	// castleRights
 		{
 			wCastleOO=1,
