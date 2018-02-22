@@ -25,7 +25,12 @@ using namespace libChess;
 
 namespace {
 	
-	
+	TEST(Position, constructor)
+	{
+		Position p;
+		Position p2(p);
+		ASSERT_EQ( 1, p2.getStateSize() );
+	}
 	
 	
 }
