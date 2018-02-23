@@ -397,7 +397,7 @@ namespace libChess
 		s += " ";
 		
 		// castling rights
-		symmSt.clearAllCastleRights();
+		symmSt.resetAllCastleRights();
 		if( st.hasCastleRight( baseTypes::wCastleOO ) ) symmSt.setCastleRight( baseTypes::bCastleOO );
 		if( st.hasCastleRight( baseTypes::wCastleOOO ) ) symmSt.setCastleRight( baseTypes::bCastleOOO );
 		if( st.hasCastleRight( baseTypes::bCastleOO ) ) symmSt.setCastleRight( baseTypes::wCastleOO );
@@ -574,7 +574,7 @@ namespace libChess
 		}
 		
 		// castle rights
-		st.clearAllCastleRights();
+		st.resetAllCastleRights();
 		unsigned int crCounter = 0;
 		
 		while ( (ss >> token) && !isspace(token) )

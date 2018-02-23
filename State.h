@@ -36,7 +36,112 @@ namespace libChess
 	class GameState
 	{
 		friend class Position;
-		private:
+		
+	public:
+		
+		/*****************************************************************
+		*	constructors
+		******************************************************************/
+		GameState();
+		
+		
+		/*****************************************************************
+		*	getters
+		******************************************************************/
+		const HashKey& getKey() const;
+		const HashKey& getPawnKey() const;
+		const HashKey& getMaterialKey() const;
+		
+		const simdScore& getNonPawnMaterialValue() const;
+		const simdScore& getMaterialValue() const;
+		
+		baseTypes::eTurn getTurn() const;
+		baseTypes::eCastle getCastleRights() const;
+		baseTypes::tSquare getEpSquare() const;
+		
+		std::string getCastleRightsString() const;
+		std::string getEpSquareString() const;
+		
+		unsigned int getFiftyMoveCnt() const;
+		unsigned int getPliesFromNullCnt() const;
+		unsigned int getPliesCnt() const;
+		unsigned int getFullMoveCounter() const;
+		
+		baseTypes::bitboardIndex getCapturedPiece() const;
+		const baseTypes::BitMap& getCheckingSquare( const baseTypes::bitboardIndex idx ) const;
+		
+		const baseTypes::BitMap& getHiddenCheckers() const;
+		const baseTypes::BitMap& getPinned() const;
+		const baseTypes::BitMap& getCheckers() const;
+		
+		const Move& getCurrentMove() const;
+		
+	protected:
+		/*****************************************************************
+		*	setters methods, doesn't update keys
+		******************************************************************/
+		void setKeys( const HashKey& key, const HashKey& pawnKey, const HashKey& materialKey );
+		
+		void setMaterialValues( const simdScore MaterialValue, const simdScore nonPawnMaterialValue );
+		
+		void setTurn( const baseTypes::eTurn turn);
+		
+		void setCastleRights( const baseTypes::eCastle cr );
+		void setCastleRight( const baseTypes::eCastle cr );
+		void resetAllCastleRights();
+		
+		void setFiftyMoveCnt( const unsigned int fmc );
+		void setPliesCnt( const unsigned int cnt );
+		
+		void setCurrentMove( const Move& m );
+		void setEpSquare( const baseTypes::tSquare sq );
+		
+		void setCapturedPiece( const baseTypes::bitboardIndex idx );
+		void resetCapturedPiece();
+		
+		void setCheckingSquare( const baseTypes::bitboardIndex idx, const baseTypes::BitMap& b );
+		void setHiddenChechers( const baseTypes::BitMap& b);
+		void setPinned( const baseTypes::BitMap& b);
+		void setCheckers( const baseTypes::BitMap& b );
+			
+		/*****************************************************************
+		*	update method, if necessary update keys
+		******************************************************************/
+		
+		void changeTurn();
+		
+		void incrementCounters();
+		void incrementCountersNullMove();
+		void resetCountersNullMove();
+		void resetFiftyMoveCnt();
+		
+		void clearEpSquare();
+		void addEpSquare( const baseTypes::tSquare sq );
+		
+		void clearCastleRight( const int cr );
+		
+		void keyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
+		void keyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
+		void keyPromotePiece(const baseTypes::bitboardIndex piece, const baseTypes::bitboardIndex promotedPiece, const baseTypes::tSquare sq);
+		
+		void pawnKeyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
+		void pawnKeyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
+		
+		void materialKeyRemovePiece(const baseTypes::bitboardIndex p , unsigned int count);
+		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece , const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount);
+		
+		void MaterialMovePiece( const simdScore to, const simdScore from );
+		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
+		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+		
+		/*****************************************************************
+		*	other methods
+		******************************************************************/
+		bool hasCastleRight( const baseTypes::eCastle cr) const;
+		bool hasEpSquareSet(void)const;
+		
+		
+	private:
 		HashKey 
 			_key,		/*!<  hashkey identifying the position*/
 			_pawnKey,	/*!<  hashkey identifying the pawn formation*/
@@ -51,6 +156,7 @@ namespace libChess
 		baseTypes::tSquare _epSquare;	/*!<  en passant square*/
 		
 		unsigned int 
+		/* todo unificare _fiftyMoveCnt e _pliesFromNull?? */
 			_fiftyMoveCnt,	/*!<  50 move count used for draw rule*/
 			_pliesFromNull,	/*!<  plies from null move*/
 		/* todo spostare fuori dal gamestate? */
@@ -63,118 +169,6 @@ namespace libChess
 		baseTypes::BitMap _pinned;	/*!< pinned pieces*/
 		baseTypes::BitMap _checkers;	/*!< checking pieces*/
 		Move _currentMove;
-		
-		public:
-		
-		//-----------------------------------------
-		// constructor
-		//-----------------------------------------
-		GameState();
-		
-		
-		//-----------------------------------------
-		// getters
-		//-----------------------------------------
-		const HashKey& getKey() const;
-		const HashKey& getPawnKey() const;
-		const HashKey& getMaterialKey() const;
-		
-		const simdScore& getNonPawnMaterialValue() const;
-		const simdScore& getMaterialValue() const;
-		
-		baseTypes::eTurn getTurn() const;
-		baseTypes::eCastle getCastleRights() const;
-		std::string getCastleRightsString(void) const;
-		baseTypes::tSquare getEpSquare() const;
-		std::string getEpSquareString(void) const;
-		
-		
-		unsigned int getFiftyMoveCnt() const;
-		unsigned int getPliesFromNullCnt() const;
-		unsigned int getPliesCnt() const;
-		
-		baseTypes::bitboardIndex getCapturedPiece() const;
-		baseTypes::BitMap getCheckingSquare( const baseTypes::bitboardIndex idx ) const;
-		
-		const baseTypes::BitMap& getHiddenCheckers() const;
-		const baseTypes::BitMap& getPinned() const;
-		const baseTypes::BitMap& getCheckers() const;
-		
-		const Move& getCurrentMove() const;
-		
-		protected:
-		//-----------------------------------------
-		// methods
-		//-----------------------------------------
-		void setKeys(const HashKey& key, const HashKey& pawnKey, const HashKey& materialKey );
-		
-		void setMaterialValues(const simdScore MaterialValue, const simdScore nonPawnMaterialValue );
-		
-		void setTurn( const baseTypes::eTurn turn);
-		
-		void setCastleRights( const baseTypes::eCastle cr);
-		
-		void setCastleRight( const baseTypes::eCastle cr);
-		
-		void setFiftyMoveCnt( const unsigned int fmc );
-		
-		void setPliesCnt( const unsigned int cnt );
-		
-		void changeTurn();
-		
-		void setCurrentMove( const Move& m );
-		
-		void incrementCounters();
-		
-		void incrementCountersNullMove();
-		
-		void resetCountersNullMove();
-		
-		void resetFiftyMoveCnt();
-		
-		void resetEpSquare();
-		
-		void setEpSquare( const baseTypes::tSquare sq);
-		
-		void setCapturedPiece( const baseTypes::bitboardIndex idx );
-		
-		void resetCapturedPiece();
-		
-		void clearCastleRight( const int cr );
-		
-		void clearAllCastleRights();
-		
-		void setCheckingSquare( const baseTypes::bitboardIndex idx, const baseTypes::BitMap& b );
-		
-		void setHiddenChechers( const baseTypes::BitMap& b);
-		
-		void setPinned( const baseTypes::BitMap& b);
-		
-		void setCheckers( const baseTypes::BitMap& b );
-		
-		void keyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
-		
-		void keyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
-		
-		void keyPromotePiece(const baseTypes::bitboardIndex piece, const baseTypes::bitboardIndex promotedPiece, const baseTypes::tSquare sq);
-		
-		void pawnKeyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
-	
-		void pawnKeyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
-		
-		void materialKeyRemovePiece(const baseTypes::bitboardIndex p , unsigned int count);
-	
-		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece , const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount);
-		
-		void MaterialMovePiece( const simdScore to, const simdScore from );
-		
-		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
-	
-		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
-		
-		bool hasCastleRight( const baseTypes::eCastle cr)const{ return _castleRights & cr;}
-		bool hasEpSquareSet(void)const{ return _epSquare != baseTypes::squareNone;}
-		unsigned int getFullMoveCounter(void) const;
 		
 	};
 	
@@ -194,20 +188,20 @@ namespace libChess
 	inline const simdScore& GameState::getNonPawnMaterialValue() const { return _nonPawnMaterialValue; }
 	inline const simdScore& GameState::getMaterialValue()    const { return _materialValue; }
 	
-	inline baseTypes::eTurn GameState::getTurn()                        const {return _turn; }
-	inline baseTypes::eCastle GameState::getCastleRights()              const {return _castleRights; }
-	inline baseTypes::tSquare GameState::getEpSquare()                  const {return _epSquare; }
+	inline baseTypes::eTurn GameState::getTurn()             const {return _turn; }
+	inline baseTypes::eCastle GameState::getCastleRights()   const {return _castleRights; }
+	inline baseTypes::tSquare GameState::getEpSquare()       const {return _epSquare; }
 	
 	inline unsigned int GameState::getFiftyMoveCnt()         const { return _fiftyMoveCnt; }
 	inline unsigned int GameState::getPliesFromNullCnt()     const { return _pliesFromNull; }
 	inline unsigned int GameState::getPliesCnt()             const { return _ply; }
 	
 	inline baseTypes::bitboardIndex GameState::getCapturedPiece()       const { return _capturedPiece; }
-	inline baseTypes::BitMap GameState::getCheckingSquare( const baseTypes::bitboardIndex idx ) const { return _checkingSquares[idx]; }
+	inline const baseTypes::BitMap& GameState::getCheckingSquare( const baseTypes::bitboardIndex idx ) const { return _checkingSquares[idx]; }
 	
 	inline const baseTypes::BitMap& GameState::getHiddenCheckers()      const { return _hiddenCheckers; }
-	inline const baseTypes::BitMap& GameState::getPinned()              const { return _pinned; }
-	inline const baseTypes::BitMap& GameState::getCheckers()            const { return _checkers; }
+	inline const baseTypes::BitMap& GameState::getPinned()   const { return _pinned; }
+	inline const baseTypes::BitMap& GameState::getCheckers() const { return _checkers; }
 	
 	inline const Move& GameState::getCurrentMove()           const { return _currentMove; }
 	
@@ -286,7 +280,7 @@ namespace libChess
 		_fiftyMoveCnt = 0;
 	}
 	
-	inline void GameState::resetEpSquare()
+	inline void GameState::clearEpSquare()
 	{
 		if( _epSquare != baseTypes::squareNone)
 		{
@@ -301,10 +295,18 @@ namespace libChess
 		assert( _epSquare == baseTypes::squareNone);
 		assert( sq < baseTypes::squareNumber );
 		_epSquare = sq;
-		_key.addEp(_epSquare);
-		
-		
+
 	}
+	
+	inline void GameState::addEpSquare( const baseTypes::tSquare sq)
+	{
+		assert( _epSquare == baseTypes::squareNone);
+		assert( sq < baseTypes::squareNumber );
+		_epSquare = sq;
+		_key.addEp(_epSquare);
+	
+	}
+	
 	
 	inline void GameState::setCapturedPiece( const baseTypes::bitboardIndex idx )
 	{
@@ -328,7 +330,7 @@ namespace libChess
 		}
 	}
 	
-	inline void GameState::clearAllCastleRights()
+	inline void GameState::resetAllCastleRights()
 	{
 		_castleRights = (baseTypes::eCastle)0;
 	}
@@ -458,6 +460,16 @@ namespace libChess
 		}
 		
 		return s;
+	}
+	
+	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr ) const
+	{
+		return _castleRights & cr;
+	}
+	
+	inline bool GameState::hasEpSquareSet() const
+	{
+		return _epSquare != baseTypes::squareNone;
 	}
 }
 
