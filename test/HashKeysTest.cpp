@@ -64,7 +64,6 @@ namespace {
 		HashKey y = x;
 		ASSERT_EQ( y, x);
 		
-		// todo change to number of pieces to constant
 		for( auto i : baseTypes::bitboardIndexRange() )
 		{
 			for(auto from: baseTypes::tSquareRange())
@@ -94,7 +93,6 @@ namespace {
 		ASSERT_EQ( y, x );
 		ASSERT_EQ( z, x );
 		
-		// todo change to number of pieces to constant
 		for( auto i : baseTypes::bitboardIndexRange() )
 		{
 			for(auto from: baseTypes::tSquareRange())
