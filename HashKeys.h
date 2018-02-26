@@ -33,34 +33,58 @@ namespace libChess
 //---------------------------------
 class HashKey
 {
-	uint64_t _key;
 public:
+
+	/*****************************************************************
+	*	constructors
+	******************************************************************/
 	HashKey():_key(0){};
 	explicit HashKey(const uint64_t key):_key(key){};
-	
-	
 	HashKey ( const HashKey & ) = default;
 	
+	/*****************************************************************
+	*	Operators
+	******************************************************************/
 	HashKey& operator=(const HashKey & other){_key = other._key; return *this;}
 	bool operator==(const HashKey & other)const {return (_key == other._key);}
 	bool operator!=(const HashKey & other)const {return (_key != other._key);}
 	
+	/*****************************************************************
+	*	methods
+	******************************************************************/
+	
 	//uint64_t inline getKey(void)const{ return _key; } 
 	
-	inline HashKey exclusion(void)const{ return HashKey(_key ^ _exclusion); }
+	HashKey exclusion(void) const;
 	
-	inline HashKey& movePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq){_key ^= _keys[fromSq][p] ^ _keys[toSq][p]; return *this;};
-	inline HashKey& addPiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
-	inline HashKey& removePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq){_key ^= _keys[sq][p]; return *this;};
-	inline HashKey& changeSide(void){_key ^= _side; return *this;};
-	inline HashKey& addEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
-	inline HashKey& removeEp(const baseTypes::tSquare sq){_key ^= _ep[sq]; return *this;};
-	inline HashKey& changeCastlingRight(const baseTypes::eCastle cr){_key ^= _castlingRight[cr]; return *this;};
-	
-	
+	HashKey& movePiece( const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq );
+	HashKey& addPiece( const baseTypes::bitboardIndex p, const baseTypes::tSquare sq );
+	HashKey& removePiece( const baseTypes::bitboardIndex p, const baseTypes::tSquare sq );
+	HashKey& changeSide( void );
+	HashKey& addEp( const baseTypes::tSquare sq );
+	HashKey& removeEp( const baseTypes::tSquare sq );
+	HashKey& changeCastlingRight( const baseTypes::eCastle cr );
 	
 private:
+	uint64_t _key;
+
+public:
+
+	/*****************************************************************
+	*	static methods
+	******************************************************************/
 	
+	static void init();       // initialize the random data
+	//static inline uint64_t getKeys(const baseTypes::tSquare sq,const /*piece*/ unsigned int p){ return _keys[sq][p];};
+	//static inline uint64_t getSide(){ return _side;};
+	//static inline uint64_t getEp(const baseTypes::tSquare sq){ return _ep[sq];};
+	//static inline uint64_t getCastlingRight(const unsigned int cr){ return _castlingRight[cr];};
+	//static inline uint64_t getExclusion(){ return _exclusion;};
+	
+private:
+	/*****************************************************************
+	*	static members
+	******************************************************************/
 	static const unsigned int _CastlingRightBit = 4;
 	static const unsigned int _CastlingRightSize = 1<<_CastlingRightBit;
 	static const unsigned int _KeyNum = baseTypes::bitboardNumber;
@@ -70,15 +94,54 @@ private:
 	static uint64_t _castlingRight[_CastlingRightSize];		// white king-side castling right
 	static uint64_t _exclusion;
 
-public:
 
-	static void init();       // initialize the random data
-	//static inline uint64_t getKeys(const baseTypes::tSquare sq,const /*piece*/ unsigned int p){ return _keys[sq][p];};
-	//static inline uint64_t getSide(){ return _side;};
-	//static inline uint64_t getEp(const baseTypes::tSquare sq){ return _ep[sq];};
-	//static inline uint64_t getCastlingRight(const unsigned int cr){ return _castlingRight[cr];};
-	//static inline uint64_t getExclusion(){ return _exclusion;};
 };
+
+inline HashKey HashKey::exclusion(void)const{ return HashKey(_key ^ _exclusion); }
+	
+inline HashKey& HashKey::movePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq)
+{
+	_key ^= _keys[fromSq][p] ^ _keys[toSq][p];
+	return *this;
+}
+
+inline HashKey& HashKey::addPiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq)
+{
+	_key ^= _keys[sq][p];
+	return *this;
+}
+
+inline HashKey& HashKey::removePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq)
+{
+	_key ^= _keys[sq][p];
+	return *this;
+}
+
+inline HashKey& HashKey::changeSide(void)
+{
+	_key ^= _side;
+	return *this;
+}
+
+inline HashKey& HashKey::addEp(const baseTypes::tSquare sq)
+{
+	_key ^= _ep[sq];
+	return *this;
+}
+
+inline HashKey& HashKey::removeEp(const baseTypes::tSquare sq)
+{
+	_key ^= _ep[sq];
+	return *this;
+
+	}
+inline HashKey& HashKey::changeCastlingRight(const baseTypes::eCastle cr)
+{
+	_key ^= _castlingRight[cr];
+	return *this;
+}
+
+
 
 }
 

@@ -130,7 +130,7 @@ namespace libChess
 		void materialKeyRemovePiece(const baseTypes::bitboardIndex p , unsigned int count);
 		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece , const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount);
 		
-		void MaterialMovePiece( const simdScore to, const simdScore from );
+		void MaterialMovePiece( const simdScore from, const simdScore to );
 		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
 		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
 		
@@ -391,7 +391,7 @@ namespace libChess
 		_materialKey.removePiece( piece, (baseTypes::tSquare)count ).addPiece( promotedPiece, (baseTypes::tSquare)promotedCount );
 	}
 	
-	inline void  GameState::MaterialMovePiece( const simdScore to, const simdScore from )
+	inline void  GameState::MaterialMovePiece( const simdScore from, const simdScore to )
 	{
 		_materialValue += to - from;
 	}
@@ -430,6 +430,7 @@ namespace libChess
 	
 	inline std::string GameState::getCastleRightsString(void) const
 	{
+		// TODO print chess960 CR
 		std::string s;
 		// castling rights
 		bool hasSomeCastleRight = false;

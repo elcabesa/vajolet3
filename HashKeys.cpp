@@ -25,15 +25,6 @@
 
 namespace libChess
 {
-//---------------------------------
-//	global static HashKey
-//---------------------------------
-
-uint64_t  HashKey::_keys[baseTypes::tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
-uint64_t  HashKey::_side;          							// side to move (black)
-uint64_t  HashKey::_ep[baseTypes::tSquare::squareNumber];        		// ep targets (only 16 used)
-uint64_t  HashKey::_castlingRight[_CastlingRightSize];		// white king-side castling right
-uint64_t  HashKey::_exclusion;								// position with an exluded move
 
 /*!	\brief init the HashKey
     \author Marco Belli
@@ -103,6 +94,16 @@ void HashKey::init()
 	}
 
 }
+
+//---------------------------------
+//	global static HashKey
+//---------------------------------
+
+uint64_t  HashKey::_keys[baseTypes::tSquare::squareNumber][_KeyNum];	// position, piece (not all the keys are used)
+uint64_t  HashKey::_side;          							// side to move (black)
+uint64_t  HashKey::_ep[baseTypes::tSquare::squareNumber];   // ep targets (only 16 used)
+uint64_t  HashKey::_castlingRight[_CastlingRightSize];		// white king-side castling right
+uint64_t  HashKey::_exclusion;								// position with an exluded move
 
 }
 

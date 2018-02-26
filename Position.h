@@ -56,6 +56,7 @@ namespace libChess
 		HashKey _calcKey(void) const;
 		HashKey _calcPawnKey(void) const;
 		HashKey _calcMaterialKey(void) const;
+		bool _setupCastleRight(const baseTypes::tSquare rsq);
 	
 		
 	public:

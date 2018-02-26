@@ -250,7 +250,6 @@ namespace libChess
 	*/
 	const std::string Position::getFen(void) const
 	{
-
 		std::string s;
 		
 		const GameState& st = getActualStateConst();
@@ -530,7 +529,6 @@ namespace libChess
 				{
 					return false;
 				}
-				// TODO try to use a function here that map char to index -> using PIECE_NAMES_FEN in bitBoardIndex.h
 				
 				baseTypes::bitboardIndex piece = baseTypes::getPieceFromUci(token);
 				if( piece != baseTypes::empty )
@@ -575,38 +573,97 @@ namespace libChess
 		
 		// castle rights
 		st.resetAllCastleRights();
-		unsigned int crCounter = 0;
+		bool crEmpty = false;
 		
+
+		// todo manage path and masks for castling
 		while ( (ss >> token) && !isspace(token) )
 		{
 			switch(token)
 			{
 			case 'K':
-				++crCounter;
-				st.setCastleRight( baseTypes::wCastleOO );
+			{
+				const baseTypes::tSquare rsq = baseTypes::H1;
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}
+			}
 				break;
 			case 'Q':
-				++crCounter;
-				st.setCastleRight( baseTypes::wCastleOOO);
+			{
+				const baseTypes::tSquare rsq = baseTypes::A1;
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}
+			}
 				break;
 			case 'k':
-				++crCounter;
-				st.setCastleRight( baseTypes::bCastleOO);
+			{
+				const baseTypes::tSquare rsq = baseTypes::H8;
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}
+			}
 				break;
 			case 'q':
-				++crCounter;
-				st.setCastleRight( baseTypes::bCastleOOO);
+			{
+				const baseTypes::tSquare rsq = baseTypes::A8;
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}
+			}
+				break;
+			case 'A':
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'E':
+			case 'F':
+			case 'G':
+			case 'H':
+			{
+				// white castling
+				const baseTypes::tSquare rsq = baseTypes::getSquareFromFileRank( (baseTypes::tFile)((char)token -'A'), baseTypes::one );
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}
+	
+			}
+				break;
+			case 'a':
+			case 'b':
+			case 'c':
+			case 'd':
+			case 'e':
+			case 'f':
+			case 'g':
+			case 'h':
+			{
+				// black castling
+				const baseTypes::tSquare rsq = baseTypes::getSquareFromFileRank( (baseTypes::tFile)((char)token -'a'), baseTypes::eight );
+				
+				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
+				{
+					return false;
+				}	
+			}
+				
 				break;
 			case '-':
+				if( st.getCastleRights() != 0 )
+				{
+					return false;
+				}
+				crEmpty = true;
 				break;
 			default:
 				return false;
 			}
-		}
-		
-		if( crCounter > 4 || (crCounter == 0 && st.getCastleRights() != 0 ) )
-		{
-			return false;
 		}
 		
 		ss >> token;
@@ -688,6 +745,70 @@ namespace libChess
 
 		checkPosConsistency(1);*/
 		return true;
+	}
+	
+	bool Position::_setupCastleRight(const baseTypes::tSquare rsq)
+	{
+	
+		GameState &st = _getActualState();
+		
+		const baseTypes::tSquare ksq = getSquareOfThePiece( baseTypes::whiteKing );
+		const baseTypes::tRank kingRank = getRank(ksq);
+		const baseTypes::tRank rookRank = getRank(rsq);
+		if( kingRank != baseTypes::one && kingRank != baseTypes::eight )
+		{
+			return false;
+		}
+		
+		if( rookRank != kingRank )
+		{
+			return false;
+		}
+		
+		if( getPieceAt( rsq ) != baseTypes::whiteRooks )
+		{
+			return false;
+		}
+		
+		if ( kingRank == baseTypes::one ) 
+		{
+			if( ksq < rsq )
+			{
+				if( st.hasCastleRight( baseTypes::wCastleOO ) )
+				{
+					return false;
+				}
+				st.setCastleRight( baseTypes::wCastleOO);
+			}
+			else
+			{
+				if( st.hasCastleRight( baseTypes::wCastleOOO ) )
+				{
+					return false;
+				}
+				st.setCastleRight( baseTypes::wCastleOOO);
+			}
+		}
+		else
+		{
+			if( ksq < rsq )
+			{
+				if( st.hasCastleRight( baseTypes::bCastleOO ) )
+				{
+					return false;
+				}
+				st.setCastleRight( baseTypes::bCastleOO);
+			}
+			else
+			{
+				if( st.hasCastleRight( baseTypes::bCastleOOO) )
+				{
+					return false;
+				}
+				st.setCastleRight( baseTypes::bCastleOOO);
+			}
+		}
+	return true;
 	}
 	
 }
