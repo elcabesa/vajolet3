@@ -117,7 +117,7 @@ namespace {
 		ASSERT_EQ( g.getMaterialKey(), g.getMaterialKey());
 	}
 	
-	TEST(GameState,KeysGetSet)
+	TEST(GameState,MaterialValueGetSet)
 	{
 		GameStateFixture g;
 		simdScore mv = { 450, 245, 0, 0 };
@@ -132,7 +132,7 @@ namespace {
 		
 	}
 	
-	TEST(GameState, MaterialValuesGetSet)
+	TEST(GameState, KeysValuesGetSet)
 	{
 		GameStateFixture g;
 		HashKey k(473829258338);
@@ -143,7 +143,44 @@ namespace {
 		ASSERT_EQ( k, g.getKey() );
 		ASSERT_EQ( pk, g.getPawnKey() );
 		ASSERT_EQ( mk, g.getMaterialKey() );
-
+	
+	}
+	
+	TEST(GameState, TurnGetSet)
+	{
+		GameStateFixture g;
+		
+		g.setTurn( baseTypes::whiteTurn );
+		ASSERT_EQ( baseTypes::whiteTurn, g.getTurn() );
+		
+		g.setTurn( baseTypes::blackTurn );
+		ASSERT_EQ( baseTypes::blackTurn, g.getTurn() );
+	
+	}
+	
+	TEST(GameState, CastleRightsGetSet)
+	{
+		GameStateFixture g;
+		
+		for( int i = 0; i < 16; i++ )
+		{
+			g.setCastleRights( (baseTypes::eCastle)i );
+			ASSERT_EQ( (baseTypes::eCastle)i, g.getCastleRights() );
+		}
+	}
+	
+	TEST(GameState, resetAllCastleRights)
+	{
+		GameStateFixture g;
+		
+		g.setCastleRights( (baseTypes::eCastle)12 );
+		ASSERT_EQ( (baseTypes::eCastle)12, g.getCastleRights() );
+		
+		g.resetAllCastleRights();
+		
+		ASSERT_EQ( (baseTypes::eCastle)0, g.getCastleRights() );
+		
+		
 		
 	}
 	
