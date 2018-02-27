@@ -291,6 +291,80 @@ namespace {
 		ASSERT_STREQ( "a6", st.getEpSquareString().c_str() );
 	}
 	
+	TEST(GameState, FiftyMoveCntSetGet)
+	{
+		GameStateFixture st;
+		
+		for( unsigned int i = 0 ; i < 300; ++i )
+		{
+			st.setFiftyMoveCnt( i );
+			ASSERT_EQ( i, st.getFiftyMoveCnt() );
+		}
+		
+	}
+	
+	TEST(GameState, PliesCntSetGet)
+	{
+		GameStateFixture st;
+		
+		for( unsigned int i = 0 ; i < 2000; ++i )
+		{
+			st.setPliesCnt( i );
+			ASSERT_EQ( i, st.getPliesCnt() );
+		}
+		
+	}
+	
+	TEST(GameState, getFullMoveCounter)
+	{
+		GameStateFixture st;
+		
+		st.setTurn( baseTypes::whiteTurn );
+		st.setPliesCnt( 0 );
+
+		ASSERT_EQ( 1, st.getFullMoveCounter() );
+		
+		st.setTurn( baseTypes::blackTurn );
+		st.setPliesCnt( 1 );
+		ASSERT_EQ( 1, st.getFullMoveCounter() );
+		
+		
+		st.setTurn( baseTypes::whiteTurn );
+		st.setPliesCnt( 100 );
+		ASSERT_EQ( 51, st.getFullMoveCounter() );
+		
+		st.setTurn( baseTypes::blackTurn );
+		st.setPliesCnt( 101 );
+		ASSERT_EQ( 51, st.getFullMoveCounter() );
+		
+	}
+	
+	TEST(GameState, CurrentMoveSetGet)
+	{
+		GameStateFixture st;
+		
+		for( int i = 0; i < 65536; ++i )
+		{
+			st.setCurrentMove( Move(0) );
+			ASSERT_EQ( Move(0), st.getCurrentMove() );
+		}
+	}
+	
+	TEST(GameState, CapturedPieceSetGet)
+	{
+		GameStateFixture st;
+		
+		for( auto idx: baseTypes::bitboardIndexRange() )
+		{
+			st.setCapturedPiece( idx );
+			ASSERT_EQ( idx, st.getCapturedPiece() );
+		}
+	}
+	
+	
+	
+	
+	
 	
 	
 }
