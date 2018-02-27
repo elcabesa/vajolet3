@@ -436,22 +436,22 @@ namespace libChess
 		bool hasSomeCastleRight = false;
 		if( hasCastleRight( baseTypes::wCastleOO ) )
 		{
-			s += "k";
+			s += "K";
 			hasSomeCastleRight = true;
 		}
 		if( hasCastleRight( baseTypes::wCastleOOO) )
 		{
-			s += "q";
+			s += "Q";
 			hasSomeCastleRight = true;
 		}
 		if( hasCastleRight( baseTypes::bCastleOO) )
 		{
-			s += "K";
+			s += "k";
 			hasSomeCastleRight = true;
 		}
 		if( hasCastleRight( baseTypes::bCastleOOO) )
 		{
-			s += "Q";
+			s += "q";
 			hasSomeCastleRight = true;
 		}
 		

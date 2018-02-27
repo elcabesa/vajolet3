@@ -179,17 +179,118 @@ namespace {
 		g.resetAllCastleRights();
 		
 		ASSERT_EQ( (baseTypes::eCastle)0, g.getCastleRights() );
+			
+	}
+	
+	TEST(GameState, setCastleRight)
+	{
+		GameStateFixture g;
 		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOO );
+		ASSERT_EQ( baseTypes::wCastleOO, g.getCastleRights() );
 		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOOO );
+		ASSERT_EQ( baseTypes::wCastleOOO, g.getCastleRights() );
 		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOO );
+		ASSERT_EQ( baseTypes::bCastleOO, g.getCastleRights() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOOO );
+		ASSERT_EQ( baseTypes::bCastleOOO, g.getCastleRights() );
+
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOOO );
+		g.setCastleRight( baseTypes::wCastleOO );
+		ASSERT_EQ( baseTypes::wCastleOO | baseTypes::bCastleOOO, g.getCastleRights() );
+
+			
 	}
 	
 	
-	TEST(GameState, setEpSquare)
+	TEST(GameState, EpSquareSetGet)
 	{
 		GameStateFixture st;
 		st.setEpSquare(baseTypes::tSquare::E3);
 		ASSERT_EQ( baseTypes::tSquare::E3, st.getEpSquare() );
+		
+		st.setEpSquare(baseTypes::tSquare::C6);
+		ASSERT_EQ( baseTypes::tSquare::C6, st.getEpSquare() );
+		
+		st.setEpSquare(baseTypes::tSquare::H3);
+		ASSERT_EQ( baseTypes::tSquare::H3, st.getEpSquare() );
+		
+		st.setEpSquare(baseTypes::tSquare::A6);
+		ASSERT_EQ( baseTypes::tSquare::A6, st.getEpSquare() );
 	}
+	
+	TEST(GameState, getCastleRightsString)
+	{
+		GameStateFixture g;
+		
+		g.resetAllCastleRights();
+		ASSERT_STREQ( "-", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOO );
+		ASSERT_STREQ( "K", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOOO );
+		ASSERT_STREQ( "Q", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOO );
+		ASSERT_STREQ( "k", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOOO );
+		ASSERT_STREQ( "q", g.getCastleRightsString().c_str() );
+
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOOO );
+		g.setCastleRight( baseTypes::wCastleOO );
+		ASSERT_STREQ( "Kq", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOOO );
+		g.setCastleRight( baseTypes::wCastleOO );
+		ASSERT_STREQ( "KQ", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::bCastleOOO );
+		g.setCastleRight( baseTypes::bCastleOO );
+		ASSERT_STREQ( "kq", g.getCastleRightsString().c_str() );
+		
+		g.resetAllCastleRights();
+		g.setCastleRight( baseTypes::wCastleOOO );
+		g.setCastleRight( baseTypes::wCastleOO );
+		g.setCastleRight( baseTypes::bCastleOOO );
+		g.setCastleRight( baseTypes::bCastleOO );
+		ASSERT_STREQ( "KQkq", g.getCastleRightsString().c_str() );
+
+			
+	}
+	
+	TEST(GameState, getEpSquareString)
+	{
+		GameStateFixture st;
+		st.setEpSquare(baseTypes::tSquare::E3);
+		ASSERT_STREQ( "e3", st.getEpSquareString().c_str() );
+		
+		st.setEpSquare(baseTypes::tSquare::C6);
+		ASSERT_STREQ( "c6", st.getEpSquareString().c_str() );
+		
+		st.setEpSquare(baseTypes::tSquare::H3);
+		ASSERT_STREQ( "h3", st.getEpSquareString().c_str() );
+		
+		st.setEpSquare(baseTypes::tSquare::A6);
+		ASSERT_STREQ( "a6", st.getEpSquareString().c_str() );
+	}
+	
+	
 	
 }
