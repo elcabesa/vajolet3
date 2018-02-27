@@ -117,15 +117,34 @@ namespace {
 		ASSERT_EQ( g.getMaterialKey(), g.getMaterialKey());
 	}
 	
-	TEST(GameState, NonPawnMaterialValue)
+	TEST(GameState,KeysGetSet)
 	{
 		GameStateFixture g;
 		simdScore mv = { 450, 245, 0, 0 };
-		simdScore nmv = { 38350, -392, 0, 0 };
+		simdScore npmv = { 38350, -392, 0, 0 };
 		g.setMaterialValues( mv, nmv );
-		simdScore read= g.getNonPawnMaterialValue();
-		ASSERT_EQ( nmv[0], read[0]);
-		ASSERT_EQ( nmv[1], read[1]);
+		simdScore readNpmv= g.getNonPawnMaterialValue();
+		simdScore readMv= g.getMaterialValue();
+		ASSERT_EQ( npmv[0], readNpmv[0]);
+		ASSERT_EQ( npmv[1], readNpmv[1]);
+		ASSERT_EQ( mv[0], readMv[0]);
+		ASSERT_EQ( mv[1], readMv[1]);
+		
+	}
+	
+	TEST(GameState, MaterialValuesGetSet)
+	{
+		GameStateFixture g;
+		HashKey k(473829258338);
+		HashKey pk(947828127461);
+		HashKey mk(4832976592067);
+		g.setKeys( k, pk, mk );
+		
+		ASSERT_EQ( k, g.getKey() );
+		ASSERT_EQ( pk, g.getPawnKey() );
+		ASSERT_EQ( mk, g.getMaterialKey() );
+
+		
 	}
 	
 	
