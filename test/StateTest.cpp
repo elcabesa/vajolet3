@@ -122,7 +122,7 @@ namespace {
 		GameStateFixture g;
 		simdScore mv = { 450, 245, 0, 0 };
 		simdScore npmv = { 38350, -392, 0, 0 };
-		g.setMaterialValues( mv, nmv );
+		g.setMaterialValues( mv, npmv );
 		simdScore readNpmv= g.getNonPawnMaterialValue();
 		simdScore readMv= g.getMaterialValue();
 		ASSERT_EQ( npmv[0], readNpmv[0]);
