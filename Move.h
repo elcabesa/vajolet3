@@ -68,11 +68,11 @@ namespace libChess
 		/*****************************************************************
 		*	setter methods
 		******************************************************************/
-		void setFrom(baseTypes::tSquare from);
-		void setTo(baseTypes::tSquare to);
-		void setFlag(eflags fl);
+		void setFrom( baseTypes::tSquare from );
+		void setTo( baseTypes::tSquare to );
+		void setFlag( eflags fl );
 		void clearFlag();
-		void setPromotion(epromotion pr);
+		void setPromotion( epromotion pr );
 		
 		/*****************************************************************
 		*	getter methods

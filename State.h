@@ -120,19 +120,19 @@ namespace libChess
 		
 		void clearCastleRight( const int cr );
 		
-		void keyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
-		void keyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
+		void keyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
+		void keyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq);
 		void keyPromotePiece(const baseTypes::bitboardIndex piece, const baseTypes::bitboardIndex promotedPiece, const baseTypes::tSquare sq);
 		
-		void pawnKeyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
-		void pawnKeyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq);
+		void pawnKeyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
+		void pawnKeyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq);
 		
-		void materialKeyRemovePiece(const baseTypes::bitboardIndex p , unsigned int count);
-		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece , const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount);
+		void materialKeyRemovePiece(const baseTypes::bitboardIndex p, unsigned int count);
+		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece, const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount);
 		
-		void MaterialMovePiece( const simdScore from, const simdScore to );
-		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
-		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+		void materialMovePiece( const simdScore from, const simdScore to );
+		void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
+		void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
 		
 		/*****************************************************************
 		*	other methods
@@ -356,12 +356,12 @@ namespace libChess
 		_checkingSquares[idx] = b;
 	}
 	
-	inline void GameState::keyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq)
+	inline void GameState::keyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq)
 	{
 		_key.movePiece( p, fromSq, toSq );
 	}
 	
-	inline void GameState::keyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq)
+	inline void GameState::keyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq)
 	{
 		_key.removePiece( p, sq );
 	}
@@ -371,38 +371,38 @@ namespace libChess
 		_key.removePiece( piece, sq).addPiece( promotedPiece, sq);
 	}
 	
-	inline void GameState::pawnKeyMovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq)
+	inline void GameState::pawnKeyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq)
 	{
 		_pawnKey.movePiece( p, fromSq, toSq );
 	}
 	
-	inline void GameState::pawnKeyRemovePiece(const baseTypes::bitboardIndex p , const baseTypes::tSquare sq)
+	inline void GameState::pawnKeyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq)
 	{
 		_pawnKey.removePiece( p, sq );
 	}
 	
-	inline void GameState::materialKeyRemovePiece(const baseTypes::bitboardIndex p , unsigned int count)
+	inline void GameState::materialKeyRemovePiece(const baseTypes::bitboardIndex p, unsigned int count)
 	{
 		_materialKey.removePiece( p, (baseTypes::tSquare)count );
 	}
 	
-	inline void GameState::materialKeyPromovePiece(const baseTypes::bitboardIndex piece , const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount)
+	inline void GameState::materialKeyPromovePiece(const baseTypes::bitboardIndex piece, const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount)
 	{
 		_materialKey.removePiece( piece, (baseTypes::tSquare)count ).addPiece( promotedPiece, (baseTypes::tSquare)promotedCount );
 	}
 	
-	inline void  GameState::MaterialMovePiece( const simdScore from, const simdScore to )
+	inline void  GameState::materialMovePiece( const simdScore from, const simdScore to )
 	{
 		_materialValue += to - from;
 	}
 	
-	inline void  GameState::MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial )
+	inline void  GameState::materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial )
 	{
 		_materialValue -= material;
 		_nonPawnMaterialValue -= nonPawnMaterial;
 	}
 	
-	inline void  GameState::MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial )
+	inline void  GameState::materialPromotePiece( const simdScore material, const simdScore protmotedMaterial, const simdScore nonPawnPromotedMaterial )
 	{
 		_materialValue += protmotedMaterial - material;
 		_nonPawnMaterialValue -= nonPawnPromotedMaterial;

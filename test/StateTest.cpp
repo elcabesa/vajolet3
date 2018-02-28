@@ -80,9 +80,9 @@ namespace libChess
 		void materialKeyRemovePiece(const baseTypes::bitboardIndex p, unsigned int count){GameState::materialKeyRemovePiece( p , count );}
 		void materialKeyPromovePiece(const baseTypes::bitboardIndex piece, const unsigned int count, const baseTypes::bitboardIndex promotedPiece, const unsigned int promotedCount){GameState::materialKeyPromovePiece( piece , count, promotedPiece, promotedCount);}
 		
-		void MaterialMovePiece( const simdScore from, const simdScore to ){ GameState::MaterialMovePiece(from,to);}
-		void MaterialCapturePiece( const simdScore material, const simdScore nonPawnMaterial ){GameState::MaterialCapturePiece(material,nonPawnMaterial);}
-		void MaterialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial ){GameState::MaterialPromotePiece(material,protmotedMaterial,nonPawnPromotedMaterial);}
+		void materialMovePiece( const simdScore from, const simdScore to ){ GameState::materialMovePiece(from,to);}
+		void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial ){GameState::materialCapturePiece(material,nonPawnMaterial);}
+		void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial ){GameState::materialPromotePiece(material,protmotedMaterial,nonPawnPromotedMaterial);}
 		
 		/*****************************************************************
 		*	other methods
@@ -485,6 +485,62 @@ namespace {
 		st.setCheckers( baseTypes::BitMap(732) );
 	}
 	
+	TEST(GameState, StateFullSet)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
 	TEST(GameState, changeTurn)
 	{
 		GameStateFixture st;
@@ -514,6 +570,849 @@ namespace {
 		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
 		
 		ASSERT_EQ( baseTypes::blackTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, countersUpdate)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+		st.incrementCounters();
+		
+		ASSERT_EQ( 33, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 1, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 136, st.getPliesCnt() );
+		
+		st.incrementCounters();
+		
+		ASSERT_EQ( 34, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 2, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 137, st.getPliesCnt() );
+		
+		st.resetCountersNullMove();
+		
+		ASSERT_EQ( 34, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 137, st.getPliesCnt() );
+		
+		st.incrementCounters();
+		st.incrementCounters();
+		st.incrementCounters();
+		
+		ASSERT_EQ( 37, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 3, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 140, st.getPliesCnt() );
+		
+		st.incrementCounters();
+		st.incrementCountersNullMove();
+		st.incrementCounters();
+		
+		ASSERT_EQ( 40, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 1, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 143, st.getPliesCnt() );
+		
+		st.resetFiftyMoveCnt();
+		st.incrementCounters();
+		st.incrementCounters();
+		st.incrementCounters();
+		
+		ASSERT_EQ( 3, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 4, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 146, st.getPliesCnt() );
+		
+		
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 3, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 4, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 146, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, EpSquare)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		ASSERT_FALSE( st.hasEpSquareSet() );
+		
+		st.clearEpSquare();
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		ASSERT_FALSE( st.hasEpSquareSet() );
+		
+		st.addEpSquare( baseTypes::E3 );
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_EQ( baseTypes::E3, st.getEpSquare() );
+		ASSERT_TRUE( st.hasEpSquareSet() );
+		
+		st.clearEpSquare(  );
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		ASSERT_FALSE( st.hasEpSquareSet() );
+		
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	
+	TEST(GameState, clearCastleRight)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+		//st.setCastleRights( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO) );
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		baseTypes::eCastle cr = st.getCastleRights();
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOO) );
+		ASSERT_TRUE( st.hasCastleRight( baseTypes::wCastleOOO) );
+		ASSERT_TRUE( st.hasCastleRight( baseTypes::bCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOOO) );
+		
+		st.clearCastleRight( baseTypes::wCastleOO );
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_EQ( cr, st.getCastleRights() );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOO) );
+		ASSERT_TRUE( st.hasCastleRight( baseTypes::wCastleOOO) );
+		ASSERT_TRUE( st.hasCastleRight( baseTypes::bCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOOO) );
+		
+		st.clearCastleRight( baseTypes::wCastleOOO );
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_NE( cr, st.getCastleRights() );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOOO) );
+		ASSERT_TRUE( st.hasCastleRight( baseTypes::bCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOOO) );
+		
+		k = st.getKey();
+		pk = st.getPawnKey();
+		mk = st.getMaterialKey();
+		cr = st.getCastleRights();
+		
+		st.clearCastleRight( baseTypes::bCastleOO );
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_NE( cr, st.getCastleRights() );
+		
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOOO) );
+		
+		k = st.getKey();
+		pk = st.getPawnKey();
+		mk = st.getMaterialKey();
+		cr = st.getCastleRights();
+		
+		st.clearCastleRight( baseTypes::bCastleOOO );
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		ASSERT_EQ( cr, st.getCastleRights() );
+		
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::wCastleOOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOO) );
+		ASSERT_FALSE( st.hasCastleRight( baseTypes::bCastleOOO) );
+		
+		
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(0), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+	}
+	
+	TEST(GameState, keyMovePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.keyMovePiece( baseTypes::whiteRooks, baseTypes::E3, baseTypes::E7);
+		st.keyMovePiece( baseTypes::whiteRooks, baseTypes::E7, baseTypes::D3);
+		
+		st.keyMovePiece( baseTypes::blackBishops, baseTypes::F1, baseTypes::G4);
+		
+		
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+		st.keyMovePiece( baseTypes::whiteRooks, baseTypes::D3, baseTypes::E3);
+		st.keyMovePiece( baseTypes::blackBishops, baseTypes::G4, baseTypes::F1);
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, keyRemovePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.keyRemovePiece( baseTypes::whiteRooks, baseTypes::E3);
+		
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+	
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, keyPromotePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.keyPromotePiece( baseTypes::whitePawns, baseTypes::whiteQueens, baseTypes::E8);
+		
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+	
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_NE( k, st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, pawnKeyMovePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.pawnKeyMovePiece( baseTypes::whitePawns, baseTypes::E3, baseTypes::E7);
+		st.pawnKeyMovePiece( baseTypes::whitePawns, baseTypes::E7, baseTypes::D3);
+		
+		st.pawnKeyMovePiece( baseTypes::blackPawns, baseTypes::F1, baseTypes::G4);
+		
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_NE( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+		st.pawnKeyMovePiece( baseTypes::whitePawns, baseTypes::D3, baseTypes::E3);
+		st.pawnKeyMovePiece( baseTypes::blackPawns, baseTypes::G4, baseTypes::F1);
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, pawnKeyRemovePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.pawnKeyRemovePiece( baseTypes::whiteRooks, baseTypes::E3);
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_NE( pk, st.getPawnKey() );
+		ASSERT_EQ( mk, st.getMaterialKey() );
+		
+	
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_NE( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, materialKeyRemovePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.materialKeyRemovePiece( baseTypes::whiteRooks, 1);
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_NE( mk, st.getMaterialKey() );
+		
+	
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_NE( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	TEST(GameState, materialKeyPromotePiece)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+
+		HashKey k = st.getKey();
+		HashKey pk = st.getPawnKey();
+		HashKey mk = st.getMaterialKey();
+		
+		st.materialKeyPromovePiece( baseTypes::whitePawns, 3, baseTypes::whiteQueens, 1 );
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( pk, st.getPawnKey() );
+		ASSERT_NE( mk, st.getMaterialKey() );
+		
+	
+		// final check
+		
+		const simdScore mv = { 127, 4532, 0, 0};
+		const simdScore npmv = { -3427, 56432, 0, 0 };
+		
+		ASSERT_EQ( k, st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_NE( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( mv[0], st.getMaterialValue()[0] );
+		ASSERT_EQ( mv[1], st.getMaterialValue()[1] );
+		ASSERT_EQ( npmv[0], st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( npmv[1], st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
+		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
+		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
+		
+		ASSERT_EQ( 32, st.getFiftyMoveCnt() );
+		ASSERT_EQ( 0, st.getPliesFromNullCnt() );
+		ASSERT_EQ( 135, st.getPliesCnt() );
+		
+		ASSERT_EQ( Move( baseTypes::E2, baseTypes::E4 ), st.getCurrentMove() );
+		ASSERT_EQ( baseTypes::blackBishops, st.getCapturedPiece() );
+		
+		ASSERT_EQ( baseTypes::BitMap(1), st.getCheckingSquare( baseTypes::whiteKing ) );
+		ASSERT_EQ( baseTypes::BitMap(2), st.getCheckingSquare( baseTypes::whiteQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(3), st.getCheckingSquare( baseTypes::whiteRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(4), st.getCheckingSquare( baseTypes::whiteBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(5), st.getCheckingSquare( baseTypes::whiteKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(6), st.getCheckingSquare( baseTypes::whitePawns ) );
+		ASSERT_EQ( baseTypes::BitMap(7), st.getCheckingSquare( baseTypes::blackKing ) );
+		ASSERT_EQ( baseTypes::BitMap(8), st.getCheckingSquare( baseTypes::blackQueens ) );
+		ASSERT_EQ( baseTypes::BitMap(9), st.getCheckingSquare( baseTypes::blackRooks ) );
+		ASSERT_EQ( baseTypes::BitMap(10), st.getCheckingSquare( baseTypes::blackBishops ) );
+		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
+		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
+		
+		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
+		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
+		
+		
+
+	}
+	
+	
+	TEST(GameState, materialValuesUpdate)
+	{
+		GameStateFixture st;
+		
+		/* set common data */
+		setCommonData( st );
+		
+		/* function to be tested */
+		
+		st.materialMovePiece( simdScore{100,80,0,0},simdScore{60,40,0,0} ) ;
+		
+		ASSERT_EQ( 87, st.getMaterialValue()[0] );
+		ASSERT_EQ( 4492, st.getMaterialValue()[1] );
+		ASSERT_EQ( -3427, st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( 56432, st.getNonPawnMaterialValue()[1] );
+		//void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
+		//void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+
+		
+		// final check
+		
+		ASSERT_EQ( HashKey(1454), st.getKey() );
+		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
+		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
+		
+		ASSERT_EQ( 87, st.getMaterialValue()[0] );
+		ASSERT_EQ( 4492, st.getMaterialValue()[1] );
+		ASSERT_EQ( -3427, st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( 56432, st.getNonPawnMaterialValue()[1] );
+		
+		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
 		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );
 		ASSERT_EQ( baseTypes::squareNone, st.getEpSquare() );
 		
