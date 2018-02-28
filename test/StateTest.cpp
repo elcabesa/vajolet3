@@ -82,7 +82,7 @@ namespace libChess
 		
 		void materialMovePiece( const simdScore from, const simdScore to ){ GameState::materialMovePiece(from,to);}
 		void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial ){GameState::materialCapturePiece(material,nonPawnMaterial);}
-		void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial ){GameState::materialPromotePiece(material,protmotedMaterial,nonPawnPromotedMaterial);}
+		void materialPromotePiece( const simdScore material, const simdScore promotedMaterial , const simdScore nonPawnPromotedMaterial ){GameState::materialPromotePiece(material,promotedMaterial,nonPawnPromotedMaterial);}
 		
 		/*****************************************************************
 		*	other methods
@@ -289,6 +289,9 @@ namespace {
 		
 		st.setEpSquare(baseTypes::tSquare::A6);
 		ASSERT_STREQ( "a6", st.getEpSquareString().c_str() );
+		
+		st.setEpSquare(baseTypes::tSquare::squareNone);
+		ASSERT_STREQ( "-", st.getEpSquareString().c_str() );
 	}
 	
 	TEST(GameState, FiftyMoveCntSetGet)
@@ -1391,14 +1394,28 @@ namespace {
 		
 		/* function to be tested */
 		
-		st.materialMovePiece( simdScore{100,80,0,0},simdScore{60,40,0,0} ) ;
+		st.materialMovePiece( simdScore{100,80,0,0}, simdScore{60,40,0,0} ) ;
 		
 		ASSERT_EQ( 87, st.getMaterialValue()[0] );
 		ASSERT_EQ( 4492, st.getMaterialValue()[1] );
 		ASSERT_EQ( -3427, st.getNonPawnMaterialValue()[0] );
 		ASSERT_EQ( 56432, st.getNonPawnMaterialValue()[1] );
-		//void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
-		//void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+		
+		
+		st.materialCapturePiece( simdScore{1000,800,0,0}, simdScore{200,400,0,0} );
+		
+		ASSERT_EQ( -913, st.getMaterialValue()[0] );
+		ASSERT_EQ( 3692, st.getMaterialValue()[1] );
+		ASSERT_EQ( -3627, st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( 56032, st.getNonPawnMaterialValue()[1] );
+		
+		st.materialPromotePiece( simdScore{10000,8000,0,0}, simdScore{30000,35000,0,0}, simdScore{12000,9000,0,0} );
+		
+		ASSERT_EQ( 19087, st.getMaterialValue()[0] );
+		ASSERT_EQ( 30692, st.getMaterialValue()[1] );
+		ASSERT_EQ( 8373, st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( 65032, st.getNonPawnMaterialValue()[1] );
+		
 
 		
 		// final check
@@ -1407,10 +1424,10 @@ namespace {
 		ASSERT_EQ( HashKey(54832), st.getPawnKey() );
 		ASSERT_EQ( HashKey(390864398026), st.getMaterialKey() );
 		
-		ASSERT_EQ( 87, st.getMaterialValue()[0] );
-		ASSERT_EQ( 4492, st.getMaterialValue()[1] );
-		ASSERT_EQ( -3427, st.getNonPawnMaterialValue()[0] );
-		ASSERT_EQ( 56432, st.getNonPawnMaterialValue()[1] );
+		ASSERT_EQ( 19087, st.getMaterialValue()[0] );
+		ASSERT_EQ( 30692, st.getMaterialValue()[1] );
+		ASSERT_EQ( 8373, st.getNonPawnMaterialValue()[0] );
+		ASSERT_EQ( 65032, st.getNonPawnMaterialValue()[1] );
 		
 		ASSERT_EQ( baseTypes::whiteTurn, st.getTurn() );
 		ASSERT_EQ( (baseTypes::eCastle)(baseTypes::wCastleOOO | baseTypes::bCastleOO), st.getCastleRights() );

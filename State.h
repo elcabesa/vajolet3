@@ -132,7 +132,7 @@ namespace libChess
 		
 		void materialMovePiece( const simdScore from, const simdScore to );
 		void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
-		void materialPromotePiece( const simdScore material, const simdScore protmotedMaterial , const simdScore nonPawnPromotedMaterial );
+		void materialPromotePiece( const simdScore material, const simdScore promotedMaterial , const simdScore nonPawnPromotedMaterial );
 		
 		/*****************************************************************
 		*	other methods
@@ -402,10 +402,10 @@ namespace libChess
 		_nonPawnMaterialValue -= nonPawnMaterial;
 	}
 	
-	inline void  GameState::materialPromotePiece( const simdScore material, const simdScore protmotedMaterial, const simdScore nonPawnPromotedMaterial )
+	inline void  GameState::materialPromotePiece( const simdScore material, const simdScore promotedMaterial, const simdScore nonPawnPromotedMaterial )
 	{
-		_materialValue += protmotedMaterial - material;
-		_nonPawnMaterialValue -= nonPawnPromotedMaterial;
+		_materialValue += promotedMaterial - material;
+		_nonPawnMaterialValue += nonPawnPromotedMaterial;
 	}
 	
 	inline unsigned int GameState::getFullMoveCounter(void) const
