@@ -207,6 +207,39 @@ namespace {
 		ASSERT_EQ( 3, distance( f,g ));
 	}
 	
+	TEST(tFile, isValidFile)
+	{
+		baseTypes::tFile f = baseTypes::tFile::A;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::B;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::C;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::D;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::E;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::F;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::G;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = baseTypes::tFile::H;
+		ASSERT_TRUE( isValidFile( f ) );
+		
+		f = (baseTypes::tFile)-1;
+		ASSERT_FALSE( isValidFile( f ) );
+		
+		f = (baseTypes::tFile)8;
+		ASSERT_FALSE( isValidFile( f ) );
+	}
+	
 	
 		
 	TEST(tRank,assign)
@@ -492,6 +525,39 @@ namespace {
 		f = baseTypes::tRank::four;
 		g = baseTypes::tRank::one;
 		ASSERT_EQ( 3, distance( f,g ));
+	}
+	
+	TEST(tRank, isValidRank)
+	{
+		baseTypes::tRank f = baseTypes::tRank::one;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::two;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::three;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::four;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::five;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::six;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::seven;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = baseTypes::tRank::eight;
+		ASSERT_TRUE( isValidRank( f ) );
+		
+		f = (baseTypes::tRank)-1;
+		ASSERT_FALSE( isValidRank( f ) );
+		
+		f = (baseTypes::tRank)8;
+		ASSERT_FALSE( isValidRank( f ) );
 	}
 
 	TEST(tSquare, assign)

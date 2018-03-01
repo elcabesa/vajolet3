@@ -87,6 +87,8 @@ namespace libChess
 	}
 	
 	static inline int distance(const tFile d1, const tFile d2) { return std::abs( (int)d1 - (int)d2 ); }
+	
+	static inline bool isValidFile( const tFile f ) { return (f >= A) & (f <= H); }
 
 
 	//-----------------------------------------------------
@@ -158,6 +160,8 @@ namespace libChess
 	}
 	
 	static inline int distance(const tRank d1, const tRank d2) { return std::abs( (int)d1 - (int)d2 ); }
+	
+	static inline bool isValidRank( const tRank r ) { return (r >= one) & (r <= eight); }
 
 
 	//-----------------------------------------------------

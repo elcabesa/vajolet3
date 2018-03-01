@@ -206,11 +206,12 @@ namespace libChess
 				\date 17/08/2017
 			*/
 			static void init(void);
-			
+		
+		private:		
 			/*****************************************************************
 			*	static members
 			******************************************************************/
-
+		
 			static BitMap _RANKMASK[ tSquare::squareNumber ];
 			static BitMap _FILEMASK[ tSquare::squareNumber ];
 			static BitMap _SQUARECOLOR[ tColor::colorNumber ];

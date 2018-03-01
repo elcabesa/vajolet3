@@ -19,6 +19,7 @@
 #include "./../BitMap.h"
 #include "./../tSquare.h"
 #include "./../HashKeys.h"
+#include "./../BitMapMoveGenerator.h"
 
 class EnvironmentInvocationCatcher : public ::testing::Environment
 {
@@ -28,6 +29,7 @@ protected:
 		libChess::baseTypes::inittSquare();
 		libChess::baseTypes::BitMap::init();
 		libChess::HashKey::init();
+		libChess::BitMapMoveGenerator::init();
 	}
 
 	virtual void TearDown()

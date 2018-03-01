@@ -17,11 +17,10 @@
 #include <iostream>
 
 #include "Vajolet.h"
-#include "tSquare.h"
 #include "BitMap.h"
 #include "HashKeys.h"
+#include "BitMapMoveGenerator.h"
 
-#include "Position.h"
 
 static void setIoBuffers()
 {
@@ -34,16 +33,13 @@ static void init(void)
 	libChess::baseTypes::inittSquare();
 	libChess::baseTypes::BitMap::init();
 	libChess::HashKey::init();
+	libChess::BitMapMoveGenerator::init();
 }
 
 int main(void)
 {
 	setIoBuffers();
 	init();
-	
-	libChess::Position p;
-	p.setupFromFen("bnrqb1k1/pppppp1p/6p1/6N1/2BBP3/2Q5/PPP5/1K5R w - - 0 13");
-	std::cout<<p.display()<<std::endl;
 
 	return 0;
 }
