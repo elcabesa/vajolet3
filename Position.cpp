@@ -106,13 +106,13 @@ namespace libChess
 	{
 		baseTypes::eTurn turn = getActualStateConst().getTurn();
 		
-		_Us = &_bitBoard[ turn ];
-		_Them = &_bitBoard[ getSwitchedTurn(turn) ];
+		_us = &_bitBoard[ turn ];
+		_them = &_bitBoard[ getSwitchedTurn(turn) ];
 	}
 	
 	inline void Position::_swapUsThem()
 	{
-		std::swap( _Us , _Them );
+		std::swap( _us , _them );
 	}
 	
 	inline void Position::_addPiece( const baseTypes::bitboardIndex piece, const baseTypes::tSquare s )

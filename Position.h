@@ -28,45 +28,24 @@ namespace libChess
 {
 	class Position
 	{
-	private:
-		std::vector<GameState> _stateList;
-		// todo valutate the use of a iterator
-		GameState* _actualState;
-		std::array< baseTypes::bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
-		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
-		// todo valutate the use of a iterator
-		baseTypes::BitMap *_Us,*_Them;	/*!< pointer to our & their pieces bitboard*/
-		
-		
-	
-	
-		
-	private:
-		void _clearStateList( void );
-		void _clear(void);
-		
-		GameState& _getActualState( void );
-		GameState& _pushState( void );
-		void _popState( void );
-		void _setUsThem( void );
-		void _swapUsThem();
-		void _addPiece( const baseTypes::bitboardIndex piece, const baseTypes::tSquare s );
-		void _removePiece(const baseTypes::bitboardIndex piece,const baseTypes::tSquare s);
-		void _movePiece(const baseTypes::bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to);
-		HashKey _calcKey(void) const;
-		HashKey _calcPawnKey(void) const;
-		HashKey _calcMaterialKey(void) const;
-		bool _setupCastleRight(const baseTypes::tSquare rsq);
-	
-		
 	public:
+		/*****************************************************************
+		*	constructors
+		******************************************************************/
+		Position();
+		Position(const Position& other);
+		
+		/*****************************************************************
+		*	Operators
+		******************************************************************/
+		Position& operator=(const Position& other);
+		
+		/*****************************************************************
+		*	Getters
+		******************************************************************/
 		const GameState& getActualStateConst(void)const;
 		const GameState& getState(unsigned int n)const;
 		unsigned int getStateSize() const;
-		Position();
-		Position(const Position& other);
-		Position& operator=(const Position& other);
-		bool setupFromFen(const std::string& fenStr);
 		
 		const baseTypes::BitMap& getOccupationBitmap() const;
 		const baseTypes::BitMap& getBitmap(const baseTypes::bitboardIndex in) const;
@@ -78,8 +57,51 @@ namespace libChess
 		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
+		
+		/*****************************************************************
+		*	Methods
+		******************************************************************/
 		const std::string display(void) const;
+		bool setupFromFen(const std::string& fenStr);
+		
 	
+	private:
+	
+		/*****************************************************************
+		*	Members
+		******************************************************************/
+		std::vector<GameState> _stateList;
+		// todo valutate the use of a iterator
+		GameState* _actualState;
+		std::array< baseTypes::bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
+		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
+		// todo valutate the use of a iterator
+		baseTypes::BitMap *_us,*_them;	/*!< pointer to our & their pieces bitboard*/
+		
+	private:
+	
+		/*****************************************************************
+		*	methods
+		******************************************************************/
+		GameState& _getActualState( void );
+		GameState& _pushState( void );
+		void _popState( void );
+		
+		void _clearStateList( void );
+		void _clear(void);
+		
+		void _setUsThem( void );
+		void _swapUsThem();
+		
+		void _addPiece( const baseTypes::bitboardIndex piece, const baseTypes::tSquare s );
+		void _removePiece(const baseTypes::bitboardIndex piece,const baseTypes::tSquare s);
+		void _movePiece(const baseTypes::bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to);
+		
+		HashKey _calcKey(void) const;
+		HashKey _calcPawnKey(void) const;
+		HashKey _calcMaterialKey(void) const;
+		
+		bool _setupCastleRight(const baseTypes::tSquare rsq);
 	
 		
 	};
@@ -120,11 +142,11 @@ namespace libChess
 	}
 	inline const baseTypes::BitMap& Position::getOurBitmap( const baseTypes::bitboardIndex piece )const
 	{
-		return _Us[ piece ];
+		return _us[ piece ];
 	}
 	inline const baseTypes::BitMap& Position::getTheirBitmap( const baseTypes::bitboardIndex piece )const
 	{
-		return _Them[ piece ];
+		return _them[ piece ];
 	}
 	
 }
