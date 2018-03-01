@@ -82,7 +82,7 @@ namespace libChess
 		******************************************************************/
 		void setKeys( const HashKey& key, const HashKey& pawnKey, const HashKey& materialKey );
 		
-		void setMaterialValues( const simdScore MaterialValue, const simdScore nonPawnMaterialValue );
+		void setMaterialValues( const simdScore materialValue, const simdScore nonPawnMaterialValue );
 		
 		void setTurn( const baseTypes::eTurn turn);
 		

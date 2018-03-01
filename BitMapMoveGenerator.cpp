@@ -56,7 +56,7 @@ namespace libChess
 				}
 			}
 		}
-
+		
 	}
 	
 	baseTypes::BitMap BitMapMoveGenerator::_kingMoveBitmap[ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
