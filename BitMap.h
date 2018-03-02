@@ -1,6 +1,7 @@
 /*
 	This file is part of Vajolet.
-
+	Copyright (C) 2013-2018 Marco Belli
+	
     Vajolet is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -62,6 +63,12 @@ namespace libChess
 			
 			inline BitMap& operator ^=(const tSquare sq) { _b ^= getBitmapFromSquare(sq)._b; return (*this); }
 			inline BitMap& operator ^=(const BitMap& x) { _b ^= x._b; return (*this); }
+			
+			inline BitMap operator <<(const int shift) const { return BitMap(_b << shift);}
+			inline BitMap operator >>(const int shift) const { return BitMap(_b >> shift);}
+			
+			inline BitMap& operator <<=(const int shift) { _b <<= shift; return (*this);}
+			inline BitMap& operator >>=(const int shift) { _b >>= shift; return (*this);}
 			
 			/*****************************************************************
 			*	Iterator
