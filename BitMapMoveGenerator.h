@@ -18,6 +18,8 @@
 #ifndef BITMAPMOVEGENERATOR_H_
 #define BITMAPMOVEGENERATOR_H_
 
+#include <list>
+#include <utility>
 #include "BitMap.h"
 
 namespace libChess
@@ -34,6 +36,7 @@ namespace libChess
 		
 		static const baseTypes::BitMap& getBitMapMovesFromKing( const baseTypes::tSquare& from );
 		static const baseTypes::BitMap& getBitMapMovesFromKnight( const baseTypes::tSquare& from );
+		static const baseTypes::BitMap& getBitMapAttacksFromPawn( const baseTypes::tSquare& from, const baseTypes::tColor color );
 	
 		static void init(void);
 	
@@ -43,6 +46,13 @@ namespace libChess
 		******************************************************************/
 		static baseTypes::BitMap _knightMoveBitmap[ baseTypes::squareNumber ];
 		static baseTypes::BitMap _kingMoveBitmap[ baseTypes::squareNumber ];
+		static baseTypes::BitMap _pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ];
+		
+		/*****************************************************************
+		*	static methods
+		******************************************************************/
+		static void _initHelper( baseTypes::BitMap * const b, std::list<std::pair<int,int>> directions );
+		
 	};
 	
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBitMapMovesFromKing( const baseTypes::tSquare& from )
@@ -55,6 +65,13 @@ namespace libChess
 	{
 		assert(from < baseTypes::squareNumber);
 		return _knightMoveBitmap[ from ];
+	}
+	
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getBitMapAttacksFromPawn( const baseTypes::tSquare& from, const baseTypes::tColor color )
+	{
+		assert(from < baseTypes::squareNumber);
+		assert(color < baseTypes::colorNumber);
+		return _pawnsAttackBitmap[ color ][ from ];
 	}
 	
 }
