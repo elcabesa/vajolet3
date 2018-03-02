@@ -53,9 +53,12 @@ namespace libChess
 		*	static methods
 		******************************************************************/
 		
-		static const baseTypes::BitMap& getBitMapMovesFromKing( const baseTypes::tSquare& from );
-		static const baseTypes::BitMap& getBitMapMovesFromKnight( const baseTypes::tSquare& from );
-		static const baseTypes::BitMap& getBitMapAttacksFromPawn( const baseTypes::tSquare& from, const baseTypes::tColor color );
+		static const baseTypes::BitMap& getKingMoves( const baseTypes::tSquare& from );
+		static const baseTypes::BitMap& getKnightMoves( const baseTypes::tSquare& from );
+		static const baseTypes::BitMap& getPawnAttack( const baseTypes::tSquare& from, const baseTypes::tColor color );
+		static const baseTypes::BitMap& getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
+		static const baseTypes::BitMap& getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
+		static const baseTypes::BitMap getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 	
 		static void init(void);
 	
@@ -67,45 +70,76 @@ namespace libChess
 		static baseTypes::BitMap _kingMoveBitmap[ baseTypes::squareNumber ];
 		static baseTypes::BitMap _pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ];
 		
-		static const unsigned int _magicmovesRshift[ baseTypes::squareNumber ];
-		static const baseTypes::BitMap _magicmovesRmagics[ baseTypes::squareNumber ];
-		static const baseTypes::BitMap _magicmovesRmask[ baseTypes::squareNumber ];
+		static const unsigned int _magicMovesRshift[ baseTypes::squareNumber ];
+		static const uint64_t _magicMovesRmagics[ baseTypes::squareNumber ];
+		static const baseTypes::BitMap _magicMovesRmask[ baseTypes::squareNumber ];
 		
-		static const unsigned int _magicmovesBshift[ baseTypes::squareNumber ];
-		static const baseTypes::BitMap _magicmovesBmagics[ baseTypes::squareNumber ];
-		static const baseTypes::BitMap _magicmovesBmask[ baseTypes::squareNumber ];
+		static const unsigned int _magicMovesBshift[ baseTypes::squareNumber ];
+		static const uint64_t _magicMovesBmagics[ baseTypes::squareNumber ];
+		static const baseTypes::BitMap _magicMovesBmask[ baseTypes::squareNumber ];
 		
-		static baseTypes::BitMap _magicmovesBdb[ 5248 ];
-		static const baseTypes::BitMap* _magicmovesBindices[ baseTypes::squareNumber ];
-		static baseTypes::BitMap _magicmovesRdb[ 102400 ];
-		static const baseTypes::BitMap* _magicmovesRindices[ baseTypes::squareNumber ];
+		static baseTypes::BitMap _magicMovesBdb[ 5248 ];
+		static baseTypes::BitMap* _magicMovesBindices[ baseTypes::squareNumber ];
+		static baseTypes::BitMap _magicMovesRdb[ 102400 ];
+		static baseTypes::BitMap* _magicMovesRindices[ baseTypes::squareNumber ];
 
 		/*****************************************************************
 		*	static methods
 		******************************************************************/
 		static void _initHelper( baseTypes::BitMap * const b, std::list<std::pair<int,int>> directions );
 		static baseTypes::BitMap _mapLinearOccToBitmap( const baseTypes::BitMap& moves, const baseTypes::BitMap& linOcc );
+		static baseTypes::BitMap _generateRookMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
+		static baseTypes::BitMap _generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
+		
+		static baseTypes::BitMap& _getBishopMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );
+		static baseTypes::BitMap& _getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );
+		
 		
 	};
 	
-	inline const baseTypes::BitMap& BitMapMoveGenerator::getBitMapMovesFromKing( const baseTypes::tSquare& from )
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getKingMoves( const baseTypes::tSquare& from )
 	{
 		assert(from < baseTypes::squareNumber);
 		return _kingMoveBitmap[ from ];
 	}
 	
-	inline const baseTypes::BitMap& BitMapMoveGenerator::getBitMapMovesFromKnight( const baseTypes::tSquare& from )
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getKnightMoves( const baseTypes::tSquare& from )
 	{
 		assert(from < baseTypes::squareNumber);
 		return _knightMoveBitmap[ from ];
 	}
 	
-	inline const baseTypes::BitMap& BitMapMoveGenerator::getBitMapAttacksFromPawn( const baseTypes::tSquare& from, const baseTypes::tColor color )
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getPawnAttack( const baseTypes::tSquare& from, const baseTypes::tColor color )
 	{
 		assert(from < baseTypes::squareNumber);
 		assert(color < baseTypes::colorNumber);
 		return _pawnsAttackBitmap[ color ][ from ];
 	}
+	
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
+	{
+		return _getRookMoves( from, occupancy );
+	}
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
+	{
+		return _getBishopMoves( from, occupancy );
+	}
+	inline const baseTypes::BitMap BitMapMoveGenerator::getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
+	{
+		return _getRookMoves( from, occupancy ) + _getBishopMoves( from, occupancy );
+	}
+	
+	inline baseTypes::BitMap& BitMapMoveGenerator::_getBishopMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy )
+	{
+		return *( _magicMovesBindices [ sq ] + ( ( ( occupancy & _magicMovesBmask[ sq ] ).getInternalRepresentation() * _magicMovesBmagics[ sq ] ) >> _magicMovesBshift[ sq ] ) );
+	}
+	inline baseTypes::BitMap& BitMapMoveGenerator::_getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy )
+	{
+		return *( _magicMovesRindices [ sq ] + ( ( ( occupancy & _magicMovesRmask[ sq ] ).getInternalRepresentation() * _magicMovesRmagics[ sq ] ) >> _magicMovesRshift[ sq ] ) );
+	}
+	
+	
+	
 	
 }
 

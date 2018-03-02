@@ -22,7 +22,7 @@
 #include "tSquare.h"
 
 namespace libChess
-{
+{	
 	namespace baseTypes
 	{
 		/*	\brief this class implement a 64bit representation of a board containing pieces
@@ -32,6 +32,7 @@ namespace libChess
 		*/
 		class BitMap
 		{
+			
 		public:
 			/*****************************************************************
 			*	constructors
@@ -92,6 +93,7 @@ namespace libChess
 			*	methods
 			******************************************************************/
 
+			uint64_t getInternalRepresentation() const ;
 			/*	\brief clear the state of the bitboard and empty it
 				\author Marco Belli
 				\version 1.0
@@ -230,6 +232,11 @@ namespace libChess
 			static void _initSquareColor(void);
 		};
 		
+		inline uint64_t BitMap::getInternalRepresentation() const
+		{
+			return _b;
+		}
+		
 		inline void BitMap::clear()
 		{
 			_b = 0ull;
@@ -265,6 +272,7 @@ namespace libChess
 		{
 			return (_b & getBitmapFromSquare( f, r )._b);
 		}
+		
 		
 		inline BitMap BitMap::getBitmapFromSquare(const tSquare n)
 		{
