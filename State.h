@@ -293,15 +293,14 @@ namespace libChess
 	
 	inline void GameState::setEpSquare( const baseTypes::tSquare sq)
 	{
-		assert( _epSquare == baseTypes::squareNone);
-		assert( sq < baseTypes::squareNumber );
+		assert( sq < baseTypes::squareNumber || sq == baseTypes::squareNone );
 		_epSquare = sq;
 
 	}
 	
 	inline void GameState::addEpSquare( const baseTypes::tSquare sq)
 	{
-		assert( _epSquare == baseTypes::squareNone);
+		assert( _epSquare == baseTypes::squareNone );
 		assert( sq < baseTypes::squareNumber );
 		_epSquare = sq;
 		_key.addEp(_epSquare);
@@ -311,12 +310,12 @@ namespace libChess
 	
 	inline void GameState::setCapturedPiece( const baseTypes::bitboardIndex idx )
 	{
-		assert( idx < bitboardNumber );
+		assert( idx < baseTypes::bitboardNumber );
 		_capturedPiece = idx;
 	}
 	inline void GameState::resetCapturedPiece()
 	{
-		_capturedPiece =baseTypes::empty;
+		_capturedPiece = baseTypes::empty;
 	}
 	
 	inline void GameState::clearCastleRight( const int cr )
@@ -353,7 +352,7 @@ namespace libChess
 	
 	inline void GameState::setCheckingSquare( const baseTypes::bitboardIndex idx, const baseTypes::BitMap& b )
 	{
-		assert( idx < bitboardNumber );
+		assert( idx < baseTypes::bitboardNumber );
 		_checkingSquares[idx] = b;
 	}
 	

@@ -19,9 +19,9 @@
 #ifndef TSQUARE_H_
 #define TSQUARE_H_
 
+#include <assert.h>
 #include <iostream>
 #include <string>
-#include "Vajolet.h"
 #include "BaseTypeTemplate.h"
 
 namespace libChess
@@ -52,16 +52,16 @@ namespace libChess
 		H
 	};
 
-	template static tFile& operator++<tFile>(tFile& r);
-	template static tFile& operator--<tFile>(tFile& r);
-	template static tFile operator++<tFile>(tFile& r,int);
-	template static tFile operator--<tFile>(tFile& r,int);
+	template tFile& operator++<tFile>(tFile& r);
+	template tFile& operator--<tFile>(tFile& r);
+	template tFile operator++<tFile>(tFile& r,int);
+	template tFile operator--<tFile>(tFile& r,int);
 	
-	template static tFile operator+<tFile>(const tFile d1, const int d2);
-	template static tFile operator-<tFile>(const tFile d1, const int d2);
+	template tFile operator+<tFile>(const tFile d1, const int d2);
+	template tFile operator-<tFile>(const tFile d1, const int d2);
 
-	template static tFile& operator+=<tFile>(tFile& d1, const int d2);
-	template static tFile& operator-=<tFile>(tFile& d1, const int d2);
+	template tFile& operator+=<tFile>(tFile& d1, const int d2);
+	template tFile& operator-=<tFile>(tFile& d1, const int d2);
 
 	
 
@@ -118,16 +118,16 @@ namespace libChess
 		\version 1.0
 		\date 17/08/2017
 	*/
-	template static tRank& operator++<tRank>(tRank& r);
-	template static tRank& operator--<tRank>(tRank& r);
-	template static tRank operator++<tRank>(tRank& r,int);
-	template static tRank operator--<tRank>(tRank& r,int);
+	template tRank& operator++<tRank>(tRank& r);
+	template tRank& operator--<tRank>(tRank& r);
+	template tRank operator++<tRank>(tRank& r,int);
+	template tRank operator--<tRank>(tRank& r,int);
 	
-	template static tRank operator+<tRank>(const tRank d1, const int d2);
-	template static tRank operator-<tRank>(const tRank d1, const int d2);
+	template tRank operator+<tRank>(const tRank d1, const int d2);
+	template tRank operator-<tRank>(const tRank d1, const int d2);
 
-	template static tRank& operator+=<tRank>(tRank& d1, const int d2);
-	template static tRank& operator-=<tRank>(tRank& d1, const int d2);
+	template tRank& operator+=<tRank>(tRank& d1, const int d2);
+	template tRank& operator-=<tRank>(tRank& d1, const int d2);
 
 
 	/*	\brief class used to iterate over a range of tRank
@@ -206,10 +206,10 @@ namespace libChess
 		\date 17/08/2017
 	*/
 	
-	template static tSquare& operator++<tSquare>(tSquare& r);
-	template static tSquare& operator--<tSquare>(tSquare& r);
-	template static tSquare operator++<tSquare>(tSquare& r,int);
-	template static tSquare operator--<tSquare>(tSquare& r,int);
+	template tSquare& operator++<tSquare>(tSquare& r);
+	template tSquare& operator--<tSquare>(tSquare& r);
+	template tSquare operator++<tSquare>(tSquare& r,int);
+	template tSquare operator--<tSquare>(tSquare& r,int);
 
 
 	static inline tSquare operator+(const tSquare d1, const tSquare d2) { return tSquare( (int)d1 + (int)d2 ); }
@@ -273,7 +273,7 @@ namespace libChess
 	static inline tSquare getSquareFromFileRank(tFile f, tRank r)
 	{
 		tSquare t;
-		t = (tSquare)( r *8 + f );
+		t = (tSquare)( (int)(r * 8) + (int)f );
 		return t;
 	}
 
@@ -285,8 +285,8 @@ namespace libChess
 	static inline unsigned int distance(const tSquare s1, const tSquare s2)
 	{
 		extern unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
-		assert( s1 < intsquareNumber );
-		assert( s2 < intsquareNumber );
+		assert( s1 < tSquare::squareNumber );
+		assert( s2 < tSquare::squareNumber );
 		return (SQUARE_DISTANCE[ s1 ][ s2 ]);
 	}
 

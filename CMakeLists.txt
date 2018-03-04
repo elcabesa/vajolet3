@@ -1,20 +1,33 @@
 cmake_minimum_required (VERSION 2.8)
 project (Vajolet)
 
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pedantic -Wall -Wextra" )
+
 IF(NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm")
-	set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 -O3 -msse4.2 -m64 -mbmi -mbmi2 -mpopcnt -pedantic -Wall -Wextra -fmessage-length=0 -fno-exceptions")
-	set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -g -O0 -msse3 -m64 -pedantic -Wall -Wextra -fmessage-length=0 --coverage -fno-exceptions")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -msse4.2 -m64 -mbmi -mbmi2 -mpopcnt ")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -msse4.2 -m64 -mbmi -mbmi2 -mpopcnt")
+	
+	if(CMAKE_CXX_COMPILER STREQUAL g++)
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
+	endif()
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 -O3 -pedantic -Wall -Wextra -fmessage-length=0 -fno-exceptions")
-	set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -g -O0 -pedantic -Wall -Wextra -fmessage-length=0 --coverage -fno-exceptions")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 endif()
 
 if (WIN32)
-	set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s -static -pthread -fno-exceptions")
-	set(CMAKE_EXE_LINKER_FLAGS_DEBUG " -static -pthread --coverage -fno-exceptions")		
+	set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Wl,--allow-multiple-definition -static -pthread")
+	set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -Wl,--allow-multiple-definition -static -pthread")		
 else()
-	set (CMAKE_EXE_LINKER_FLAGS_RELEASE "-s -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static -fno-exceptions")
-	set (CMAKE_EXE_LINKER_FLAGS_DEBUG "-s -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static --coverage -fno-exceptions")
+	
+	if(CMAKE_CXX_COMPILER STREQUAL g++)
+		set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static")
+		set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static --coverage")
+	else()
+		set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static")
+		set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -static ")
+	endif()
+	
 endif()
 
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)

@@ -265,7 +265,7 @@ namespace libChess
 	
 	baseTypes::BitMap BitMapMoveGenerator::_kingMoveBitmap[ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
 	baseTypes::BitMap BitMapMoveGenerator::_knightMoveBitmap[ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
-	baseTypes::BitMap BitMapMoveGenerator::_pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
+	baseTypes::BitMap BitMapMoveGenerator::_pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ] = { { baseTypes::BitMap(0) } };
 	
 	const unsigned int BitMapMoveGenerator::_magicMovesRshift[ baseTypes::squareNumber ] = 
 	{

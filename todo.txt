@@ -1,0 +1,4 @@
+analize and add simdscore usage -> to add tests
+hashkey method return HashKeys& -> write new unit tests :)
+
+add untitest for state and other new code

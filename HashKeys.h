@@ -23,7 +23,6 @@
 //---------------------------------
 //	includes
 //---------------------------------
-#include "Vajolet.h"
 #include "tSquare.h"
 #include "BitBoardIndex.h"
 

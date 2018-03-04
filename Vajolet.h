@@ -20,8 +20,4 @@
 #define VAJOLET_H_
 
 
-#define NDEBUG
-#include <assert.h>     /* assert */
-
-
 #endif /* VAJOLET_H_ */

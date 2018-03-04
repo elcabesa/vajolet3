@@ -59,6 +59,8 @@ namespace libChess
 		static const baseTypes::BitMap& getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap& getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
+		static const baseTypes::BitMap& getRookPseudoMoves( const baseTypes::tSquare& from);
+		static const baseTypes::BitMap& getBishopPseudoMoves( const baseTypes::tSquare& from);
 	
 		static void init(void);
 	
@@ -136,6 +138,15 @@ namespace libChess
 	inline baseTypes::BitMap& BitMapMoveGenerator::_getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy )
 	{
 		return *( _magicMovesRindices [ sq ] + ( ( ( occupancy & _magicMovesRmask[ sq ] ).getInternalRepresentation() * _magicMovesRmagics[ sq ] ) >> _magicMovesRshift[ sq ] ) );
+	}
+	
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getRookPseudoMoves( const baseTypes::tSquare& from)
+	{
+		return _getRookMoves( from, baseTypes::BitMap(0) );
+	}
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopPseudoMoves( const baseTypes::tSquare& from)
+	{
+		return _getBishopMoves( from, baseTypes::BitMap(0) );
 	}
 	
 	

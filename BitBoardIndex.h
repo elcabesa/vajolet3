@@ -233,16 +233,16 @@ namespace libChess
 			\version 1.0
 			\date 17/08/2017
 		*/
-		template static bitboardIndex& operator++<bitboardIndex>(bitboardIndex& r);
-		template static bitboardIndex& operator--<bitboardIndex>(bitboardIndex& r);
-		template static bitboardIndex operator++<bitboardIndex>(bitboardIndex& r,int);
-		template static bitboardIndex operator--<bitboardIndex>(bitboardIndex& r,int);
+		template bitboardIndex& operator++<bitboardIndex>(bitboardIndex& r);
+		template bitboardIndex& operator--<bitboardIndex>(bitboardIndex& r);
+		template bitboardIndex operator++<bitboardIndex>(bitboardIndex& r,int);
+		template bitboardIndex operator--<bitboardIndex>(bitboardIndex& r,int);
 		
-		template static bitboardIndex operator+<bitboardIndex>(const bitboardIndex d1, const int d2);
-		template static bitboardIndex operator-<bitboardIndex>(const bitboardIndex d1, const int d2);
+		template bitboardIndex operator+<bitboardIndex>(const bitboardIndex d1, const int d2);
+		template bitboardIndex operator-<bitboardIndex>(const bitboardIndex d1, const int d2);
 
-		template static bitboardIndex& operator+=<bitboardIndex>(bitboardIndex& d1, const int d2);
-		template static bitboardIndex& operator-=<bitboardIndex>(bitboardIndex& d1, const int d2);
+		template bitboardIndex& operator+=<bitboardIndex>(bitboardIndex& d1, const int d2);
+		template bitboardIndex& operator-=<bitboardIndex>(bitboardIndex& d1, const int d2);
 
 		
 		/*	\brief class used to iterate over a range of tFile
