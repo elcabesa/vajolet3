@@ -106,62 +106,20 @@ namespace libChess
 		return occ;
 	}
 	
-	baseTypes::BitMap BitMapMoveGenerator::_generateRookMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ )
+	baseTypes::BitMap BitMapMoveGenerator::_generateMoveBitMapHelper( baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement)
 	{
 		baseTypes::BitMap moves(0);
 		const baseTypes::tFile file = getFile( sq );
 		const baseTypes::tRank rank = getRank( sq );
 		
-		// north Direction
 		baseTypes::tRank toRank = rank;
 		baseTypes::tFile toFile = file;
 		baseTypes::tSquare toSquare;
 		
 		do
 		{
-			++toRank;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-
-		// sud Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			--toRank;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-		
-		// east Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			++toFile;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-
-		// ovest Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			--toFile;
+			toRank += fileIncrement;
+			toFile += rankIncrement;
 			if ( isValidRank( toRank ) && isValidFile( toFile ) )
 			{
 				toSquare = getSquareFromFileRank( toFile, toRank );
@@ -171,76 +129,29 @@ namespace libChess
 		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
 		
 		return moves;
+		
+	}
+	
+	baseTypes::BitMap BitMapMoveGenerator::_generateRookMoveBitMap( baseTypes::tSquare sq, const baseTypes::BitMap& occ )
+	{
+		baseTypes::BitMap moves(0);
+		
+		moves +=_generateMoveBitMapHelper( sq, occ, 1, 0 );
+		moves +=_generateMoveBitMapHelper( sq, occ, -1, 0 );
+		moves +=_generateMoveBitMapHelper( sq, occ, 0, 1 );
+		moves +=_generateMoveBitMapHelper( sq, occ, 0, -1 );
+		
+		return moves;
 	}
 	
 	baseTypes::BitMap BitMapMoveGenerator::_generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ )
 	{
 		baseTypes::BitMap moves(0);
 		
-		const baseTypes::tFile file = getFile( sq );
-		const baseTypes::tRank rank = getRank( sq );
-		
-		// north east Direction
-		baseTypes::tRank toRank = rank;
-		baseTypes::tFile toFile = file;
-		baseTypes::tSquare toSquare;
-		
-		do
-		{
-			++toRank;
-			++toFile;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-
-		// sud east Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			--toRank;
-			++toFile;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-		
-		// sud ovest Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			--toRank;
-			--toFile;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
-
-		// nord ovest Direction
-		toRank = rank;
-		toFile = file;
-		do
-		{
-			++toRank;
-			--toFile;
-			if ( isValidRank( toRank ) && isValidFile( toFile ) )
-			{
-				toSquare = getSquareFromFileRank( toFile, toRank );
-				moves += toSquare;
-			}
-		}
-		while ( isValidRank( toRank ) && isValidFile( toFile ) && !occ.isSquareSet(toSquare) );
+		moves +=_generateMoveBitMapHelper( sq, occ, 1, 1 );
+		moves +=_generateMoveBitMapHelper( sq, occ, 1, -1 );
+		moves +=_generateMoveBitMapHelper( sq, occ, -1, 1 );
+		moves +=_generateMoveBitMapHelper( sq, occ, -1, -1 );
 		
 		return moves;
 	}

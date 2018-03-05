@@ -63,7 +63,10 @@ namespace libChess
 		*	Methods
 		******************************************************************/
 		const std::string display(void) const;
-		bool setupFromFen(const std::string& fenStr);
+		bool setupFromFen(const std::string& fenStr= "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		
+		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to) const;
+		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to, const baseTypes::BitMap& occupancy ) const;
 		
 	
 	private:
@@ -101,6 +104,7 @@ namespace libChess
 		HashKey _calcKey(void) const;
 		HashKey _calcPawnKey(void) const;
 		HashKey _calcMaterialKey(void) const;
+		void _calcCheckingSquares(void);
 		
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
 	
@@ -150,6 +154,10 @@ namespace libChess
 		return _them[ piece ];
 	}
 	
+	inline const baseTypes::BitMap Position::getAttackersTo(const baseTypes::tSquare to) const
+	{
+		return getAttackersTo(to, _bitBoard[ baseTypes::occupiedSquares] );
+	}
 }
 
 

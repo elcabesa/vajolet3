@@ -61,6 +61,11 @@ namespace libChess
 		static const baseTypes::BitMap getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap& getRookPseudoMoves( const baseTypes::tSquare& from);
 		static const baseTypes::BitMap& getBishopPseudoMoves( const baseTypes::tSquare& from);
+		
+		static const baseTypes::BitMap getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& occupancy );
+		static const baseTypes::BitMap getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
+		static const baseTypes::BitMap getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
+		
 	
 		static void init(void);
 	
@@ -90,6 +95,7 @@ namespace libChess
 		******************************************************************/
 		static void _initHelper( baseTypes::BitMap * const b, std::list<std::pair<int,int>> directions );
 		static baseTypes::BitMap _mapLinearOccToBitmap( const baseTypes::BitMap& moves, const baseTypes::BitMap& linOcc );
+		static baseTypes::BitMap _generateMoveBitMapHelper( baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement);
 		static baseTypes::BitMap _generateRookMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
 		static baseTypes::BitMap _generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
 		
@@ -147,6 +153,21 @@ namespace libChess
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopPseudoMoves( const baseTypes::tSquare& from)
 	{
 		return _getBishopMoves( from, baseTypes::BitMap(0) );
+	}
+	
+	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& occupancy )
+	{
+		return ( (col == baseTypes::white) ? (b << 1) : (b >> 1) ) & ~occupancy ;
+	}
+	
+	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target )
+	{
+		return ( (col == baseTypes::white) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) << 7 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) >> 9 ) ) & target;	
+	}
+	
+	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target )
+	{
+		return ( (col == baseTypes::white) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	
 	}
 	
 	

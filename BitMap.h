@@ -72,6 +72,8 @@ namespace libChess
 			inline BitMap& operator <<=(const int shift) { _b <<= shift; return (*this);}
 			inline BitMap& operator >>=(const int shift) { _b >>= shift; return (*this);}
 			
+			inline BitMap operator~() const { return BitMap(~_b ); }
+			
 			/*****************************************************************
 			*	Iterator
 			******************************************************************/

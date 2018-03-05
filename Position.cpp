@@ -19,6 +19,7 @@
 #include <utility>
 #include <sstream>
 #include "Position.h"
+#include "BitMapMoveGenerator.h"
 
 namespace libChess
 {
@@ -810,6 +811,85 @@ namespace libChess
 			}
 		}
 	return true;
+	}
+	
+	const baseTypes::BitMap Position::getAttackersTo(const baseTypes::tSquare to, const baseTypes::BitMap& occupancy ) const
+	{
+		assert( to < baseTypes::squareNumber);
+		
+		baseTypes::BitMap res = 
+				// white pawns attack
+				( BitMapMoveGenerator::getPawnAttack( to, baseTypes::black ) & getBitmap( baseTypes::whitePawns ) )
+				// black pawns attack
+				+ ( BitMapMoveGenerator::getPawnAttack( to, baseTypes::white ) & getBitmap( baseTypes::blackPawns ) )
+				// knights attack
+				+ ( BitMapMoveGenerator::getKnightMoves( to ) & ( getBitmap( baseTypes::whiteKnights ) + getBitmap( baseTypes::blackKnights ) ) )
+				// king attack
+				+ ( BitMapMoveGenerator::getKingMoves( to ) & ( getBitmap( baseTypes::whiteKing ) + getBitmap( baseTypes::blackKing ) ) );
+		
+		// bishop like movers
+		baseTypes::BitMap mask = getBitmap( baseTypes::blackBishops ) + getBitmap( baseTypes::whiteBishops )+ getBitmap( baseTypes::blackQueens ) + getBitmap( baseTypes::whiteQueens );
+		if( ( mask & BitMapMoveGenerator::getBishopPseudoMoves(to) ).isEmpty() == false )
+		{
+			res += ( BitMapMoveGenerator::getBishopMoves( to, occupancy ) & mask );
+		}
+		// rook like movers
+		mask = getBitmap( baseTypes::blackRooks ) + getBitmap( baseTypes::whiteRooks )+ getBitmap( baseTypes::blackQueens ) + getBitmap( baseTypes::whiteQueens );
+		if( ( mask & BitMapMoveGenerator::getRookPseudoMoves(to) ).isEmpty() == false )
+		{
+			res += ( BitMapMoveGenerator::getRookMoves( to, occupancy ) & mask );
+		}
+		
+		return res;
+	}
+	
+	/*! \brief calculate the checking squares given the king position
+		\author Marco Belli
+		\version 1.0
+		\date 08/11/2013
+	*/
+	inline void Position::_calcCheckingSquares(void)
+	{
+		GameState &st = _getActualState();
+		
+		baseTypes::bitboardIndex opponentKing = baseTypes::blackKing - st.getTurn();
+		assert( opponentKing < baseTypes::bitboardNumber );
+		
+		
+		baseTypes::bitboardIndex myPieces = (baseTypes::bitboardIndex)st.getTurn();
+		assert( myPieces < baseTypes::bitboardNumber);
+
+
+		baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
+
+		baseTypes::BitMap occupancy = getOccupationBitmap();
+
+		st.setCheckingSquare( baseTypes::whiteKing +  myPieces, baseTypes::BitMap(0) );
+		assert( OppKingSquare < baseTypes::squareNumber );
+		assert( baseTypes::whitePawns + myPieces < baseTypes::bitboardNumber );
+/*		
+		
+		s.checkingSquares[whiteRooks+myPieces] = Movegen::attackFrom<Position::whiteRooks>(OppKingSquare,occupancy);
+		s.checkingSquares[whiteBishops+myPieces] = Movegen::attackFrom<Position::whiteBishops>(OppKingSquare,occupancy);
+		s.checkingSquares[whiteQueens+myPieces] = s.checkingSquares[whiteRooks+myPieces]|s.checkingSquares[whiteBishops+myPieces];
+		s.checkingSquares[whiteKnights+myPieces] = Movegen::attackFrom<Position::whiteKnights>(OppKingSquare);
+
+		if( st.getTurn() == baseTypes::blackTurn )
+		{
+			s.checkingSquares[whitePawns+myPieces] = Movegen::attackFrom<Position::whitePawns>(OppKingSquare);
+		}else
+		{
+			s.checkingSquares[whitePawns+myPieces] = Movegen::attackFrom<Position::blackPawns>(OppKingSquare,1);
+		}
+
+		assert(blackPawns-myPieces>=0);
+		s.checkingSquares[blackKing-myPieces] = 0;
+		s.checkingSquares[blackRooks-myPieces] = 0;
+		s.checkingSquares[blackBishops-myPieces] = 0;
+		s.checkingSquares[blackQueens-myPieces] = 0;
+		s.checkingSquares[blackKnights-myPieces] = 0;
+		s.checkingSquares[blackPawns-myPieces]  =0;*/
+
 	}
 	
 }
