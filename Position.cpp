@@ -194,7 +194,7 @@ namespace libChess
 			}
 		}
 
-		if( st.getTurn() == baseTypes::blackTurn )
+		if( isBlackTurn() )
 		{
 			hash.changeSide();
 		}
@@ -298,7 +298,7 @@ namespace libChess
 		
 		// turn
 		s += " ";
-		if( st.getTurn() == baseTypes::blackTurn )
+		if( isBlackTurn() )
 		{
 			s += "b";
 		}
@@ -387,7 +387,7 @@ namespace libChess
 		
 		// turn
 		s += " ";
-		if( st.getTurn() == baseTypes::blackTurn )
+		if( isBlackTurn() )
 		{
 			s += "w";
 		}
@@ -455,7 +455,7 @@ namespace libChess
 		}
 		s += "\n";
 
-		s += (st.getTurn() == baseTypes::whiteTurn ? "WHITE TO MOVE" : "BLACK TO MOVE");
+		s += ( isWhiteTurn() ? "WHITE TO MOVE" : "BLACK TO MOVE");
 		s += "\n";
 		s += "50 move counter ";
 		s += std::to_string( st.getFiftyMoveCnt() ) + "\n";
@@ -469,7 +469,6 @@ namespace libChess
 		s += st.getEpSquareString();
 		s += "\n";
 		
-		// todo add this code
 		s += "material ";
 		s += st.getMaterialValue()[0]/10000.0;
 		s += "\n";
@@ -685,11 +684,12 @@ namespace libChess
 				)
 			{
 				st.setEpSquare( (baseTypes::tSquare) ( ( col - 'a' ) + 8 * ( row - '1' ) ) );
-				// todo add this code
-				/*if (!(getAttackersTo(x.epSquare) & bitBoard[whitePawns+x.nextMove]))
+				
+				// todo riguardare
+				if ( ( getAttackersTo( st.getEpSquare() ) & getBitmap( getMyPiece( baseTypes::Pawns ) ) ).isEmpty() )
 				{
-					st.resetEpSquare();
-				}*/
+					st.clearEpSquare();
+				}
 				
 			}
 			else{
@@ -711,14 +711,14 @@ namespace libChess
 		
 		if( ss.eof() )
 		{
-			st.setPliesCnt( int( st.getTurn() == baseTypes::blackTurn) );
+			st.setPliesCnt( int( isBlackTurn() ) );
 			st.resetFiftyMoveCnt();
 		}
 		else
 		{
 			int plies;
 			ss >> plies;
-			plies = std::max( 2 * ( plies - 1), 0) + int( st.getTurn() == baseTypes::blackTurn );
+			plies = std::max( 2 * ( plies - 1), 0) + int( isBlackTurn() );
 			st.setPliesCnt( plies );
 		}
 		
@@ -734,18 +734,22 @@ namespace libChess
 		
 		st.setKeys(_calcKey(), _calcPawnKey(), _calcMaterialKey() );
 
-/*
-		// todo readd those methods
+
 		
-		calcCheckingSquares();
+		
+		_calcCheckingSquares();
+	
+		st.setDiscoveryChechers( calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
+		st.setPinned( calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		
+		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
 
-		x.hiddenCheckersCandidate=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove)),x.nextMove);
-		x.pinnedPieces=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),eNextMove(blackTurn-x.nextMove));
-		x.checkers= getAttackersTo(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))) & bitBoard[blackPieces-x.nextMove];
 
 
-
-		checkPosConsistency(1);*/
+		/*
+		// todo readd those methods
+		checkPosConsistency(1);
+		*/
 		return true;
 	}
 	
@@ -848,43 +852,53 @@ namespace libChess
 		\version 1.0
 		\date 08/11/2013
 	*/
-	inline void Position::_calcCheckingSquares(void)
+	void Position::_calcCheckingSquares(void)
 	{
 		GameState &st = _getActualState();
-		const baseTypes::eTurn turn = st.getTurn();
 		
-		const baseTypes::bitboardIndex opponentKing = baseTypes::blackKing - turn;
+		const baseTypes::bitboardIndex opponentKing = getEnemyPiece ( baseTypes::King );
 		assert( opponentKing < baseTypes::bitboardNumber );
-		
-		
-		const baseTypes::bitboardIndex myPieces = (baseTypes::bitboardIndex)turn;
-		assert( myPieces < baseTypes::bitboardNumber);
 
 
 		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
 
 		const baseTypes::BitMap occupancy = getOccupationBitmap();
-		const baseTypes::tColor color = (turn == baseTypes::blackTurn) ?  baseTypes::white : baseTypes::black;
+		const baseTypes::tColor color = isBlackTurn() ?  baseTypes::white : baseTypes::black;
 
-		
-		
-		assert( OppKingSquare < baseTypes::squareNumber );
-		assert( baseTypes::whitePawns + myPieces < baseTypes::bitboardNumber );
-		st.setCheckingSquare( baseTypes::King +  myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::Rooks +  myPieces, BitMapMoveGenerator::getRookMoves( OppKingSquare, occupancy ) );
-		st.setCheckingSquare( baseTypes::Bishops +  myPieces, BitMapMoveGenerator::getBishopMoves( OppKingSquare, occupancy ) );
-		st.setCheckingSquare( baseTypes::Queens +  myPieces, BitMapMoveGenerator::getQueenMoves( OppKingSquare, occupancy ) );
-		st.setCheckingSquare( baseTypes::Knights +  myPieces, BitMapMoveGenerator::getKnightMoves( OppKingSquare ) );
-		st.setCheckingSquare( baseTypes::Pawns +  myPieces, BitMapMoveGenerator::getPawnAttack( OppKingSquare,color ) );
+		st.setCheckingSquare( getMyPiece( baseTypes::King ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getMyPiece( baseTypes::Rooks ), BitMapMoveGenerator::getRookMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( getMyPiece( baseTypes::Bishops ), BitMapMoveGenerator::getBishopMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( getMyPiece( baseTypes::Queens ), BitMapMoveGenerator::getQueenMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( getMyPiece( baseTypes::Knights ), BitMapMoveGenerator::getKnightMoves( OppKingSquare ) );
+		st.setCheckingSquare( getMyPiece( baseTypes::Pawns ), BitMapMoveGenerator::getPawnAttack( OppKingSquare,color ) );
 
-		
-		assert( baseTypes::blackPawns - myPieces >= 0 );
-		st.setCheckingSquare( baseTypes::blackKing - myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::blackRooks - myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::blackBishops - myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::blackQueens - myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::blackKnights - myPieces, baseTypes::BitMap(0) );
-		st.setCheckingSquare( baseTypes::blackPawns - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::King ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::Rooks ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::Bishops ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::Queens ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::Knights ), baseTypes::BitMap(0) );
+		st.setCheckingSquare( getEnemyPiece( baseTypes::Pawns ), baseTypes::BitMap(0) );
+
+	}
+	
+	
+	const baseTypes::BitMap Position::calcPin( const baseTypes::tSquare kingSquare, const baseTypes::eTurn turn ) const
+	{
+		assert( kingSquare < baseTypes::squareNumber );
+		baseTypes::BitMap result(0);
+		// calc pinners/pinned candidate
+		baseTypes::BitMap pin = BitMapMoveGenerator::getBishopPseudoMoves( kingSquare ) & ( getBitmap( baseTypes::Bishops + turn ) + getBitmap( baseTypes::Queens + turn ) );
+		pin += BitMapMoveGenerator::getRookPseudoMoves(kingSquare) & ( getBitmap( baseTypes::Rooks + turn ) + getBitmap( baseTypes::Queens + turn ) );
+
+		for(  const auto pinSq : pin )
+		{
+			baseTypes::BitMap b = baseTypes::BitMap::getSquaresBetween( kingSquare, pinSq ) & getOccupationBitmap();
+			if ( !b.moreThanOneBit() )
+			{
+				result += b & getBitmap( getMyPiece( baseTypes::Pieces ) );
+			}
+		}
+		return result;
 
 	}
 	

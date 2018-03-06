@@ -56,17 +56,23 @@ namespace libChess
 		unsigned int getPieceCount(const baseTypes::bitboardIndex in) const;
 		baseTypes::bitboardIndex getPieceAt(const baseTypes::tSquare sq) const;
 		
+		baseTypes::bitboardIndex getMyPiece(const baseTypes::bitboardIndex in) const;
+		baseTypes::bitboardIndex getEnemyPiece(const baseTypes::bitboardIndex in) const;
+		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
 		
 		/*****************************************************************
 		*	Methods
 		******************************************************************/
+		bool isWhiteTurn() const;
+		bool isBlackTurn() const;
 		const std::string display(void) const;
 		bool setupFromFen(const std::string& fenStr= "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		
 		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to) const;
 		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to, const baseTypes::BitMap& occupancy ) const;
+		const baseTypes::BitMap calcPin(const baseTypes::tSquare kingSquare,const baseTypes::eTurn turn) const;
 		
 	
 	private:
@@ -157,6 +163,25 @@ namespace libChess
 	inline const baseTypes::BitMap Position::getAttackersTo(const baseTypes::tSquare to) const
 	{
 		return getAttackersTo(to, _bitBoard[ baseTypes::occupiedSquares] );
+	}
+	
+	inline bool Position::isWhiteTurn(void) const
+	{
+		return getActualStateConst().getTurn() == baseTypes::whiteTurn;
+	}
+	
+	inline bool Position::isBlackTurn(void) const
+	{
+		return getActualStateConst().getTurn() == baseTypes::blackTurn;
+	}
+	
+	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const
+	{
+		return in + getActualStateConst().getTurn();
+	}
+	inline baseTypes::bitboardIndex Position::getEnemyPiece(const baseTypes::bitboardIndex in) const
+	{
+		return in + baseTypes::separationBitmap - getActualStateConst().getTurn();
 	}
 }
 

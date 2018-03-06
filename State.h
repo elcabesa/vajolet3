@@ -71,7 +71,7 @@ namespace libChess
 		baseTypes::bitboardIndex getCapturedPiece() const;
 		const baseTypes::BitMap& getCheckingSquare( const baseTypes::bitboardIndex idx ) const;
 		
-		const baseTypes::BitMap& getHiddenCheckers() const;
+		const baseTypes::BitMap& getDiscoveryCheckers() const;
 		const baseTypes::BitMap& getPinned() const;
 		const baseTypes::BitMap& getCheckers() const;
 		
@@ -101,7 +101,7 @@ namespace libChess
 		void resetCapturedPiece();
 		
 		void setCheckingSquare( const baseTypes::bitboardIndex idx, const baseTypes::BitMap& b );
-		void setHiddenChechers( const baseTypes::BitMap& b);
+		void setDiscoveryChechers( const baseTypes::BitMap& b);
 		void setPinned( const baseTypes::BitMap& b);
 		void setCheckers( const baseTypes::BitMap& b );
 			
@@ -166,7 +166,7 @@ namespace libChess
 		baseTypes::bitboardIndex _capturedPiece; /*!<  index of the captured piece for unmakeMove*/
 		
 		baseTypes::BitMap _checkingSquares[baseTypes::bitboardNumber]; /*!< squares of the board from where a king can be checked*/
-		baseTypes::BitMap _hiddenCheckers;	/*!< pieces who can make a discover check moving*/
+		baseTypes::BitMap _discoveryCheckers;	/*!< pieces who can make a discover check moving*/
 		baseTypes::BitMap _pinned;	/*!< pinned pieces*/
 		baseTypes::BitMap _checkers;	/*!< checking pieces*/
 		Move _currentMove;
@@ -200,7 +200,7 @@ namespace libChess
 	inline baseTypes::bitboardIndex GameState::getCapturedPiece()       const { return _capturedPiece; }
 	inline const baseTypes::BitMap& GameState::getCheckingSquare( const baseTypes::bitboardIndex idx ) const { return _checkingSquares[idx]; }
 	
-	inline const baseTypes::BitMap& GameState::getHiddenCheckers()      const { return _hiddenCheckers; }
+	inline const baseTypes::BitMap& GameState::getDiscoveryCheckers()      const { return _discoveryCheckers; }
 	inline const baseTypes::BitMap& GameState::getPinned()   const { return _pinned; }
 	inline const baseTypes::BitMap& GameState::getCheckers() const { return _checkers; }
 	
@@ -340,9 +340,9 @@ namespace libChess
 		_pinned = b;
 	}
 
-	inline void GameState::setHiddenChechers( const baseTypes::BitMap& b)
+	inline void GameState::setDiscoveryChechers( const baseTypes::BitMap& b)
 	{
-		_hiddenCheckers = b;
+		_discoveryCheckers = b;
 	}
 	
 	inline void GameState::setCheckers( const baseTypes::BitMap& b )

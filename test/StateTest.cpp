@@ -50,7 +50,7 @@ namespace libChess
 		void resetCapturedPiece(){GameState::resetCapturedPiece();}
 		
 		void setCheckingSquare( const baseTypes::bitboardIndex idx, const baseTypes::BitMap& b ){GameState::setCheckingSquare( idx, b );}
-		void setHiddenChechers( const baseTypes::BitMap& b){GameState::setHiddenChechers( b );}
+		void setDiscoveryChechers( const baseTypes::BitMap& b){GameState::setDiscoveryChechers( b );}
 		void setPinned( const baseTypes::BitMap& b){GameState::setPinned( b );}
 		void setCheckers( const baseTypes::BitMap& b ){GameState::setCheckers( b );}
 			
@@ -392,18 +392,18 @@ namespace {
 		
 	}
 	
-	TEST(GameState, HiddenCheckersSetGet)
+	TEST(GameState, DiscoveryCheckersSetGet)
 	{
 		GameStateFixture st;
 		
-		st.setHiddenChechers( baseTypes::BitMap(34535) );
-		ASSERT_EQ( baseTypes::BitMap(34535), st.getHiddenCheckers() );
-		st.setHiddenChechers( baseTypes::BitMap(5347274) );
-		ASSERT_EQ( baseTypes::BitMap(5347274), st.getHiddenCheckers() );
-		st.setHiddenChechers( baseTypes::BitMap(23) );
-		ASSERT_EQ( baseTypes::BitMap(23), st.getHiddenCheckers() );
-		st.setHiddenChechers( baseTypes::BitMap(6549598769) );
-		ASSERT_EQ( baseTypes::BitMap(6549598769), st.getHiddenCheckers() );
+		st.setDiscoveryChechers( baseTypes::BitMap(34535) );
+		ASSERT_EQ( baseTypes::BitMap(34535), st.getDiscoveryCheckers() );
+		st.setDiscoveryChechers( baseTypes::BitMap(5347274) );
+		ASSERT_EQ( baseTypes::BitMap(5347274), st.getDiscoveryCheckers() );
+		st.setDiscoveryChechers( baseTypes::BitMap(23) );
+		ASSERT_EQ( baseTypes::BitMap(23), st.getDiscoveryCheckers() );
+		st.setDiscoveryChechers( baseTypes::BitMap(6549598769) );
+		ASSERT_EQ( baseTypes::BitMap(6549598769), st.getDiscoveryCheckers() );
 		
 	}
 	
@@ -441,12 +441,12 @@ namespace {
 	{
 		GameStateFixture st;
 		
-		st.setHiddenChechers( baseTypes::BitMap(34535) );
+		st.setDiscoveryChechers( baseTypes::BitMap(34535) );
 		st.setPinned( baseTypes::BitMap(23) );
 		st.setCheckers( baseTypes::BitMap(6549598769) );
 		
 		ASSERT_EQ( baseTypes::BitMap(23), st.getPinned() );
-		ASSERT_EQ( baseTypes::BitMap(34535), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(34535), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(6549598769), st.getCheckers() );
 		
 	}
@@ -483,7 +483,7 @@ namespace {
 		st.setCheckingSquare( baseTypes::blackKnights, baseTypes::BitMap(11) );
 		st.setCheckingSquare( baseTypes::blackPawns, baseTypes::BitMap(12) );
 		
-		st.setHiddenChechers( baseTypes::BitMap(435) );
+		st.setDiscoveryChechers( baseTypes::BitMap(435) );
 		st.setPinned( baseTypes::BitMap(1435) );
 		st.setCheckers( baseTypes::BitMap(732) );
 	}
@@ -536,7 +536,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -596,7 +596,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -695,7 +695,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -777,7 +777,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -896,7 +896,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -970,7 +970,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1036,7 +1036,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1102,7 +1102,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1178,7 +1178,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1244,7 +1244,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1310,7 +1310,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1376,7 +1376,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
@@ -1453,7 +1453,7 @@ namespace {
 		ASSERT_EQ( baseTypes::BitMap(11), st.getCheckingSquare( baseTypes::blackKnights ) );
 		ASSERT_EQ( baseTypes::BitMap(12), st.getCheckingSquare( baseTypes::blackPawns ) );
 		
-		ASSERT_EQ( baseTypes::BitMap(435), st.getHiddenCheckers() );
+		ASSERT_EQ( baseTypes::BitMap(435), st.getDiscoveryCheckers() );
 		ASSERT_EQ( baseTypes::BitMap(1435), st.getPinned() );
 		ASSERT_EQ( baseTypes::BitMap(732), st.getCheckers() );
 		
