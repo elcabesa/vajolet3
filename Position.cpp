@@ -862,7 +862,7 @@ namespace libChess
 
 		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
 
-		const baseTypes::BitMap occupancy = getOccupationBitmap();
+		const baseTypes::BitMap& occupancy = getOccupationBitmap();
 		const baseTypes::tColor color = isBlackTurn() ?  baseTypes::white : baseTypes::black;
 
 		st.setCheckingSquare( getMyPiece( baseTypes::King ), baseTypes::BitMap(0) );
