@@ -851,44 +851,40 @@ namespace libChess
 	inline void Position::_calcCheckingSquares(void)
 	{
 		GameState &st = _getActualState();
+		const baseTypes::eTurn turn = st.getTurn();
 		
-		baseTypes::bitboardIndex opponentKing = baseTypes::blackKing - st.getTurn();
+		const baseTypes::bitboardIndex opponentKing = baseTypes::blackKing - turn;
 		assert( opponentKing < baseTypes::bitboardNumber );
 		
 		
-		baseTypes::bitboardIndex myPieces = (baseTypes::bitboardIndex)st.getTurn();
+		const baseTypes::bitboardIndex myPieces = (baseTypes::bitboardIndex)turn;
 		assert( myPieces < baseTypes::bitboardNumber);
 
 
-		baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
+		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
 
-		baseTypes::BitMap occupancy = getOccupationBitmap();
+		const baseTypes::BitMap occupancy = getOccupationBitmap();
+		const baseTypes::tColor color = (turn == baseTypes::blackTurn) ?  baseTypes::white : baseTypes::black;
 
-		st.setCheckingSquare( baseTypes::whiteKing +  myPieces, baseTypes::BitMap(0) );
+		
+		
 		assert( OppKingSquare < baseTypes::squareNumber );
 		assert( baseTypes::whitePawns + myPieces < baseTypes::bitboardNumber );
-/*		
+		st.setCheckingSquare( baseTypes::King +  myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::Rooks +  myPieces, BitMapMoveGenerator::getRookMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( baseTypes::Bishops +  myPieces, BitMapMoveGenerator::getBishopMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( baseTypes::Queens +  myPieces, BitMapMoveGenerator::getQueenMoves( OppKingSquare, occupancy ) );
+		st.setCheckingSquare( baseTypes::Knights +  myPieces, BitMapMoveGenerator::getKnightMoves( OppKingSquare ) );
+		st.setCheckingSquare( baseTypes::Pawns +  myPieces, BitMapMoveGenerator::getPawnAttack( OppKingSquare,color ) );
+
 		
-		s.checkingSquares[whiteRooks+myPieces] = Movegen::attackFrom<Position::whiteRooks>(OppKingSquare,occupancy);
-		s.checkingSquares[whiteBishops+myPieces] = Movegen::attackFrom<Position::whiteBishops>(OppKingSquare,occupancy);
-		s.checkingSquares[whiteQueens+myPieces] = s.checkingSquares[whiteRooks+myPieces]|s.checkingSquares[whiteBishops+myPieces];
-		s.checkingSquares[whiteKnights+myPieces] = Movegen::attackFrom<Position::whiteKnights>(OppKingSquare);
-
-		if( st.getTurn() == baseTypes::blackTurn )
-		{
-			s.checkingSquares[whitePawns+myPieces] = Movegen::attackFrom<Position::whitePawns>(OppKingSquare);
-		}else
-		{
-			s.checkingSquares[whitePawns+myPieces] = Movegen::attackFrom<Position::blackPawns>(OppKingSquare,1);
-		}
-
-		assert(blackPawns-myPieces>=0);
-		s.checkingSquares[blackKing-myPieces] = 0;
-		s.checkingSquares[blackRooks-myPieces] = 0;
-		s.checkingSquares[blackBishops-myPieces] = 0;
-		s.checkingSquares[blackQueens-myPieces] = 0;
-		s.checkingSquares[blackKnights-myPieces] = 0;
-		s.checkingSquares[blackPawns-myPieces]  =0;*/
+		assert( baseTypes::blackPawns - myPieces >= 0 );
+		st.setCheckingSquare( baseTypes::blackKing - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::blackRooks - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::blackBishops - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::blackQueens - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::blackKnights - myPieces, baseTypes::BitMap(0) );
+		st.setCheckingSquare( baseTypes::blackPawns - myPieces, baseTypes::BitMap(0) );
 
 	}
 	
