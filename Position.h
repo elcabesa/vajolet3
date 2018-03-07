@@ -72,7 +72,12 @@ namespace libChess
 		
 		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to) const;
 		const baseTypes::BitMap getAttackersTo(const baseTypes::tSquare to, const baseTypes::BitMap& occupancy ) const;
-		const baseTypes::BitMap calcPin(const baseTypes::tSquare kingSquare,const baseTypes::eTurn turn) const;
+		
+		void doNullMove( void );
+		void undoNullMove( void );
+		void doMove( const Move &m );
+		void undoMove( void );
+		
 		
 	
 	private:
@@ -111,6 +116,7 @@ namespace libChess
 		HashKey _calcPawnKey(void) const;
 		HashKey _calcMaterialKey(void) const;
 		void _calcCheckingSquares(void);
+		const baseTypes::BitMap _calcPin(const baseTypes::tSquare kingSquare,const baseTypes::eTurn turn) const;
 		
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
 	

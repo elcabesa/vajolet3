@@ -40,6 +40,7 @@
 #include <list>
 #include <utility>
 #include "BitMap.h"
+#include "BitBoardIndex.h"
 
 namespace libChess
 {
@@ -65,6 +66,8 @@ namespace libChess
 		static const baseTypes::BitMap getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
 		static const baseTypes::BitMap getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
+		
+		static baseTypes::tSquare pawnPush( const baseTypes::eTurn turn );
 		
 	
 		static void init(void);
@@ -100,9 +103,7 @@ namespace libChess
 		static baseTypes::BitMap _generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
 		
 		static baseTypes::BitMap& _getBishopMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );
-		static baseTypes::BitMap& _getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );
-		
-		
+		static baseTypes::BitMap& _getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );		
 	};
 	
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getKingMoves( const baseTypes::tSquare& from )
@@ -168,6 +169,16 @@ namespace libChess
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target )
 	{
 		return ( (col == baseTypes::white) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	
+	}
+	
+	/*!	\brief return the offset of a pawn push
+		\author Marco Belli
+		\version 1.0
+		\date 08/11/2013
+	 */
+	inline baseTypes::tSquare BitMapMoveGenerator::pawnPush( const baseTypes::eTurn turn )
+	{
+		return turn ? baseTypes::sud : baseTypes::north;
 	}
 	
 	
