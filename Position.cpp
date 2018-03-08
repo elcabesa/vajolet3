@@ -82,7 +82,7 @@ namespace libChess
 	
 	inline GameState& Position::_pushState(void)
 	{
-		_stateList.emplace_back(getActualStateConst());
+		_stateList.emplace_back( getActualStateConst() );
 		_actualState = &_stateList.back();
 		return _getActualState();
 	}
@@ -739,8 +739,8 @@ namespace libChess
 		
 		_calcCheckingSquares();
 	
-		st.setDiscoveryChechers( calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
-		st.setPinned( calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
 		
 		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
 
@@ -882,7 +882,7 @@ namespace libChess
 	}
 	
 	
-	const baseTypes::BitMap Position::calcPin( const baseTypes::tSquare kingSquare, const baseTypes::eTurn turn ) const
+	const baseTypes::BitMap Position::_calcPin( const baseTypes::tSquare kingSquare, const baseTypes::eTurn turn ) const
 	{
 		assert( kingSquare < baseTypes::squareNumber );
 		baseTypes::BitMap result(0);
@@ -900,6 +900,304 @@ namespace libChess
 		}
 		return result;
 
+	}
+	
+	void Position::doNullMove( void )
+	{
+		GameState& st = _pushState();
+		st.setCurrentMove( Move::NOMOVE );
+		
+		st.clearEpSquare();
+		st.changeTurn();
+		st.incrementCountersNullMove();
+		st.resetCapturedPiece();
+		
+		_swapUsThem();
+		
+		_calcCheckingSquares();
+	
+		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		
+		// checker doesn't change, don't update them
+		//st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
+
+/* todo readd code
+#ifdef	ENABLE_CHECK_CONSISTENCY
+		checkPosConsistency(1);
+#endif
+*/	
+	}
+	
+	void Position::undoNullMove( void )
+	{
+		_popState();
+		_swapUsThem();
+
+		/* todo readd code
+#ifdef ENABLE_CHECK_CONSISTENCY
+		checkPosConsistency(0);
+#endif
+*/
+	}
+	void Position::doMove( const Move &m )
+	{
+		assert( m != Move::NOMOVE );
+		
+		GameState& st = _pushState();
+		st.setCurrentMove( m );
+		
+		const baseTypes::tSquare from = m.getFrom();
+		const baseTypes::tSquare to = m.getTo();
+		baseTypes::tSquare captureSquare = m.getTo();
+		
+		const baseTypes::bitboardIndex piece = getPieceAt( from );
+		assert( baseTypes::isValidPiece( piece ) );
+	/*
+	todo readd this code
+	bool moveIsCheck = moveGivesCheck(m);
+*/
+		const baseTypes::bitboardIndex capturedPiece = m.isEnPassantMove() ? ( st.getTurn() ? baseTypes::whitePawns : baseTypes::blackPawns) : getPieceAt( to );
+		assert( capturedPiece != baseTypes::separationBitmap );
+		assert( capturedPiece != baseTypes::whitePieces );
+		assert( capturedPiece != baseTypes::blackPieces );
+
+		st.incrementCounters();
+		
+		st.clearEpSquare();
+		
+		// do castle additional instruction
+		// todo manage chess960
+		if( m.isCastleMove() )
+		{
+			bool kingSide = to > from;
+			
+			baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			
+			assert( rFrom < baseTypes::squareNumber );
+			assert( rTo < baseTypes::squareNumber );
+			
+			baseTypes::bitboardIndex rook =  getPieceAt( rTo );
+			
+			assert( rook < baseTypes::bitboardNumber );
+			assert( baseTypes::isRook(rook) );
+			
+			_movePiece( rook, rFrom, rTo );
+			st.keyMovePiece( rook, rFrom, rTo);
+			
+			// todo readd this code
+			// st.material += pstValue[rook][rTo] - pstValue[rook][rFrom];
+			
+			
+		}
+		
+		// do capture
+		else if( capturedPiece != baseTypes::empty )
+		{
+			if( baseTypes::isPawn(capturedPiece) )
+			{
+
+				if( m.isEnPassantMove() )
+				{
+					captureSquare -= BitMapMoveGenerator::pawnPush( st.getTurn() );
+				}
+				assert( captureSquare < baseTypes::squareNumber );
+				st.pawnKeyRemovePiece( capturedPiece, captureSquare );
+			}
+			/*
+			todo readd this piece of code
+			x.nonPawnMaterial -= nonPawnValue[capture];//[captureSquare];
+			*/
+
+
+			// remove piece
+			_removePiece( capturedPiece, captureSquare );
+			// update material
+			/*
+			todo readd this piece of code
+			x.material -= pstValue[capture][captureSquare];
+			*/
+/*
+			// update keys
+			x.key ^= HashKeys::keys[captureSquare][capture];
+			assert(getPieceCount(capture)<30);
+			x.materialKey ^= HashKeys::keys[capture][getPieceCount(capture)]; // ->after removing the piece
+
+			// reset fifty move counter
+			x.fiftyMoveCnt = 0;*/
+		}
+/*
+
+
+	
+	
+
+	
+
+	// update hashKey
+	x.key ^= HashKeys::keys[from][piece] ^ HashKeys::keys[to][piece];
+	movePiece(piece,from,to);
+
+	x.material += pstValue[piece][to] - pstValue[piece][from];
+	//npm+=nonPawnValue[piece][to]-nonPawnValue[piece][from];
+	// update non pawn material
+
+
+
+
+	// Update castle rights if needed
+	if (x.castleRights && (castleRightsMask[from] | castleRightsMask[to]))
+	{
+		int cr = castleRightsMask[from] | castleRightsMask[to];
+		assert((x.castleRights & cr)<16);
+		x.key ^= HashKeys::castlingRight[x.castleRights & cr];
+		x.castleRights = (eCastle)(x.castleRights &(~cr));
+	}
+
+
+
+	if(isPawn(piece))
+	{
+		if(
+				abs(from-to)==16
+				&& (getAttackersTo((tSquare)((from+to)>>1))  & Them[Pawns])
+		)
+		{
+			x.epSquare = (tSquare)((from+to)>>1);
+			assert(x.epSquare<squareNumber);
+			x.key ^= HashKeys::ep[x.epSquare];
+		}
+		if( m.isPromotionMove() )
+		{
+			bitboardIndex promotedPiece = (bitboardIndex)(whiteQueens + x.nextMove + m.bit.promotion);
+			assert(promotedPiece<lastBitboard);
+			removePiece(piece,to);
+			putPiece(promotedPiece,to);
+
+			x.material += pstValue[promotedPiece][to]-pstValue[piece][to];
+			x.nonPawnMaterial += nonPawnValue[promotedPiece];//[to];
+
+
+			x.key ^= HashKeys::keys[to][piece]^ HashKeys::keys[to][promotedPiece];
+			x.pawnKey ^= HashKeys::keys[to][piece];
+			x.materialKey ^= HashKeys::keys[promotedPiece][getPieceCount(promotedPiece)-1] ^ HashKeys::keys[piece][getPieceCount(piece)];
+		}
+		x.pawnKey ^= HashKeys::keys[from][piece] ^ HashKeys::keys[to][piece];
+		x.fiftyMoveCnt = 0;
+	}
+
+	x.capturedPiece = capture;
+
+*/
+	st.changeTurn();
+	_swapUsThem();
+/*
+
+
+	x.checkers=0;
+	if(moveIsCheck)
+	{
+
+		if(m.bit.flags != Move::fnone)
+		{
+			assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
+			x.checkers |= getAttackersTo(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))) & Them[Pieces];
+		}
+		else
+		{
+			if(x.checkingSquares[piece] & bitSet(to)) // should be old state, but checkingSquares has not been changed so far
+			{
+				x.checkers |= bitSet(to);
+			}
+			if(x.hiddenCheckersCandidate && (x.hiddenCheckersCandidate & bitSet(from)))	// should be old state, but hiddenCheckersCandidate has not been changed so far
+			{
+				if(!isRook(piece))
+				{
+					assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
+					x.checkers |= Movegen::attackFrom<Position::whiteRooks>(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),bitBoard[occupiedSquares]) & (Them[Queens] |Them[Rooks]);
+				}
+				if(!isBishop(piece))
+				{
+					assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
+					x.checkers |= Movegen::attackFrom<Position::whiteBishops>(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),bitBoard[occupiedSquares]) & (Them[Queens] |Them[Bishops]);
+				}
+			}
+		}
+	}
+
+	calcCheckingSquares();
+	assert(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove))<squareNumber);
+	x.hiddenCheckersCandidate=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove)),x.nextMove);
+	assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
+	x.pinnedPieces = getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),eNextMove(blackTurn-x.nextMove));
+	*/
+/* todo readd this code
+#ifdef	ENABLE_CHECK_CONSISTENCY
+	checkPosConsistency(1);
+#endif
+
+*/
+	}
+	void Position::undoMove( void )
+	{
+		const GameState& st = getActualStateConst();
+		const Move m = st.getCurrentMove();
+		assert( m != Move::NOMOVE );
+		const baseTypes::tSquare to = m.getTo();
+		const baseTypes::tSquare from = m.getFrom();
+		baseTypes::bitboardIndex piece = getPieceAt( to );
+		assert( baseTypes::isValidPiece( piece ) );
+		
+		if( m.isPromotionMove() )
+		{
+			_removePiece( piece, to);
+			piece = isWhitePiece( piece ) ? baseTypes::whitePawns : baseTypes::blackPawns;
+			_addPiece( piece, to);
+		}
+		// todo manage chess960
+		else if( m.isCastleMove() )
+		{
+			bool kingSide = to > from;
+			baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			
+			assert( rFrom < baseTypes::squareNumber );
+			assert( rTo < baseTypes::squareNumber );
+			
+			baseTypes::bitboardIndex rook =  getPieceAt( rTo );
+			
+			assert( rook < baseTypes::bitboardNumber );
+			assert( baseTypes::isRook(rook) );
+			
+			_movePiece( rook, rTo, rFrom );
+		}
+		
+		_movePiece( piece, to, from );
+		
+		assert( st.getCapturedPiece() < baseTypes::bitboardNumber );
+		if( st.getCapturedPiece() )
+		{
+			baseTypes::tSquare capSq = to;
+			if( m.isEnPassantMove() )
+			{
+				capSq += BitMapMoveGenerator::pawnPush( st.getTurn() );
+			}
+			assert( capSq < baseTypes::squareNumber );
+			
+			_addPiece( st.getCapturedPiece(), capSq );
+		}
+		
+		_popState();
+		_swapUsThem();
+
+
+/*	todo read this code
+#ifdef	ENABLE_CHECK_CONSISTENCY
+		checkPosConsistency(0);
+#endif*/
+		
+		
 	}
 	
 }
