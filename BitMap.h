@@ -66,11 +66,11 @@ namespace libChess
 			inline BitMap& operator ^=(const tSquare sq) { _b ^= getBitmapFromSquare(sq)._b; return (*this); }
 			inline BitMap& operator ^=(const BitMap& x) { _b ^= x._b; return (*this); }
 			
-			inline BitMap operator <<(const int shift) const { return BitMap(_b << shift);}
-			inline BitMap operator >>(const int shift) const { return BitMap(_b >> shift);}
+			inline BitMap operator <<(const unsigned int shift) const { return BitMap(_b << shift);}
+			inline BitMap operator >>(const unsigned int shift) const { return BitMap(_b >> shift);}
 			
-			inline BitMap& operator <<=(const int shift) { _b <<= shift; return (*this);}
-			inline BitMap& operator >>=(const int shift) { _b >>= shift; return (*this);}
+			inline BitMap& operator <<=(const unsigned int shift) { _b <<= shift; return (*this);}
+			inline BitMap& operator >>=(const unsigned int shift) { _b >>= shift; return (*this);}
 			
 			inline BitMap operator~() const { return BitMap(~_b ); }
 			

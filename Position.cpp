@@ -1018,33 +1018,25 @@ namespace libChess
 			todo readd this piece of code
 			x.material -= pstValue[capture][captureSquare];
 			*/
-/*
+
 			// update keys
-			x.key ^= HashKeys::keys[captureSquare][capture];
-			assert(getPieceCount(capture)<30);
-			x.materialKey ^= HashKeys::keys[capture][getPieceCount(capture)]; // ->after removing the piece
-
+			st.keyRemovePiece( capturedPiece, captureSquare);
+			st.materialKeyRemovePiece( capturedPiece, getPieceCount( capturedPiece ) );
+		
 			// reset fifty move counter
-			x.fiftyMoveCnt = 0;*/
+			st.resetFiftyMoveCnt();
 		}
-/*
-
-
-	
-	
-
-	
-
+		
 	// update hashKey
-	x.key ^= HashKeys::keys[from][piece] ^ HashKeys::keys[to][piece];
-	movePiece(piece,from,to);
-
+	st.keyMovePiece( piece, from, to );
+	_movePiece( piece, from, to );
+/*
+todo readd this code
 	x.material += pstValue[piece][to] - pstValue[piece][from];
-	//npm+=nonPawnValue[piece][to]-nonPawnValue[piece][from];
-	// update non pawn material
+	*/
 
 
-
+/*
 
 	// Update castle rights if needed
 	if (x.castleRights && (castleRightsMask[from] | castleRightsMask[to]))
@@ -1142,7 +1134,7 @@ namespace libChess
 	void Position::undoMove( void )
 	{
 		const GameState& st = getActualStateConst();
-		const Move m = st.getCurrentMove();
+		const Move& m = st.getCurrentMove();
 		assert( m != Move::NOMOVE );
 		const baseTypes::tSquare to = m.getTo();
 		const baseTypes::tSquare from = m.getFrom();

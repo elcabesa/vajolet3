@@ -15,6 +15,7 @@
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
 
+#include <algorithm>
 #include "gtest/gtest.h"
 #include "./../BitMap.h"
 
@@ -544,5 +545,310 @@ namespace {
 		ASSERT_EQ( v[2], tSquare::E8 );
 
 	}
+	
+	TEST(BitMap, operatorLeftShift)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		BitMap r = b << 1;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::B1 );
+		ASSERT_EQ( v[1], tSquare::A2 );
+		ASSERT_EQ( v[2], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorRightShift)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		BitMap r = b >> 1;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::G1 );
+		ASSERT_EQ( v[1], tSquare::D6 );
+		ASSERT_EQ( v[2], tSquare::G8 );
+
+	}
+	
+	TEST(BitMap, operatorLeftShift2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		BitMap r = b << 8;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::H2 );
+		ASSERT_EQ( v[2], tSquare::E7 );
+
+	}
+	
+	TEST(BitMap, operatorRightShift2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		BitMap r = b >> 8;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::E5 );
+		ASSERT_EQ( v[1], tSquare::H7 );
+
+	}
+	
+	TEST(BitMap, operatorLeftShift3)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::B1;
+		b+= tSquare::H8;
+		
+		BitMap r = b << 63;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 0u );
+
+	}
+	
+	TEST(BitMap, operatorRightShift3)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::F8;
+
+		BitMap r = b >> 63;
+		
+
+		for(const auto t : r)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 0u );
+
+	}
+	
+	
+	TEST(BitMap, operatorLeftShiftEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		b <<= 1;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::B1 );
+		ASSERT_EQ( v[1], tSquare::A2 );
+		ASSERT_EQ( v[2], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorRightShiftEqual)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		b >>= 1;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::G1 );
+		ASSERT_EQ( v[1], tSquare::D6 );
+		ASSERT_EQ( v[2], tSquare::G8 );
+
+	}
+	
+	TEST(BitMap, operatorLeftShiftEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		b <<= 8;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 3u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::H2 );
+		ASSERT_EQ( v[2], tSquare::E7 );
+
+	}
+	
+	TEST(BitMap, operatorRightShiftEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::H8;
+		
+		b >>= 8;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 2u );
+		ASSERT_EQ( v[0], tSquare::E5 );
+		ASSERT_EQ( v[1], tSquare::H7 );
+
+	}
+	
+	TEST(BitMap, operatorLeftShiftEqual3)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::B1;
+		b+= tSquare::H8;
+		
+		b <<= 63;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 0u );
+
+	}
+	
+	TEST(BitMap, operatorRightShiftEqual3)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::E6;
+		b+= tSquare::H1;
+		b+= tSquare::A1;
+		b+= tSquare::F8;
+
+		b >>= 63;
+		
+
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 0u );
+
+	}
+	TEST(BitMap, operatorInvert)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b += tSquare::A5;
+		b += tSquare::D3;
+		b += tSquare::C7;
+		
+		BitMap d = ~b;
+		
+		for(const auto t : d)
+		{
+			v.push_back(t);
+		}
+		ASSERT_EQ( v.size(), 61u );
+		for( auto t : tSquareRange() )
+		{
+			if( t == tSquare::A5 || t == tSquare::D3 || t == tSquare::C7 )
+			{
+				ASSERT_EQ( v.end(), std::find( v.begin(), v.end(),t ) );
+			}
+			else
+			{
+				ASSERT_NE( v.end(), std::find( v.begin(), v.end(),t ) );
+			}
+			
+		}
+		
+	}
+	
 	
 }
