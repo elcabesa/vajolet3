@@ -67,9 +67,6 @@ namespace libChess
 		static const baseTypes::BitMap getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
 		static const baseTypes::BitMap getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target );
 		
-		static baseTypes::tSquare pawnPush( const baseTypes::eTurn turn );
-		
-	
 		static void init(void);
 	
 	private:
@@ -170,19 +167,6 @@ namespace libChess
 	{
 		return ( (col == baseTypes::white) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	
 	}
-	
-	/*!	\brief return the offset of a pawn push
-		\author Marco Belli
-		\version 1.0
-		\date 08/11/2013
-	 */
-	inline baseTypes::tSquare BitMapMoveGenerator::pawnPush( const baseTypes::eTurn turn )
-	{
-		return turn ? baseTypes::sud : baseTypes::north;
-	}
-	
-	
-	
 	
 }
 

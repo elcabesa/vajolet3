@@ -281,11 +281,19 @@ namespace libChess
 		*/
 		enum eCastle	// castleRights
 		{
+			noCastleRights = 0,
 			wCastleOO=1,
 			wCastleOOO=2,
 			bCastleOO=4,
 			bCastleOOO=8,
 		};
+		
+		inline void addCastleRightTo( eCastle& cr, const eCastle r )
+		{
+			cr = (eCastle)( cr | r ) ;
+		}
+		
+		inline eCastle operator|( const eCastle rhs, const eCastle lhs ){ return eCastle( (int)rhs | (int)lhs ); }
 	}
 
 }

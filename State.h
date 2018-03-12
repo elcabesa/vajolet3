@@ -119,7 +119,7 @@ namespace libChess
 		void clearEpSquare();
 		void addEpSquare( const baseTypes::tSquare sq );
 		
-		void clearCastleRight( const int cr );
+		void clearCastleRight( const baseTypes::eCastle cr );
 		
 		void keyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq);
 		void keyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq);
@@ -234,7 +234,7 @@ namespace libChess
 	
 	inline void GameState::setCastleRight( const baseTypes::eCastle cr)
 	{
-		_castleRights = (baseTypes::eCastle)(_castleRights | cr);
+		addCastleRightTo( _castleRights, cr );
 	}
 	
 	inline void GameState::setFiftyMoveCnt( const unsigned int fmc )
@@ -318,7 +318,7 @@ namespace libChess
 		_capturedPiece = baseTypes::empty;
 	}
 	
-	inline void GameState::clearCastleRight( const int cr )
+	inline void GameState::clearCastleRight( const baseTypes::eCastle cr )
 	{
 		const baseTypes::eCastle filteredCR = baseTypes::eCastle(_castleRights & cr);
 		// Update castle rights if needed
@@ -332,7 +332,7 @@ namespace libChess
 	
 	inline void GameState::resetAllCastleRights()
 	{
-		_castleRights = (baseTypes::eCastle)0;
+		_castleRights = baseTypes::noCastleRights;
 	}
 	
 	inline void GameState::setPinned( const baseTypes::BitMap& b)

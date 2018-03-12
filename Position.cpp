@@ -20,6 +20,7 @@
 #include <sstream>
 #include "Position.h"
 #include "BitMapMoveGenerator.h"
+#include "MoveGenerator.h"
 
 namespace libChess
 {
@@ -32,7 +33,7 @@ namespace libChess
 		_setUsThem();
 	}
 	
-	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard)
+	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask)
 	{
 		_actualState = &_stateList.back();
 		
@@ -51,6 +52,8 @@ namespace libChess
 		
 		_squares = other._squares;
 		_bitBoard = other._bitBoard;
+		
+		_castleRightsMask = other._castleRightsMask;
 
 		_setUsThem();
 
@@ -119,14 +122,17 @@ namespace libChess
 	
 	inline void Position::_addPiece( const baseTypes::bitboardIndex piece, const baseTypes::tSquare s )
 	{
-		//assert(s<baseTypes::squareNumber);
-		//assert(piece<lastBitboard);
+		assert( s < baseTypes::squareNumber );
+		assert( piece < baseTypes::bitboardNumber );
 		
 		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
 		// todo check if it's fast enough
 		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
-		//assert(squares[s]==empty);
+		assert( _squares[ s ] ==  baseTypes::empty);
+		assert( _bitBoard[ piece ].isSquareSet( s ) ==  false );
+		assert( _bitBoard[ baseTypes::occupiedSquares ].isSquareSet( s ) ==  false );
+		assert( _bitBoard[ MyPieces ].isSquareSet( s ) ==  false );
 
 		_squares[ s ] = piece;
 		_bitBoard[ piece ] += b;
@@ -137,10 +143,10 @@ namespace libChess
 	inline void Position::_removePiece(const baseTypes::bitboardIndex piece,const baseTypes::tSquare s)
 	{
 
-		//assert(!isKing(piece));
-		//assert(s<baseTypes::squareNumber);
-		//assert(piece<lastBitboard);
-		//assert(squares[s]!=empty);
+		assert( !baseTypes::isKing( piece ) );
+		assert( s < baseTypes::squareNumber);
+		assert( piece < baseTypes::bitboardNumber );
+		assert( _squares[ s ] != baseTypes::empty );
 
 		// WARNING: This is not a reversible operation. If we remove a piece in
 		// do_move() and then replace it in undo_move() we will put it at the end of
@@ -159,12 +165,13 @@ namespace libChess
 	
 	inline void Position::_movePiece(const baseTypes::bitboardIndex piece, const baseTypes::tSquare from, const baseTypes::tSquare to)
 	{
-		//assert(from<baseTypes::squareNumber);
-		//assert(to<baseTypes::squareNumber);
-		//assert(piece<lastBitboard);
+		assert( from < baseTypes::squareNumber );
+		assert( to < baseTypes::squareNumber );
+		assert( piece < baseTypes::bitboardNumber );
 		
-		//assert(squares[from]!=empty);
-		//assert(squares[to]==empty);
+		assert( _squares[from] != baseTypes::empty );
+		assert( _squares[to] == baseTypes::empty );
+		
 		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
 		
 		const baseTypes::BitMap fromTo = baseTypes::BitMap::getBitmapFromSquare( from ) ^ to;
@@ -574,17 +581,25 @@ namespace libChess
 		
 		// castle rights
 		st.resetAllCastleRights();
-		bool crEmpty = false;
-		
+		_clearCastleRightsMask();
+		bool crEmpty = false;		
 
-		// todo manage path and masks for castling
 		while ( (ss >> token) && !isspace(token) )
 		{
 			switch(token)
 			{
 			case 'K':
 			{
-				const baseTypes::tSquare rsq = baseTypes::H1;
+				baseTypes::tSquare rsq = baseTypes::H1;
+				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfThePiece(baseTypes::whiteKing), baseTypes::H1 ) )
+				{
+					if( getPieceAt( sq ) == baseTypes::whiteRooks )
+					{
+						rsq = sq;
+						break;
+					}
+				}
+				
 				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
 				{
 					return false;
@@ -593,7 +608,15 @@ namespace libChess
 				break;
 			case 'Q':
 			{
-				const baseTypes::tSquare rsq = baseTypes::A1;
+				baseTypes::tSquare rsq = baseTypes::A1;
+				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A1, getSquareOfThePiece(baseTypes::whiteKing) ) )
+				{
+					if( getPieceAt( sq ) == baseTypes::whiteRooks )
+					{
+						rsq = sq;
+						break;
+					}
+				}
 				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
 				{
 					return false;
@@ -602,7 +625,15 @@ namespace libChess
 				break;
 			case 'k':
 			{
-				const baseTypes::tSquare rsq = baseTypes::H8;
+				baseTypes::tSquare rsq = baseTypes::H8;
+				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfThePiece(baseTypes::blackKing), baseTypes::H8 ) )
+				{
+					if( getPieceAt( sq ) == baseTypes::blackRooks )
+					{
+						rsq = sq;
+						break;
+					}
+				}
 				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
 				{
 					return false;
@@ -611,7 +642,15 @@ namespace libChess
 				break;
 			case 'q':
 			{
-				const baseTypes::tSquare rsq = baseTypes::A8;
+				baseTypes::tSquare rsq = baseTypes::A8;
+				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A8, getSquareOfThePiece(baseTypes::blackKing) ) )
+				{
+					if( getPieceAt( sq ) == baseTypes::blackRooks )
+					{
+						rsq = sq;
+						break;
+					}
+				}
 				if ( ( true == crEmpty ) || ( false == _setupCastleRight(rsq) ) )
 				{
 					return false;
@@ -688,11 +727,12 @@ namespace libChess
 				// todo riguardare
 				if ( ( getAttackersTo( st.getEpSquare() ) & getBitmap( getMyPiece( baseTypes::Pawns ) ) ).isEmpty() )
 				{
-					st.clearEpSquare();
+					st.setEpSquare( baseTypes::squareNone );
 				}
 				
 			}
-			else{
+			else
+			{
 				return false;
 			}
 			
@@ -744,6 +784,7 @@ namespace libChess
 		
 		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
 
+		
 
 
 		/*
@@ -755,66 +796,59 @@ namespace libChess
 	
 	bool Position::_setupCastleRight(const baseTypes::tSquare rsq)
 	{
-	
-		GameState &st = _getActualState();
 		
-		const baseTypes::tSquare ksq = getSquareOfThePiece( baseTypes::whiteKing );
-		const baseTypes::tRank kingRank = getRank(ksq);
 		const baseTypes::tRank rookRank = getRank(rsq);
-		if( kingRank != baseTypes::one && kingRank != baseTypes::eight )
+		
+		if( rookRank != baseTypes::one && rookRank != baseTypes::eight )
 		{
 			return false;
 		}
+		
+		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfThePiece( baseTypes::whiteKing ) :getSquareOfThePiece( baseTypes::blackKing ) );
+		const baseTypes::tRank kingRank = getRank(ksq);
+		
+		
 		
 		if( rookRank != kingRank )
 		{
 			return false;
 		}
 		
-		if( getPieceAt( rsq ) != baseTypes::whiteRooks )
+		if( !( baseTypes::isRook( getPieceAt( rsq ) ) ) )
 		{
 			return false;
 		}
 		
+		baseTypes::eCastle cr;
+		
+		
 		if ( kingRank == baseTypes::one ) 
 		{
-			if( ksq < rsq )
-			{
-				if( st.hasCastleRight( baseTypes::wCastleOO ) )
-				{
-					return false;
-				}
-				st.setCastleRight( baseTypes::wCastleOO);
-			}
-			else
-			{
-				if( st.hasCastleRight( baseTypes::wCastleOOO ) )
-				{
-					return false;
-				}
-				st.setCastleRight( baseTypes::wCastleOOO);
-			}
+			cr = ( ksq < rsq ) ? baseTypes::wCastleOO : baseTypes::wCastleOOO;
 		}
 		else
 		{
-			if( ksq < rsq )
-			{
-				if( st.hasCastleRight( baseTypes::bCastleOO ) )
-				{
-					return false;
-				}
-				st.setCastleRight( baseTypes::bCastleOO);
-			}
-			else
-			{
-				if( st.hasCastleRight( baseTypes::bCastleOOO) )
-				{
-					return false;
-				}
-				st.setCastleRight( baseTypes::bCastleOOO);
-			}
+			cr = ( ksq < rsq ) ? baseTypes::bCastleOO : baseTypes::bCastleOOO;
 		}
-	return true;
+		
+		if ( false == _tryAddCastleRight( cr, ksq, rsq ) )
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	bool Position::_tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq )
+	{
+		GameState &st = _getActualState();
+		if( st.hasCastleRight( cr ) )
+		{
+			return false;
+		}
+		addCastleRightTo( _castleRightsMask[ ksq ], cr );
+		addCastleRightTo( _castleRightsMask[ rsq ], cr );
+		st.setCastleRight( cr );
+		return true;
 	}
 	
 	const baseTypes::BitMap Position::getAttackersTo(const baseTypes::tSquare to, const baseTypes::BitMap& occupancy ) const
@@ -1000,7 +1034,7 @@ namespace libChess
 
 				if( m.isEnPassantMove() )
 				{
-					captureSquare -= BitMapMoveGenerator::pawnPush( st.getTurn() );
+					captureSquare -= MoveGenerator::pawnPush( st.getTurn() );
 				}
 				assert( captureSquare < baseTypes::squareNumber );
 				st.pawnKeyRemovePiece( capturedPiece, captureSquare );
@@ -1027,61 +1061,53 @@ namespace libChess
 			st.resetFiftyMoveCnt();
 		}
 		
-	// update hashKey
-	st.keyMovePiece( piece, from, to );
-	_movePiece( piece, from, to );
+		// update hashKey
+		st.keyMovePiece( piece, from, to );
+		_movePiece( piece, from, to );
 /*
 todo readd this code
-	x.material += pstValue[piece][to] - pstValue[piece][from];
+		x.material += pstValue[piece][to] - pstValue[piece][from];
 	*/
 
+		// Update castle rights if needed
+		st.clearCastleRight( _castleRightsMask[ from ] | _castleRightsMask[ to ] );
 
-/*
 
-	// Update castle rights if needed
-	if (x.castleRights && (castleRightsMask[from] | castleRightsMask[to]))
+	if( baseTypes::isPawn( piece ) )
 	{
-		int cr = castleRightsMask[from] | castleRightsMask[to];
-		assert((x.castleRights & cr)<16);
-		x.key ^= HashKeys::castlingRight[x.castleRights & cr];
-		x.castleRights = (eCastle)(x.castleRights &(~cr));
-	}
-
-
-
-	if(isPawn(piece))
-	{
+		// double push en passant management
 		if(
-				abs(from-to)==16
-				&& (getAttackersTo((tSquare)((from+to)>>1))  & Them[Pawns])
+				MoveGenerator::isPawnDoublePush( from, to )
+				// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
+				//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
+				&& !(BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black )) & getTheirBitmap( baseTypes::Pawns ) ).isEmpty()
 		)
 		{
-			x.epSquare = (tSquare)((from+to)>>1);
-			assert(x.epSquare<squareNumber);
-			x.key ^= HashKeys::ep[x.epSquare];
+			st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
 		}
 		if( m.isPromotionMove() )
 		{
-			bitboardIndex promotedPiece = (bitboardIndex)(whiteQueens + x.nextMove + m.bit.promotion);
-			assert(promotedPiece<lastBitboard);
-			removePiece(piece,to);
-			putPiece(promotedPiece,to);
-
+			baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType());
+			assert ( promotedPiece < baseTypes::bitboardNumber );
+			_removePiece( piece, to );
+			_addPiece( promotedPiece, to );
+/*
+todo readd this piece of code
 			x.material += pstValue[promotedPiece][to]-pstValue[piece][to];
 			x.nonPawnMaterial += nonPawnValue[promotedPiece];//[to];
-
-
-			x.key ^= HashKeys::keys[to][piece]^ HashKeys::keys[to][promotedPiece];
-			x.pawnKey ^= HashKeys::keys[to][piece];
-			x.materialKey ^= HashKeys::keys[promotedPiece][getPieceCount(promotedPiece)-1] ^ HashKeys::keys[piece][getPieceCount(piece)];
-		}
-		x.pawnKey ^= HashKeys::keys[from][piece] ^ HashKeys::keys[to][piece];
-		x.fiftyMoveCnt = 0;
-	}
-
-	x.capturedPiece = capture;
-
 */
+
+			st.keyPromotePiece( piece, promotedPiece, to );
+			st.pawnKeyRemovePiece( piece, to );
+			st.materialKeyPromovePiece( piece,getPieceCount(piece), promotedPiece, getPieceCount(promotedPiece)-1 );
+		}
+		st.pawnKeyMovePiece( piece, from, to);
+		st.resetFiftyMoveCnt();
+		
+	}
+	
+	st.setCapturedPiece( capturedPiece );
+
 	st.changeTurn();
 	_swapUsThem();
 /*
@@ -1131,6 +1157,9 @@ todo readd this code
 
 */
 	}
+	
+	
+	
 	void Position::undoMove( void )
 	{
 		const GameState& st = getActualStateConst();
@@ -1173,7 +1202,7 @@ todo readd this code
 			baseTypes::tSquare capSq = to;
 			if( m.isEnPassantMove() )
 			{
-				capSq += BitMapMoveGenerator::pawnPush( st.getTurn() );
+				capSq += MoveGenerator::pawnPush( st.getTurn() );
 			}
 			assert( capSq < baseTypes::squareNumber );
 			
@@ -1190,6 +1219,14 @@ todo readd this code
 #endif*/
 		
 		
+	}
+	
+	void Position::_clearCastleRightsMask(void)
+	{
+		for( auto& cr : _castleRightsMask )
+		{
+			cr = baseTypes::noCastleRights;
+		}
 	}
 	
 }

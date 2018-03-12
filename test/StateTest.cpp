@@ -68,7 +68,7 @@ namespace libChess
 		void clearEpSquare(){GameState::clearEpSquare();}
 		void addEpSquare( const baseTypes::tSquare sq ){GameState::addEpSquare( sq );}
 		
-		void clearCastleRight( const int cr ){GameState::clearCastleRight( cr );}
+		void clearCastleRight( const baseTypes::eCastle cr ){GameState::clearCastleRight( cr );}
 		
 		void keyMovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare fromSq, const baseTypes::tSquare toSq){GameState::keyMovePiece( p, fromSq, toSq);}
 		void keyRemovePiece(const baseTypes::bitboardIndex p, const baseTypes::tSquare sq){GameState::keyRemovePiece( p, sq );}

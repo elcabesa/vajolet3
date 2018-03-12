@@ -228,6 +228,14 @@ namespace libChess
 	template class baseTypeRange<tSquare, tSquare::A1, tSquare::H8>;
 	using tSquareRange = baseTypeRange<tSquare, tSquare::A1, tSquare::H8>;
 	
+	/*	\brief class used to iterate over a range of tSquare
+	\author Marco Belli
+	\version 1.0
+	\date 17/08/2017
+	*/
+	template class baseTypeNegativeRange<tSquare, tSquare::A1, tSquare::H8>;
+	using tSquareNegativeRange = baseTypeNegativeRange<tSquare, tSquare::A1, tSquare::H8>;
+	
 	/*	\brief get file of a square
 		\author Marco Belli
 		\version 1.0

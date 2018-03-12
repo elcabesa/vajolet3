@@ -32,5 +32,20 @@ namespace {
 		ASSERT_EQ( 1, p2.getStateSize() );
 	}
 	
+	TEST(Position, test)
+	{
+		Position p;
+		p.setupFromFen();
+		Move m1(baseTypes::tSquare::E2, baseTypes::tSquare::E4);
+		Move m2(baseTypes::tSquare::D7, baseTypes::tSquare::D5);
+		Move m3(baseTypes::tSquare::E4, baseTypes::tSquare::D5);
+		p.doMove(m1);
+		ASSERT_STREQ( "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1", p.getFen().c_str() );
+		p.doMove(m2);
+		ASSERT_STREQ( "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2", p.getFen().c_str() );
+		p.doMove(m3);
+		ASSERT_STREQ( "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2", p.getFen().c_str() );
+	}
+	
 	
 }

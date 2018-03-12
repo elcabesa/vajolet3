@@ -92,6 +92,7 @@ namespace libChess
 		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
 		// todo valutate the use of a iterator
 		baseTypes::BitMap *_us,*_them;	/*!< pointer to our & their pieces bitboard*/
+		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
 		
 	private:
 	
@@ -119,6 +120,9 @@ namespace libChess
 		const baseTypes::BitMap _calcPin(const baseTypes::tSquare kingSquare,const baseTypes::eTurn turn) const;
 		
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
+		bool _tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq );
+		
+		void _clearCastleRightsMask(void);
 	
 		
 	};
