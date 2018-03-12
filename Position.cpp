@@ -1027,12 +1027,12 @@ namespace libChess
 			st.resetFiftyMoveCnt();
 		}
 		
-	// update hashKey
-	st.keyMovePiece( piece, from, to );
-	_movePiece( piece, from, to );
+		// update hashKey
+		st.keyMovePiece( piece, from, to );
+		_movePiece( piece, from, to );
 /*
 todo readd this code
-	x.material += pstValue[piece][to] - pstValue[piece][from];
+		x.material += pstValue[piece][to] - pstValue[piece][from];
 	*/
 
 
