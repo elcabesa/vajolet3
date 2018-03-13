@@ -470,10 +470,54 @@ namespace {
 
 	}
 	
+	TEST(eTurn, assign)
+	{
+		eTurn x = whiteTurn;
+		ASSERT_EQ( whiteTurn, x );
+		x = blackTurn;
+		ASSERT_EQ( blackTurn, x );
+	}
+	
 	TEST(eTurn, getSwitchedTurn)
 	{
 		ASSERT_EQ( whiteTurn, getSwitchedTurn(blackTurn) );
-		ASSERT_EQ( blackTurn, getSwitchedTurn(whiteTurn) );;
+		ASSERT_EQ( blackTurn, getSwitchedTurn(whiteTurn) );
 	}
+	
+	TEST(eCastle, assign)
+	{
+		eCastle x = noCastleRights;
+		ASSERT_EQ( noCastleRights, x );
+		x = wCastleOO;
+		ASSERT_EQ( wCastleOO, x );
+		x = wCastleOOO;
+		ASSERT_EQ( wCastleOOO, x );
+		x = bCastleOO;
+		ASSERT_EQ( bCastleOO, x );
+		x = bCastleOOO;
+		ASSERT_EQ( bCastleOOO, x );
+	}
+	
+	TEST(eCastle, operatorOr)
+	{
+		eCastle x = noCastleRights;
+		x = x | wCastleOO;
+		x = x | bCastleOOO;
+		
+		ASSERT_EQ( 9, x );
+		
+	}
+	
+	TEST(eCastle, addCastleRightTo)
+	{
+		eCastle x = noCastleRights;
+		addCastleRightTo( x, wCastleOOO );
+		addCastleRightTo( x, bCastleOO );
+		
+		ASSERT_EQ( 6, x );
+		
+	}
+	
+	
 	
 }

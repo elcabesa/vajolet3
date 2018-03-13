@@ -418,6 +418,33 @@ namespace {
 		ASSERT_EQ( v[4], tSquare::F8 );
 	}
 	
+	TEST(BitMap, operatorPlus2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b2(0);
+		b2 = b + tSquare::A2;
+		b2 = b2 + tSquare::F8;
+		b2 = b2 + tSquare::D5;
+		
+		
+		for(const auto t : b2)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 5u );
+		ASSERT_EQ( v[0], tSquare::A2 );
+		ASSERT_EQ( v[1], tSquare::D4 );
+		ASSERT_EQ( v[2], tSquare::D5 );
+		ASSERT_EQ( v[3], tSquare::F6 );
+		ASSERT_EQ( v[4], tSquare::F8 );
+	}
+	
 	TEST(BitMap, operatorAnd)
 	{
 		std::vector<tSquare>v;

@@ -52,6 +52,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::A2, x.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::D6, x.getTo());
+			ASSERT_TRUE(x.isStandardMove());
 			ASSERT_FALSE(x.isPromotionMove());
 			ASSERT_FALSE(x.isCastleMove());
 			ASSERT_FALSE(x.isEnPassantMove());
@@ -62,6 +63,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::D2, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::C1, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_TRUE(y.isEnPassantMove());
@@ -72,6 +74,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E1, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::G1, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_FALSE(y.isPromotionMove());
 			ASSERT_TRUE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -82,6 +85,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -93,6 +97,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -104,6 +109,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -115,6 +121,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());
@@ -126,6 +133,7 @@ namespace {
 			
 			ASSERT_EQ( baseTypes::tSquare::E7, y.getFrom());
 			ASSERT_EQ( baseTypes::tSquare::E8, y.getTo());
+			ASSERT_FALSE(y.isStandardMove());
 			ASSERT_TRUE(y.isPromotionMove());
 			ASSERT_FALSE(y.isCastleMove());
 			ASSERT_FALSE(y.isEnPassantMove());

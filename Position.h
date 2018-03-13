@@ -75,8 +75,12 @@ namespace libChess
 		
 		void doNullMove( void );
 		void undoNullMove( void );
-		void doMove( const Move &m );
+		void doMove( const Move& m );
 		void undoMove( void );
+		
+		bool moveGivesCheck( const Move& m ) const;
+		bool moveGivesDoubleCheck( const Move& m ) const;
+		bool moveGivesSafeDoubleCheck( const Move& m ) const;
 		
 		
 	

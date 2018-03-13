@@ -56,6 +56,7 @@ namespace libChess
 			inline BitMap& operator = (const tSquare sq) { _b = getBitmapFromSquare(sq)._b; return (*this); }
 			inline BitMap& operator = (const BitMap& x) { _b = x._b; return (*this); }
 			
+			inline BitMap operator +(const tSquare sq) const { return BitMap(_b | getBitmapFromSquare(sq)._b); }
 			inline BitMap operator +(const BitMap& rhs) const { return BitMap(_b | rhs._b); }
 			
 			inline BitMap operator &(const BitMap& rhs) const { return BitMap(_b & rhs._b); }

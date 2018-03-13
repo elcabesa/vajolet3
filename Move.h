@@ -89,6 +89,7 @@ namespace libChess
 		bool isPromotionMove() const;
 		bool isCastleMove() const;
 		bool isEnPassantMove() const;
+		bool isStandardMove() const;
 		std::string to_string() const;
 		
 		/*****************************************************************
@@ -141,6 +142,11 @@ namespace libChess
 	inline bool Move::isEnPassantMove() const
 	{
 		return _bit._flags == Move::fenpassant;
+	}
+	
+	inline bool Move::isStandardMove() const
+	{
+		return _bit._flags == Move::fnone;
 	}
 	
 	inline baseTypes::tSquare Move::getFrom()const

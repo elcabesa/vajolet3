@@ -1004,15 +1004,15 @@ namespace libChess
 		// todo manage chess960
 		if( m.isCastleMove() )
 		{
-			bool kingSide = to > from;
+			const bool kingSide = to > from;
 			
-			baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
-			baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
 			assert( rFrom < baseTypes::squareNumber );
 			assert( rTo < baseTypes::squareNumber );
 			
-			baseTypes::bitboardIndex rook =  getPieceAt( rTo );
+			const baseTypes::bitboardIndex rook =  getPieceAt( rTo );
 			
 			assert( rook < baseTypes::bitboardNumber );
 			assert( baseTypes::isRook(rook) );
@@ -1087,7 +1087,7 @@ todo readd this code
 		}
 		if( m.isPromotionMove() )
 		{
-			baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType());
+			baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() );
 			assert ( promotedPiece < baseTypes::bitboardNumber );
 			_removePiece( piece, to );
 			_addPiece( promotedPiece, to );
@@ -1099,7 +1099,7 @@ todo readd this piece of code
 
 			st.keyPromotePiece( piece, promotedPiece, to );
 			st.pawnKeyRemovePiece( piece, to );
-			st.materialKeyPromovePiece( piece,getPieceCount(piece), promotedPiece, getPieceCount(promotedPiece)-1 );
+			st.materialKeyPromovePiece( piece, getPieceCount(piece), promotedPiece, getPieceCount( promotedPiece ) - 1 );
 		}
 		st.pawnKeyMovePiece( piece, from, to);
 		st.resetFiftyMoveCnt();
@@ -1113,7 +1113,7 @@ todo readd this piece of code
 /*
 
 
-	x.checkers=0;
+	BitMap baseTypes::chekcers(0);
 	if(moveIsCheck)
 	{
 
@@ -1179,14 +1179,14 @@ todo readd this piece of code
 		// todo manage chess960
 		else if( m.isCastleMove() )
 		{
-			bool kingSide = to > from;
-			baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
-			baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			const bool kingSide = to > from;
+			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
 			assert( rFrom < baseTypes::squareNumber );
 			assert( rTo < baseTypes::squareNumber );
 			
-			baseTypes::bitboardIndex rook =  getPieceAt( rTo );
+			const baseTypes::bitboardIndex rook =  getPieceAt( rTo );
 			
 			assert( rook < baseTypes::bitboardNumber );
 			assert( baseTypes::isRook(rook) );
@@ -1229,4 +1229,156 @@ todo readd this piece of code
 		}
 	}
 	
+	/*! \brief tell us if a move gives check before doing the move
+		\author Marco Belli
+		\version 1.0
+		\date 08/11/2013
+	*/
+	bool Position::moveGivesCheck( const Move& m ) const
+	{
+		const GameState& st = getActualStateConst();
+		
+		assert( m!= Move::NOMOVE );
+		const baseTypes::tSquare to = m.getTo();
+		const baseTypes::tSquare from = m.getFrom();
+		
+		baseTypes::bitboardIndex piece = getPieceAt( from );
+		assert( baseTypes::isValidPiece( piece ) );
+		
+		// Direct check ?
+		if( st.getCheckingSquare( piece ).isSquareSet( to ) )
+		{
+			return true;
+		}
+		
+		// Discovery check ?
+		// todo serve fare il doppio test per velocizzare?
+		if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+		{
+			assert( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ) < baseTypes::squareNumber );
+			/*
+			queen, rook, bishop and knight moves always give discovery check.
+			pawn and king can move and remain on the path, not allowing the discovery
+			*/
+			if(
+				( 
+				//if it's not king or pawn move it's a discovery check
+				!isPawn( piece ) 
+				&& !isKing( piece ) 
+				)
+				// in case of king and pawn we need to check the alignment
+				|| !baseTypes::BitMap::areSquaresAligned( from, to, getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ) ) 
+			)
+			{
+				return true;
+			}
+		}
+		
+		if( m.isStandardMove() )
+		{
+			return false;
+		}
+		
+		baseTypes::tSquare kingSquare =  getSquareOfThePiece( getEnemyPiece( baseTypes::King ) );
+		assert( kingSquare < baseTypes::squareNumber );
+		
+		if( m.isPromotionMove() )
+		{
+			// to square is check 
+			if( st.getCheckingSquare( (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() ) ).isSquareSet( to ) )
+			{
+				return true;
+			}
+			
+			// to square is check die to pawn move
+			baseTypes::BitMap occ = getOccupationBitmap() ^ from;
+			
+			switch( m.getPromotionType() )
+			{
+				case Move::promQueen:
+					return BitMapMoveGenerator::getQueenMoves( to, occ ).isSquareSet( kingSquare );
+					break;
+				case Move::promRook:
+					return BitMapMoveGenerator::getRookMoves( to, occ ).isSquareSet( kingSquare );
+					break;
+				case Move::promBishop:
+					return BitMapMoveGenerator::getBishopMoves( to, occ ).isSquareSet( kingSquare );
+					break;
+				default:
+					return false;
+			}	
+		}
+		else if( m.isCastleMove() )
+		{
+			const bool kingSide = to > from;
+			
+			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			
+			baseTypes::BitMap occ = ( ( ( getOccupationBitmap() ^ from ) ^ rFrom ) + rTo) + to;
+			
+			return   ( BitMapMoveGenerator::getRookPseudoMoves( rTo ).isSquareSet( kingSquare ) )
+					 && ( BitMapMoveGenerator::getRookMoves( rTo, occ ).isSquareSet( kingSquare ));
+			
+		}
+		else if( m.isEnPassantMove() )
+		{
+			
+		}
+		
+		return false;
+	}
+/*	
+
+			break;
+		case Move::fenpassant:
+		{
+			bitMap captureSquare = FILEMASK[m.bit.to] & RANKMASK[m.bit.from];
+			bitMap occ = bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet((tSquare)m.bit.to)^captureSquare;
+			return
+					(Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Us[Queens] |Us[Rooks]))
+				   | (Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Us[Queens] |Us[Bishops]));
+
+		}
+
+
+	}
+
+	bool Position::moveGivesDoubleCheck(const Move& m)const
+	{
+		assert(m.packed);
+		tSquare from = (tSquare)m.bit.from;
+		tSquare to = (tSquare)m.bit.to;
+		bitboardIndex piece = squares[from];
+		assert(piece!=occupiedSquares);
+		assert(piece!=separationBitmap);
+		assert(piece!=whitePieces);
+		assert(piece!=blackPieces);
+		state &s = getActualState();
+
+
+		// Direct check ?
+		return ((s.checkingSquares[piece] & bitSet(to)) && (s.hiddenCheckersCandidate && (s.hiddenCheckersCandidate & bitSet(from))));
+
+
+	}
+
+	bool Position::moveGivesSafeDoubleCheck(const Move& m)const
+	{
+		assert(m.packed);
+		tSquare from = (tSquare)m.bit.from;
+		tSquare to = (tSquare)m.bit.to;
+		bitboardIndex piece = squares[from];
+		assert(piece!=occupiedSquares);
+		assert(piece!=separationBitmap);
+		assert(piece!=whitePieces);
+		assert(piece!=blackPieces);
+		state & s=getActualState();
+
+		tSquare kingSquare = getSquareOfThePiece((bitboardIndex)(blackKing-s.nextMove));
+		return (!(Movegen::attackFrom<Position::whiteKing>(kingSquare) & bitSet(to)) &&  (s.checkingSquares[piece] & bitSet(to)) && (s.hiddenCheckersCandidate && (s.hiddenCheckersCandidate & bitSet(from))));
+
+
+	}
+	*/
 }
