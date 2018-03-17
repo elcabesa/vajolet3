@@ -22,6 +22,11 @@
 #include "BitMapMoveGenerator.h"
 #include "MoveGenerator.h"
 
+
+// todo cercare funzioni comuni
+// semplificare funzioni dividendole in pezzi più piccoli
+// todo in molti posti uso la posizione del re... provare a salvare le posizioni del re nella posizione per velocizzare
+//todo evalutate the removal of moveIsCheck, candidate, pinned etc etc
 namespace libChess
 {
 	Position::Position()
@@ -987,10 +992,7 @@ namespace libChess
 		
 		const baseTypes::bitboardIndex piece = getPieceAt( from );
 		assert( baseTypes::isValidPiece( piece ) );
-	/*
-	todo readd this code
-	bool moveIsCheck = moveGivesCheck(m);
-*/
+
 		const baseTypes::bitboardIndex capturedPiece = m.isEnPassantMove() ? ( st.getTurn() ? baseTypes::whitePawns : baseTypes::blackPawns) : getPieceAt( to );
 		assert( capturedPiece != baseTypes::separationBitmap );
 		assert( capturedPiece != baseTypes::whitePieces );
@@ -999,6 +1001,8 @@ namespace libChess
 		st.incrementCounters();
 		
 		st.clearEpSquare();
+		
+		bool moveIsCheck = moveGivesCheck( m );
 		
 		// do castle additional instruction
 		// todo manage chess960
@@ -1110,46 +1114,48 @@ todo readd this piece of code
 
 	st.changeTurn();
 	_swapUsThem();
-/*
+	/***********************************
+	swapped turn, below this line us & them and turn are switched
+	************************************/
+	
 
-
-	BitMap baseTypes::chekcers(0);
-	if(moveIsCheck)
+	// todo check if it's slower of simply do (get attackers to king & them)
+	baseTypes::BitMap checkers(0);
+	if( moveIsCheck )
 	{
-
-		if(m.bit.flags != Move::fnone)
+		if( !m.isStandardMove() )
 		{
-			assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
-			x.checkers |= getAttackersTo(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))) & Them[Pieces];
+			checkers += getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) );
 		}
 		else
 		{
-			if(x.checkingSquares[piece] & bitSet(to)) // should be old state, but checkingSquares has not been changed so far
+			if( st.getCheckingSquare( piece ).isSquareSet( to ) ) // should be old state, but checkingSquares has not been updated so far
 			{
-				x.checkers |= bitSet(to);
+				checkers += to;
 			}
-			if(x.hiddenCheckersCandidate && (x.hiddenCheckersCandidate & bitSet(from)))	// should be old state, but hiddenCheckersCandidate has not been changed so far
+			
+			if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )	// should be old state, but discoveryCheckers has not been updated so far
 			{
-				if(!isRook(piece))
+				if( !baseTypes::isRook( piece ) )
 				{
-					assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
-					x.checkers |= Movegen::attackFrom<Position::whiteRooks>(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),bitBoard[occupiedSquares]) & (Them[Queens] |Them[Rooks]);
+					assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
+					checkers += BitMapMoveGenerator::getRookMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Rooks ) );
 				}
-				if(!isBishop(piece))
+				if( !baseTypes::isBishop( piece ) )
 				{
-					assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
-					x.checkers |= Movegen::attackFrom<Position::whiteBishops>(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),bitBoard[occupiedSquares]) & (Them[Queens] |Them[Bishops]);
+					assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
+					checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Bishops ) );
 				}
 			}
 		}
 	}
+	st.setCheckers( checkers );
+	
+	_calcCheckingSquares();
+	
+	st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
+	st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
 
-	calcCheckingSquares();
-	assert(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove))<squareNumber);
-	x.hiddenCheckersCandidate=getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(blackKing-x.nextMove)),x.nextMove);
-	assert(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove))<squareNumber);
-	x.pinnedPieces = getHiddenCheckers(getSquareOfThePiece((bitboardIndex)(whiteKing+x.nextMove)),eNextMove(blackTurn-x.nextMove));
-	*/
 /* todo readd this code
 #ifdef	ENABLE_CHECK_CONSISTENCY
 	checkPosConsistency(1);
@@ -1323,62 +1329,58 @@ todo readd this piece of code
 		}
 		else if( m.isEnPassantMove() )
 		{
-			
+			// filemask & rankMask
+			// todo evalutate to reuse old code 
+			baseTypes::BitMap captureSquare = baseTypes::BitMap::getFileMask( to ) & baseTypes::BitMap::getRankMask( from );
+			baseTypes::BitMap occ = ( ( getOccupationBitmap() ^ from ) ^ to ) ^ captureSquare;
+			// pawn move and capture can can create a discovery check
+			return
+				!( 
+					( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( getOurBitmap( baseTypes::Queens ) + getOurBitmap( baseTypes::Rooks ) ) )
+				  + ( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & ( getOurBitmap( baseTypes::Queens ) + getOurBitmap( baseTypes::Bishops ) ) )
+				).isEmpty();
 		}
 		
 		return false;
 	}
-/*	
-
-			break;
-		case Move::fenpassant:
-		{
-			bitMap captureSquare = FILEMASK[m.bit.to] & RANKMASK[m.bit.from];
-			bitMap occ = bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet((tSquare)m.bit.to)^captureSquare;
-			return
-					(Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Us[Queens] |Us[Rooks]))
-				   | (Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Us[Queens] |Us[Bishops]));
-
-		}
-
-
-	}
-
-	bool Position::moveGivesDoubleCheck(const Move& m)const
+	
+	bool Position::moveGivesDoubleCheck( const Move& m ) const
 	{
-		assert(m.packed);
-		tSquare from = (tSquare)m.bit.from;
-		tSquare to = (tSquare)m.bit.to;
-		bitboardIndex piece = squares[from];
-		assert(piece!=occupiedSquares);
-		assert(piece!=separationBitmap);
-		assert(piece!=whitePieces);
-		assert(piece!=blackPieces);
-		state &s = getActualState();
+		const GameState& st = getActualStateConst();
+		
+		assert( m!= Move::NOMOVE );
+		const baseTypes::tSquare to = m.getTo();
+		const baseTypes::tSquare from = m.getFrom();
+		
+		baseTypes::bitboardIndex piece = getPieceAt( from );
+		assert( baseTypes::isValidPiece( piece ) );
+		
+		// todo is this correct? discovery check test is a little more complicated in moveGivesCheck function, do some research
+		// Direct check & discovery?
+		return ( 
+			st.getCheckingSquare( piece ).isSquareSet( to ) 
+			&& ( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+			);
 
-
-		// Direct check ?
-		return ((s.checkingSquares[piece] & bitSet(to)) && (s.hiddenCheckersCandidate && (s.hiddenCheckersCandidate & bitSet(from))));
-
-
+		
 	}
-
-	bool Position::moveGivesSafeDoubleCheck(const Move& m)const
+	bool Position::moveGivesSafeDoubleCheck( const Move& m ) const
 	{
-		assert(m.packed);
-		tSquare from = (tSquare)m.bit.from;
-		tSquare to = (tSquare)m.bit.to;
-		bitboardIndex piece = squares[from];
-		assert(piece!=occupiedSquares);
-		assert(piece!=separationBitmap);
-		assert(piece!=whitePieces);
-		assert(piece!=blackPieces);
-		state & s=getActualState();
-
-		tSquare kingSquare = getSquareOfThePiece((bitboardIndex)(blackKing-s.nextMove));
-		return (!(Movegen::attackFrom<Position::whiteKing>(kingSquare) & bitSet(to)) &&  (s.checkingSquares[piece] & bitSet(to)) && (s.hiddenCheckersCandidate && (s.hiddenCheckersCandidate & bitSet(from))));
-
-
+		const GameState& st = getActualStateConst();
+		
+		assert( m!= Move::NOMOVE );
+		const baseTypes::tSquare to = m.getTo();
+		const baseTypes::tSquare from = m.getFrom();
+		
+		baseTypes::bitboardIndex piece = getPieceAt( from );
+		assert( baseTypes::isValidPiece( piece ) );
+		
+		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( getEnemyPiece ( baseTypes::King ) );
+		
+		return ( 
+			!( BitMapMoveGenerator::getKingMoves( OppKingSquare ).isSquareSet( to ) )
+			&& st.getCheckingSquare( piece ).isSquareSet( to ) 
+			&& ( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+			);
 	}
-	*/
 }
