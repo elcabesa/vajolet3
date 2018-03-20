@@ -97,6 +97,8 @@ namespace libChess
 		// todo valutate the use of a iterator
 		baseTypes::BitMap *_us,*_them;	/*!< pointer to our & their pieces bitboard*/
 		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
+		std::array< baseTypes::BitMap, 4 > _castleRightsKingPath;	// path to be traversed by the king when castling
+		std::array< baseTypes::BitMap, 4 > _castleRightsRookPath;	// path to be traversed by the rook when castling
 		
 	private:
 	
@@ -126,7 +128,12 @@ namespace libChess
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
 		bool _tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq );
 		
+		bool _setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare);
+		static unsigned int _calcCRPIndex( const baseTypes::tColor color, const bool kingside );
+		
 		void _clearCastleRightsMask(void);
+		void _clearCastleRightsPaths(void);
+		
 	
 		
 	};
@@ -196,6 +203,11 @@ namespace libChess
 	inline baseTypes::bitboardIndex Position::getEnemyPiece(const baseTypes::bitboardIndex in) const
 	{
 		return in + baseTypes::separationBitmap - getActualStateConst().getTurn();
+	}
+	
+	inline unsigned int Position::_calcCRPIndex( const baseTypes::tColor color, const bool kingSide )
+	{
+		return ( color * 2 ) + kingSide;
 	}
 }
 

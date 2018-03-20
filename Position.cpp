@@ -38,7 +38,7 @@ namespace libChess
 		_setUsThem();
 	}
 	
-	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask)
+	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleRightsKingPath(other._castleRightsKingPath), _castleRightsRookPath(other._castleRightsRookPath)
 	{
 		_actualState = &_stateList.back();
 		
@@ -59,6 +59,8 @@ namespace libChess
 		_bitBoard = other._bitBoard;
 		
 		_castleRightsMask = other._castleRightsMask;
+		_castleRightsKingPath = other._castleRightsKingPath;
+		_castleRightsRookPath = other._castleRightsRookPath;
 
 		_setUsThem();
 
@@ -843,6 +845,77 @@ namespace libChess
 		return true;
 	}
 	
+	bool Position::_setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare)
+	{
+		const baseTypes::bitboardIndex king = getPieceAt( KingSquare );
+		assert( baseTypes::isKing( king ) );
+		const baseTypes::bitboardIndex rook = getPieceAt( RookSquare );
+		assert( baseTypes::isRook( rook ) );
+		
+		
+		// todo rigirare questi if.... un solo codice parametrizzato
+		if( color == baseTypes::white )
+		{
+			if( kingSide )
+			{
+				// king path, containing king square
+				for( auto sq: baseTypes::tSquareRange( KingSquare, baseTypes::G1 ) )
+				{
+					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+				// rook path, without rook square
+				for( auto sq: baseTypes::tSquareRange( baseTypes::F1, RookSquare - 1 ) )
+				{
+					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+			}
+			else
+			{
+				// king path, containing king square
+				for( auto sq: baseTypes::tSquareRange( baseTypes::C1, KingSquare ) )
+				{
+					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+				// rook path, without rook square
+				for( auto sq: baseTypes::tSquareRange( RookSquare + 1, baseTypes::D1 ) )
+				{
+					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+			}
+		}
+		else
+		{
+			if( kingSide )
+			{
+				// king path, containing king square
+				for( baseTypes::tSquare sq: baseTypes::tSquareRange( KingSquare, baseTypes::G8 ) )
+				{
+					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+				// rook path, without rook square
+				for( auto sq: baseTypes::tSquareRange( baseTypes::F8, RookSquare - 1 ) )
+				{
+					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+			}
+			else
+			{
+				// king path, containing king square
+				for( auto sq: baseTypes::tSquareRange( baseTypes::C8, KingSquare ) )
+				{
+					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+				// rook path, without rook square
+				for( auto sq: baseTypes::tSquareRange( RookSquare + 1, baseTypes::D8 ) )
+				{
+					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
 	bool Position::_tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq )
 	{
 		GameState &st = _getActualState();
@@ -1232,6 +1305,19 @@ todo readd this piece of code
 		for( auto& cr : _castleRightsMask )
 		{
 			cr = baseTypes::noCastleRights;
+		}
+	}
+	
+	void Position::_clearCastleRightsPaths(void)
+	{
+		
+		for( auto& cr : _castleRightsKingPath )
+		{
+			cr.clear();
+		}
+		for( auto& cr : _castleRightsRookPath )
+		{
+			cr.clear();
 		}
 	}
 	

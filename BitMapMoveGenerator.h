@@ -159,7 +159,7 @@ namespace libChess
 	
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& occupancy )
 	{
-		return ( (col == baseTypes::white) ? (b << 1) : (b >> 1) ) & ~occupancy ;
+		return ( (col == baseTypes::white) ? (b << 8) : (b >> 8) ) & ~occupancy ;
 	}
 	
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::tColor col, const baseTypes::BitMap& target )
