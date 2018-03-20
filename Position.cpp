@@ -847,10 +847,8 @@ namespace libChess
 	
 	bool Position::_setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare)
 	{
-		const baseTypes::bitboardIndex king = getPieceAt( KingSquare );
-		assert( baseTypes::isKing( king ) );
-		const baseTypes::bitboardIndex rook = getPieceAt( RookSquare );
-		assert( baseTypes::isRook( rook ) );
+		assert( baseTypes::isKing( getPieceAt( KingSquare ) ) );
+		assert( baseTypes::isRook( getPieceAt( RookSquare ) ) );
 		
 		
 		// todo rigirare questi if.... un solo codice parametrizzato

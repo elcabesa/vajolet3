@@ -129,7 +129,7 @@ namespace libChess
 		bool _tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq );
 		
 		bool _setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare);
-		static unsigned int _calcCRPIndex( const baseTypes::tColor color, const bool kingside );
+		static unsigned int _calcCRPIndex( const baseTypes::tColor color, const bool kingSide );
 		
 		void _clearCastleRightsMask(void);
 		void _clearCastleRightsPaths(void);

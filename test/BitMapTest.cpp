@@ -46,10 +46,10 @@ namespace {
 	{
 		BitMap x = BitMap(7);
 		BitMap y(x);
-		ASSERT_TRUE( x.isSquareSet(tSquare::A1));
-		ASSERT_TRUE( x.isSquareSet(tSquare::B1));
-		ASSERT_TRUE( x.isSquareSet(tSquare::C1));
-		ASSERT_FALSE( x.isSquareSet(tSquare::E5));
+		ASSERT_TRUE( y.isSquareSet(tSquare::A1));
+		ASSERT_TRUE( y.isSquareSet(tSquare::B1));
+		ASSERT_TRUE( y.isSquareSet(tSquare::C1));
+		ASSERT_FALSE( y.isSquareSet(tSquare::E5));
 	}
 	
 	TEST(BitMap, clear)
