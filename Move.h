@@ -54,17 +54,17 @@ namespace libChess
 		*	constructors
 		******************************************************************/
 		Move(){}
-		Move(const Move& m): _packed(m._packed){}
-		explicit Move(const unsigned short i):_packed(i){}
-		Move(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
+		Move(const Move& m): _u( m._u._packed ){}
+		explicit Move( const unsigned short i ):_u(i){}
+		Move( const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen ):_u(_from, _to, _flag, _prom){}
 		
 		/*****************************************************************
 		*	Operators
 		******************************************************************/
-		inline bool operator == (const Move& d1) const { return _packed == d1._packed;}
-		inline bool operator != (const Move& d1) const { return _packed != d1._packed;}
-		inline Move& operator = (const unsigned short b) { _packed = b; return *this;}
-		inline Move& operator = (const Move&m){ _packed = m._packed; return *this;}
+		inline bool operator == (const Move& d1) const { return _u._packed == d1._u._packed; }
+		inline bool operator != (const Move& d1) const { return _u._packed != d1._u._packed; }
+		inline Move& operator = (const unsigned short b) { _u._packed = b; return *this; }
+		inline Move& operator = (const Move&m){ _u._packed = m._u._packed; return *this; }
 
 		/*****************************************************************
 		*	setter methods
@@ -103,8 +103,11 @@ namespace libChess
 		******************************************************************/
 
 	protected:
-		union
+		union t_u
 		{
+			t_u(){};
+			t_u( unsigned short packed ):_packed(packed){}
+			t_u( const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen ):_bit{(unsigned int)_from,(unsigned int)_to,_prom, _flag}{}
 			struct
 			{
 				unsigned _from		:6;
@@ -113,55 +116,55 @@ namespace libChess
 				unsigned _flags		:2;
 			}_bit;
 			unsigned short _packed;
-		};
+		}_u;
 
 
 	};
 	
-	inline void Move::setFrom(baseTypes::tSquare from){ _bit._from = from; }
-	inline void Move::setTo(baseTypes::tSquare to){ _bit._to = to; }
-	inline void Move::setFlag(eflags fl){ _bit._flags = fl; }
-	inline void Move::clearFlag(){ _bit._flags = fnone; }
-	inline void Move::setPromotion(epromotion pr){ _bit._promotion = pr; }
+	inline void Move::setFrom( baseTypes::tSquare from ){ _u._bit._from = from; }
+	inline void Move::setTo( baseTypes::tSquare to ){ _u._bit._to = to; }
+	inline void Move::setFlag( eflags fl ){ _u._bit._flags = fl; }
+	inline void Move::clearFlag(){ _u._bit._flags = fnone; }
+	inline void Move::setPromotion(epromotion pr){ _u._bit._promotion = pr; }
 	
 	inline Move::epromotion Move::getPromotionType() const
 	{
-		return (epromotion)(_bit._promotion);
+		return (epromotion)( _u._bit._promotion );
 	}
 	
 	inline bool Move::isPromotionMove() const
 	{
-		return _bit._flags == Move::fpromotion;
+		return _u._bit._flags == Move::fpromotion;
 	}
 	
 	inline bool Move::isCastleMove() const
 	{
-		return _bit._flags == Move::fcastle;
+		return _u._bit._flags == Move::fcastle;
 	}
 	
 	inline bool Move::isEnPassantMove() const
 	{
-		return _bit._flags == Move::fenpassant;
+		return _u._bit._flags == Move::fenpassant;
 	}
 	
 	inline bool Move::isStandardMove() const
 	{
-		return _bit._flags == Move::fnone;
+		return _u._bit._flags == Move::fnone;
 	}
 	
 	inline baseTypes::tSquare Move::getFrom()const
 	{
-		return baseTypes::tSquare(_bit._from);
+		return baseTypes::tSquare( _u._bit._from );
 	
 	}
 	inline baseTypes::tSquare Move::getTo()const
 	{
-		return baseTypes::tSquare(_bit._to);
+		return baseTypes::tSquare( _u._bit._to );
 	}
 	
 	inline unsigned short Move::getPacked()const
 	{
-		return _packed;
+		return _u._packed;
 	}
 
 	
@@ -181,9 +184,9 @@ namespace libChess
 		*	constructors
 		******************************************************************/
 		extMove(){};
-		explicit extMove(const Move& m): Move(m){}
-		explicit extMove(const unsigned short i): Move(i){}
-		extMove(const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move(_from,_to,_flag,_prom){}
+		explicit extMove( const Move& m ): Move(m){}
+		explicit extMove( const unsigned short i ): Move(i){}
+		extMove( const baseTypes::tSquare _from, const baseTypes::tSquare _to, const eflags _flag=fnone, const epromotion _prom=promQueen): Move( _from, _to, _flag, _prom ){}
 		
 		/*****************************************************************
 		*	Operators
@@ -195,13 +198,13 @@ namespace libChess
 		/*****************************************************************
 		*	setter methods
 		******************************************************************/
-		void setScore(const Score s);
+		void setScore( const Score s );
 		
 	private:
 		Score _score;
 	};
 	
-	void inline extMove::setScore(const Score s){ _score = s;}
+	void inline extMove::setScore( const Score  s){ _score = s;}
 
 }
 

@@ -28,15 +28,15 @@ namespace libChess
 	{
 		std::string s;
 
-		if( _packed == 0 )
+		if( _u._packed == 0 )
 		{
 			s = "0000";
 			return s;
 		}
 		// from
-		s += libChess::baseTypes::to_string(getFrom());
+		s += libChess::baseTypes::to_string( getFrom() );
 		// to
-		s += libChess::baseTypes::to_string(getTo());
+		s += libChess::baseTypes::to_string( getTo() );
 		//promotion
 		if( isPromotionMove() )
 		{

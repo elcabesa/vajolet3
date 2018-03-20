@@ -324,7 +324,7 @@ namespace libChess
 		// Update castle rights if needed
 		if ( filteredCR )
 		{
-			assert( ( filteredCR ) < 16 );
+			assert( (int)( filteredCR ) < 16 );
 			_key.changeCastlingRight( filteredCR );
 			_castleRights = (baseTypes::eCastle)( _castleRights & (~filteredCR) );
 		}
