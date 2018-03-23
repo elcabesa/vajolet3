@@ -21,6 +21,7 @@
 #include "Position.h"
 #include "BitMapMoveGenerator.h"
 #include "MoveGenerator.h"
+#include "MoveList.h"
 
 
 // todo cercare funzioni comuni
@@ -589,6 +590,7 @@ namespace libChess
 		// castle rights
 		st.resetAllCastleRights();
 		_clearCastleRightsMask();
+		_clearCastleRightsPaths();
 		bool crEmpty = false;		
 
 		while ( (ss >> token) && !isspace(token) )
@@ -811,7 +813,7 @@ namespace libChess
 			return false;
 		}
 		
-		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfThePiece( baseTypes::whiteKing ) :getSquareOfThePiece( baseTypes::blackKing ) );
+		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfThePiece( baseTypes::whiteKing ) : getSquareOfThePiece( baseTypes::blackKing ) );
 		const baseTypes::tRank kingRank = getRank(ksq);
 		
 		
@@ -827,19 +829,24 @@ namespace libChess
 		}
 		
 		baseTypes::eCastle cr;
-		
+		baseTypes::tColor color;
+		const bool kingSide = ( ksq < rsq );
 		
 		if ( kingRank == baseTypes::one ) 
 		{
+			color = baseTypes::white;
 			cr = ( ksq < rsq ) ? baseTypes::wCastleOO : baseTypes::wCastleOOO;
+			
 		}
 		else
 		{
+			color = baseTypes::black;
 			cr = ( ksq < rsq ) ? baseTypes::bCastleOO : baseTypes::bCastleOOO;
 		}
 		
 		if ( false == _tryAddCastleRight( cr, ksq, rsq ) )
 		{
+			_setupCastlePath( color, kingSide, ksq, rsq );
 			return false;
 		}
 		return true;
@@ -850,65 +857,56 @@ namespace libChess
 		assert( baseTypes::isKing( getPieceAt( KingSquare ) ) );
 		assert( baseTypes::isRook( getPieceAt( RookSquare ) ) );
 		
+		baseTypes::tSquare rookFrom;
+		baseTypes::tSquare rookTo;
+		baseTypes::tSquare kingFrom;
+		baseTypes::tSquare kingTo;
 		
-		// todo rigirare questi if.... un solo codice parametrizzato
 		if( color == baseTypes::white )
 		{
 			if( kingSide )
 			{
-				// king path, containing king square
-				for( auto sq: baseTypes::tSquareRange( KingSquare, baseTypes::G1 ) )
-				{
-					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
-				// rook path, without rook square
-				for( auto sq: baseTypes::tSquareRange( baseTypes::F1, RookSquare - 1 ) )
-				{
-					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
+				rookFrom = baseTypes::F1;
+				rookTo = RookSquare - 1;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::G1;
 			}
 			else
 			{
-				// king path, containing king square
-				for( auto sq: baseTypes::tSquareRange( baseTypes::C1, KingSquare ) )
-				{
-					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
-				// rook path, without rook square
-				for( auto sq: baseTypes::tSquareRange( RookSquare + 1, baseTypes::D1 ) )
-				{
-					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
+				rookFrom = RookSquare + 1;
+				rookTo = baseTypes::D1;
+				kingFrom = baseTypes::C1;
+				kingTo = KingSquare;
 			}
 		}
 		else
 		{
 			if( kingSide )
 			{
-				// king path, containing king square
-				for( baseTypes::tSquare sq: baseTypes::tSquareRange( KingSquare, baseTypes::G8 ) )
-				{
-					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
-				// rook path, without rook square
-				for( auto sq: baseTypes::tSquareRange( baseTypes::F8, RookSquare - 1 ) )
-				{
-					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
+				rookFrom = baseTypes::F8;
+				rookTo = RookSquare - 1;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::G8;
 			}
 			else
 			{
-				// king path, containing king square
-				for( auto sq: baseTypes::tSquareRange( baseTypes::C8, KingSquare ) )
-				{
-					_castleRightsKingPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
-				// rook path, without rook square
-				for( auto sq: baseTypes::tSquareRange( RookSquare + 1, baseTypes::D8 ) )
-				{
-					_castleRightsRookPath[ _calcCRPIndex( color, kingSide) ] += sq;
-				}
+				rookFrom = RookSquare + 1;
+				rookTo = baseTypes::D8;
+				kingFrom = baseTypes::C8;
+				kingTo = KingSquare;
 			}
+		}
+		const unsigned int index = _calcCRPIndex( color, kingSide);
+		
+		// king path, containing king square
+		for( auto sq: baseTypes::tSquareRange( kingFrom, kingTo ) )
+		{
+			_castleRightsKingPath[ index ] += sq;
+		}
+		// rook path, without rook square
+		for( auto sq: baseTypes::tSquareRange( rookFrom, rookTo ) )
+		{
+			_castleRightsRookPath[ index ] += sq;
 		}
 		
 		return true;

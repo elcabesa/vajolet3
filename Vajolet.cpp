@@ -25,6 +25,7 @@
 
 static void setIoBuffers()
 {
+	// todo why?? non ricordo perché e forse non serve
 	std::cout.rdbuf()->pubsetbuf( nullptr, 0 );
 	std::cin.rdbuf()->pubsetbuf( nullptr, 0 );
 }
