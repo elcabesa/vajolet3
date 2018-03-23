@@ -443,6 +443,14 @@ namespace {
 		ASSERT_FALSE(y.isEnPassantMove());
 	}
 	
+	TEST(extMove, assign3)
+	{
+		Move x(4533);
+		extMove y;
+		y = x;
+		ASSERT_EQ( 4533, y.getPacked());
+	}
+	
 	TEST(extMove, set1)
 	{
 		extMove x(baseTypes::tSquare::A8, baseTypes::tSquare::B2);
