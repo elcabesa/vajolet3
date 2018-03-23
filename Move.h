@@ -191,7 +191,8 @@ namespace libChess
 		/*****************************************************************
 		*	Operators
 		******************************************************************/
-		inline bool operator < (const extMove& d1) const { return _score < d1._score;}
+		inline bool operator < ( const extMove& d1 ) const { return _score < d1._score;}
+		inline extMove& operator = ( const Move& m ){ _u._packed = m.getPacked(); return *this; }
 		
 		/*Score inline getScore() const { return _score;}*/
 		

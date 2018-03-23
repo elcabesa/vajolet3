@@ -59,12 +59,12 @@ namespace libChess
 		void reset(void);
 		unsigned int size() const;
 		const Move& get( const unsigned int n ) const;
-		const typename std::array<extMove,N >::iterator begin() const;
+		const typename std::array<extMove,N >::iterator begin();
 		const typename std::array<extMove,N >::iterator end() const;
-		const typename std::array<extMove,N >::iterator actualPosition() const;
+		const typename std::array<extMove,N >::iterator actualPosition();
 		const Move& findNextBestMove(void);
 		const Move& getNextMove(void);
-		void removeMove( const Move& m );
+		void ignoreMove( const Move& m );
 	
 	
 	
@@ -72,43 +72,43 @@ namespace libChess
 	*	members
 	******************************************************************/
 	private:
-		typename std::array<extMove,N >::iterator _moveListEnd;
-		typename std::array<extMove,N >::iterator _moveListPosition;
+		typename std::array<extMove,N >::iterator _moveListEnd = std::array< extMove, N >::begin();
+		typename std::array<extMove,N >::iterator _moveListPosition = std::array< extMove, N >::begin();
 		
 	};
 	
 	template <std::size_t N>
 	void MoveList<N>::insert( const Move& m )
 	{
-		assert( _moveListEnd < N );
-		( _moveListEnd++ )->m = m;
+		//assert( _moveListEnd < N );
+		*( _moveListEnd++ ) = m;
 	}
 	
 	template <std::size_t N>
 	inline void MoveList<N>::reset()
 	{
-		_moveListPosition = this->begin();
-		_moveListEnd = this->begin();
+		_moveListPosition = std::array< extMove, N >::begin();
+		_moveListEnd = std::array< extMove, N >::begin();
 	}
 	
 	template <std::size_t N>
 	unsigned int MoveList<N>::size() const
 	{
-		assert( _moveListEnd < N );
-		return _moveListEnd - this->begin();
+		//assert( _moveListEnd < N );
+		return _moveListEnd - std::array< extMove, N >::cbegin();
 	}
 	
 	template <std::size_t N>
 	const Move& MoveList<N>::get( const unsigned int n ) const
 	{
 		assert( n < N );
-		return this[ n ].m;
+		return (*this)[ n ];
 	}
 	
 	template <std::size_t N>
-	const typename std::array<extMove,N >::iterator MoveList<N>::begin() const
+	const typename std::array<extMove,N >::iterator MoveList<N>::begin() 
 	{
-		return this->begin();
+		return std::array< extMove, N >::begin();
 	}
 	
 	template <std::size_t N>
@@ -118,7 +118,7 @@ namespace libChess
 	}
 	
 	template <std::size_t N>
-	const typename std::array<extMove,N >::iterator MoveList<N>::actualPosition() const
+	const typename std::array<extMove,N >::iterator MoveList<N>::actualPosition() 
 	{
 		return _moveListPosition;
 	}
@@ -129,7 +129,7 @@ namespace libChess
 		if( max != _moveListEnd )
 		{
 			std::swap( *max, *_moveListPosition );
-			return ( _moveListPosition++ )->m;
+			return *( _moveListPosition++ );
 		}
 		return Move::NOMOVE;
 	}
@@ -139,13 +139,13 @@ namespace libChess
 	{
 		if( _moveListPosition != _moveListEnd )
 		{
-			return ( _moveListPosition++ )->m;
+			return *( _moveListPosition++ );
 		}
 		return Move::NOMOVE;
 	}
 	
 	template <std::size_t N>
-	inline void MoveList<N>::removeMove( const Move& m )
+	inline void MoveList<N>::ignoreMove( const Move& m )
 	{
 		const auto i = std::find( _moveListPosition, _moveListEnd, m );
 		if( i != _moveListEnd )
