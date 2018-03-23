@@ -109,6 +109,33 @@ namespace {
 		
 	}
 	
+	TEST(MoveList,ignoreMove2)
+	{
+		Move m1( baseTypes::E2 , baseTypes::E4);
+		Move m2( baseTypes::G1 , baseTypes::D8);
+		Move m3( baseTypes::D6 , baseTypes::C4);
+		Move m4( baseTypes::E2 , baseTypes::E3);
+		
+		Move m5( baseTypes::F1 , baseTypes::A8);
+		
+		class MoveList<30> ml;
+		ml.insert(m1);
+		ml.insert(m2);
+		ml.insert(m3);
+		ml.insert(m4);
+		
+		ml.ignoreMove(m5);
+				
+		ASSERT_EQ( 4, ml.size() );
+		ASSERT_EQ( m1, ml.getNextMove() );
+		ASSERT_EQ( m2, ml.getNextMove() );
+		ASSERT_EQ( m3, ml.getNextMove() );
+		ASSERT_EQ( m4, ml.getNextMove() );
+		
+		ASSERT_EQ( Move::NOMOVE, ml.getNextMove() );
+		
+	}
+	
 	TEST(MoveList,iterator1)
 	{
 		Move m1( baseTypes::E2 , baseTypes::E4);
