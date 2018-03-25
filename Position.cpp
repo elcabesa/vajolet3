@@ -21,7 +21,6 @@
 #include "Position.h"
 #include "BitMapMoveGenerator.h"
 #include "MoveGenerator.h"
-#include "MoveList.h"
 
 
 // todo cercare funzioni comuni

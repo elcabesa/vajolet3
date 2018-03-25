@@ -82,6 +82,8 @@ namespace libChess
 		bool moveGivesDoubleCheck( const Move& m ) const;
 		bool moveGivesSafeDoubleCheck( const Move& m ) const;
 		
+		Score getMvvLvaScore( const Move& m ) const;
+		
 		
 	
 	private:
@@ -208,6 +210,28 @@ namespace libChess
 	inline unsigned int Position::_calcCRPIndex( const baseTypes::tColor color, const bool kingSide )
 	{
 		return ( color * 2 ) + kingSide;
+	}
+	
+	inline Score Position::getMvvLvaScore( const Move& m ) const
+	{	
+		const Score MVVValue[] = { 0, 3000, 900, 500, 350, 300, 100, 0, 0, 3000, 900, 500, 350, 300, 100, 0 } ;
+		const Score LVAValue[] = { 0, 30, 9, 5, 3, 2, 1, 0, 0, 30, 9, 5, 3, 2, 1, 0 } ;
+		assert( isValidPiece( getPieceAt( m.getFrom() ) ) );
+		assert( isValidPiece( getPieceAt( m.getTo() ) ) || m.isEnPassantMove() );
+		
+		Score s = MVVValue[ getPieceAt( m.getTo() ) ] - LVAValue[ getPieceAt( m.getFrom() ) ];
+				
+		/*if ( m.isPromotionMove() )
+		{
+			s += (pieceValue[ baseTypes::whiteQueens +m.bit.promotion ] - pieceValue[whitePawns])[0];
+		}
+		else */if( m.isEnPassantMove() )
+		{
+			//todo questo può essere eliminato mettendo MVVValue[empty ] = 100;
+			s += MVVValue[ baseTypes::whitePawns ];
+		}
+		
+		return s;
 	}
 }
 

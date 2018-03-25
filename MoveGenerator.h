@@ -37,8 +37,9 @@
 #ifndef MOVEGENERATOR_H_
 #define MOVEGENERATOR_H_
 
-#include <cstdlib>
 #include "tSquare.h"
+#include "MoveList.h"
+
 
 namespace libChess
 {
@@ -56,10 +57,25 @@ namespace libChess
 		static bool isPawnPush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		static bool isPawnDoublePush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		
+		// todo added for test, remove
+		/*inline void scoreCaptureMoves( MoveList<300>& m )
+		{
+			for( auto mov = m.actualPosition(); mov != m.end(); ++mov )
+			{
+				mov->setScore( 5 );
+				//mov->setScore( pos.getMvvLvaScore( mov->m ) );
+			}
+		}*/
+		
 	
 		static void init(void);
 	
 	private:
+		//MoveList<300> _moveList;
+		//MoveList<300> _badMoveList;
+		
+		
+		
 		
 	};
 	
