@@ -37,7 +37,7 @@ endif()
 
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
-add_library(libChess BitMap.cpp BitMapMoveGenerator.cpp HashKeys.cpp Move.cpp Position.cpp tSquare.cpp)
+add_library(libChess BitMap.cpp BitMapMoveGenerator.cpp HashKeys.cpp Move.cpp MoveGenerator.cpp Position.cpp tSquare.cpp)
 
 add_executable(Vajolet Vajolet.cpp )
 target_link_libraries (Vajolet libChess)

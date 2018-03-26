@@ -84,6 +84,8 @@ namespace libChess
 		
 		Score getMvvLvaScore( const Move& m ) const;
 		
+		bool isInCheck( void ) const;
+		
 		
 	
 	private:
@@ -198,6 +200,7 @@ namespace libChess
 		return getActualStateConst().getTurn() == baseTypes::blackTurn;
 	}
 	
+	// todo move this function as public of state to speedup move generation
 	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const
 	{
 		return in + getActualStateConst().getTurn();
@@ -232,6 +235,11 @@ namespace libChess
 		}
 		
 		return s;
+	}
+	
+	inline bool Position::isInCheck( void ) const
+	{
+		return !getActualStateConst().getCheckers().isEmpty();
 	}
 }
 

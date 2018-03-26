@@ -15,8 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
-#include <iostream>
 
+#include <iostream>
 #include "BitMap.h"
 
 namespace libChess

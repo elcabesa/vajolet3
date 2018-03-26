@@ -37,7 +37,9 @@
 #ifndef MOVEGENERATOR_H_
 #define MOVEGENERATOR_H_
 
+
 #include "tSquare.h"
+#include "Position.h"
 #include "MoveList.h"
 
 
@@ -46,8 +48,26 @@ namespace libChess
 	
 	class MoveGenerator
 	{
+	public:
+		// todo remove from here, he belong to movepicker
+		static const unsigned int maxMovePerPosition = 250;
+		// todo remove from here, he belong to movepicker
+		static const unsigned int maxBadMovePerPosition = 32;
 		
 	public:
+		enum genType
+		{
+			captureMg,			// generate capture moves
+			quietMg,			// generate quiet moves
+			quietChecksMg,		// generate quiet moves giving check
+			allNonEvasionMg,	// generate all moves while not in check
+			allEvasionMg,		// generate all moves while in check
+			allMg,				// general generate all move
+			captureEvasionMg,	// generate capture while in check
+			quietEvasionMg		// generate quiet moves while in check
+
+
+		};
 
 		/*****************************************************************
 		*	static methods
@@ -57,25 +77,13 @@ namespace libChess
 		static bool isPawnPush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		static bool isPawnDoublePush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		
-		// todo added for test, remove
-		/*inline void scoreCaptureMoves( MoveList<300>& m )
-		{
-			for( auto mov = m.actualPosition(); mov != m.end(); ++mov )
-			{
-				mov->setScore( 5 );
-				//mov->setScore( pos.getMvvLvaScore( mov->m ) );
-			}
-		}*/
-		
-	
-		static void init(void);
+		template< genType mgType > static void generateMoves( const Position& pos, MoveList< maxMovePerPosition >& ml );
 	
 	private:
-		//MoveList<300> _moveList;
-		//MoveList<300> _badMoveList;
-		
-		
-		
+		static bool _checkAllowedMove( const baseTypes::tSquare from, const baseTypes::tSquare to, const baseTypes::tSquare kingSquare, const GameState& s );
+		static bool _checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent );
+		template< baseTypes::bitboardIndex pieceType, genType mgType > static void _generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml );
+		template< MoveGenerator::genType mgType > static void _generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		
 	};
 	
