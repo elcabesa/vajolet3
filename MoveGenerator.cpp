@@ -24,7 +24,7 @@ namespace libChess
 	
 	inline bool MoveGenerator::_checkAllowedMove( const baseTypes::tSquare from, const baseTypes::tSquare to, const baseTypes::tSquare kingSquare, const GameState& s )
 	{
-		return !( ( s.getPinned() & from ).isEmpty() ) || baseTypes::BitMap::areSquaresAligned( from, to, kingSquare );
+		return ( ( s.getPinned() & from ).isEmpty() ) || baseTypes::BitMap::areSquaresAligned( from, to, kingSquare );
 	}
 	
 	inline bool MoveGenerator::_checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
