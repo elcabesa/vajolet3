@@ -32,7 +32,7 @@ namespace {
 		Move m3( baseTypes::D6 , baseTypes::C4);
 		Move m4( baseTypes::E2 , baseTypes::E3);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -53,7 +53,7 @@ namespace {
 		Move m3( baseTypes::D6 , baseTypes::C4);
 		Move m4( baseTypes::E2 , baseTypes::E3);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -71,7 +71,7 @@ namespace {
 		Move m3( baseTypes::D6 , baseTypes::C4);
 		Move m4( baseTypes::E2 , baseTypes::E3);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -92,7 +92,7 @@ namespace {
 		Move m3( baseTypes::D6 , baseTypes::C4);
 		Move m4( baseTypes::E2 , baseTypes::E3);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -118,7 +118,7 @@ namespace {
 		
 		Move m5( baseTypes::F1 , baseTypes::A8);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -143,7 +143,7 @@ namespace {
 		Move m3( baseTypes::D6 , baseTypes::C4);
 		Move m4( baseTypes::E2 , baseTypes::E3);
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(m1);
 		ml.insert(m2);
 		ml.insert(m3);
@@ -167,7 +167,7 @@ namespace {
 	{
 		Move mm[] ={ Move(baseTypes::E2 , baseTypes::E4), Move( baseTypes::G1 , baseTypes::D8), Move( baseTypes::D6 , baseTypes::C4), Move( baseTypes::E2 , baseTypes::E3) };
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(mm[0]);
 		ml.insert(mm[1]);
 		ml.insert(mm[2]);
@@ -186,7 +186,7 @@ namespace {
 	{
 		Move mm[] ={ Move(baseTypes::E2 , baseTypes::E4), Move( baseTypes::G1 , baseTypes::D8), Move( baseTypes::D6 , baseTypes::C4), Move( baseTypes::E2 , baseTypes::E3) };
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(mm[0]);
 		ml.insert(mm[1]);
 		ml.insert(mm[2]);
@@ -210,7 +210,7 @@ namespace {
 		Move mm[] ={ Move(baseTypes::E2 , baseTypes::E4), Move( baseTypes::G1 , baseTypes::D8), Move( baseTypes::D6 , baseTypes::C4), Move( baseTypes::E2 , baseTypes::E3) };
 		Score ss[] ={ 10,600,25,950 };
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		ml.insert(mm[0]);
 		ml.insert(mm[1]);
 		ml.insert(mm[2]);
@@ -235,7 +235,7 @@ namespace {
 	TEST(MoveList,emptyList)
 	{
 		
-		class MoveList<30> ml;
+		MoveList<30> ml;
 		
 		ASSERT_EQ( 0, ml.size() );
 		

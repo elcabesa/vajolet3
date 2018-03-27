@@ -74,6 +74,9 @@ namespace libChess
 		******************************************************************/
 		
 		static baseTypes::tSquare pawnPush( const baseTypes::eTurn turn );
+		static baseTypes::tSquare pawnDoublePush( const baseTypes::eTurn turn );
+		static baseTypes::tSquare pawnLeftCapture( const baseTypes::eTurn turn );
+		static baseTypes::tSquare pawnRightCapture( const baseTypes::eTurn turn );
 		static bool isPawnPush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		static bool isPawnDoublePush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		
@@ -84,6 +87,8 @@ namespace libChess
 		static bool _checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent );
 		template< baseTypes::bitboardIndex pieceType, genType mgType > static void _generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml );
+		template< MoveGenerator::genType mgType > static void _insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml );
+		template< MoveGenerator::genType mgType > static void _insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		
 	};
 	
@@ -97,6 +102,21 @@ namespace libChess
 	inline baseTypes::tSquare MoveGenerator::pawnPush( const baseTypes::eTurn turn )
 	{
 		return turn ? baseTypes::sud : baseTypes::north;
+	}
+	
+	inline baseTypes::tSquare MoveGenerator::pawnDoublePush( const baseTypes::eTurn turn )
+	{
+		return turn ? 2 * baseTypes::sud : 2 * baseTypes::north;
+	}
+	
+	inline baseTypes::tSquare MoveGenerator::pawnLeftCapture( const baseTypes::eTurn turn )
+	{
+		return turn ? baseTypes::sud + baseTypes::ovest : baseTypes::north + baseTypes::ovest;
+	}
+	
+	inline baseTypes::tSquare MoveGenerator::pawnRightCapture( const baseTypes::eTurn turn )
+	{
+		return turn ? baseTypes::sud + baseTypes::east : baseTypes::north + baseTypes::east;
 	}
 	
 	inline bool MoveGenerator::isPawnPush( const baseTypes::tSquare from, const baseTypes::tSquare to )

@@ -328,7 +328,7 @@ namespace {
 		ASSERT_EQ( v[4], tSquare::F8 );
 	}
 	
-	TEST(BitMap, operatorandEqual)
+	TEST(BitMap, operatorAndEqual)
 	{
 		std::vector<tSquare>v;
 		BitMap b(0);
@@ -351,6 +351,26 @@ namespace {
 		ASSERT_EQ( v.size(), 2u );
 		ASSERT_EQ( v[0], tSquare::D5 );
 		ASSERT_EQ( v[1], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorAndEqual2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		b &= tSquare::F6;
+		
+		for(const auto t : b)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 1u );
+		ASSERT_EQ( v[0], tSquare::F6 );
 
 	}
 	
@@ -468,6 +488,26 @@ namespace {
 		ASSERT_EQ( v.size(), 2u );
 		ASSERT_EQ( v[0], tSquare::D5 );
 		ASSERT_EQ( v[1], tSquare::F6 );
+
+	}
+	
+	TEST(BitMap, operatorAnd2)
+	{
+		std::vector<tSquare>v;
+		BitMap b(0);
+		b+= tSquare::F6;
+		b+= tSquare::D4;
+		b+= tSquare::D5;
+		
+		BitMap b3 = b & tSquare::D5;
+		
+		for(const auto t : b3)
+		{
+			v.push_back(t);
+		}
+
+		ASSERT_EQ( v.size(), 1u );
+		ASSERT_EQ( v[0], tSquare::D5 );
 
 	}
 	

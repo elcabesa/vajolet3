@@ -77,6 +77,12 @@ namespace libChess
 		
 		const Move& getCurrentMove() const;
 		
+		/*****************************************************************
+		*	other methods
+		******************************************************************/
+		bool hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color = baseTypes::white ) const;
+		bool hasEpSquareSet(void)const;
+		
 	protected:
 		/*****************************************************************
 		*	setters methods, doesn't update keys
@@ -134,12 +140,6 @@ namespace libChess
 		void materialMovePiece( const simdScore from, const simdScore to );
 		void materialCapturePiece( const simdScore material, const simdScore nonPawnMaterial );
 		void materialPromotePiece( const simdScore material, const simdScore promotedMaterial , const simdScore nonPawnPromotedMaterial );
-		
-		/*****************************************************************
-		*	other methods
-		******************************************************************/
-		bool hasCastleRight( const baseTypes::eCastle cr) const;
-		bool hasEpSquareSet(void)const;
 		
 		
 	private:
@@ -463,11 +463,11 @@ namespace libChess
 		return s;
 	}
 	
-	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr ) const
+	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color ) const
 	{
-		return _castleRights & cr;
+		return (_castleRights & ( cr << ( 2 * color ) ) );
 	}
-	
+		
 	inline bool GameState::hasEpSquareSet() const
 	{
 		return _epSquare != baseTypes::squareNone;

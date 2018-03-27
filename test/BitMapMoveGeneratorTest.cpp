@@ -394,7 +394,7 @@ namespace {
 		const BitMap Pawns = createBitMap(PawnSqList);
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, white, BitMap(0) ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, whiteTurn, BitMap(0) ) );
 		
 		
 	}
@@ -408,7 +408,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Occupancy = createBitMap(OccupancyList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, white, Occupancy ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, whiteTurn, Occupancy ) );
 		
 		
 	}
@@ -420,7 +420,7 @@ namespace {
 		const BitMap Pawns = createBitMap(PawnSqList);
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, black, BitMap(0) ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, blackTurn, BitMap(0) ) );
 		
 		
 	}
@@ -434,7 +434,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Occupancy = createBitMap(OccupancyList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, black, Occupancy ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupAdvance( Pawns, blackTurn, Occupancy ) );
 		
 	}
 	
@@ -447,7 +447,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Target = createBitMap(TargetList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureLeft( Pawns, white, Target ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureLeft( Pawns, whiteTurn, Target ) );
 		
 	}
 	
@@ -460,7 +460,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Target = createBitMap(TargetList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureRight( Pawns, white, Target ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureRight( Pawns, whiteTurn, Target ) );
 		
 	}
 	
@@ -473,7 +473,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Target = createBitMap(TargetList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureLeft( Pawns, black, Target ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureLeft( Pawns, blackTurn, Target ) );
 		
 	}
 	
@@ -486,7 +486,7 @@ namespace {
 		const BitMap Pawns2 = createBitMap(ExpectedPawnSqList);
 		const BitMap Target = createBitMap(TargetList);
 
-		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureRight( Pawns, black, Target ) );
+		ASSERT_EQ( Pawns2, BitMapMoveGenerator::getPawnGroupCaptureRight( Pawns, blackTurn, Target ) );
 		
 	}
 	

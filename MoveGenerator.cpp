@@ -57,17 +57,18 @@ namespace libChess
 			}
 			else if( pieceType == baseTypes::Knights )
 			{
-				// todo confrontare con vajolet2 e controllare se è molto più lento
+				// todo confrontare con vajolet2 e controllare se è molto più lento, in vajolet2 faccio un controllo diverso di inchiodatura
 				moveBitMap = BitMapMoveGenerator::getKnightMoves( from ) & target;
 			}
 
 			for( const auto& to : moveBitMap )
 			{
+				
 				if( _checkAllowedMove( from, to, kingSquare, s ) )
 				{
-					m.setTo( to );
 					if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 					{
+						m.setTo( to );
 						ml.insert(m);
 					}
 				}
@@ -88,14 +89,56 @@ namespace libChess
 		{
 			if( _checkKingAllowedMove( pos, to, occupiedSquares, opponent ) )
 			{
-				m.setTo( to );
 				// todo fare funzione comune??
 				if(mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 				{
+					m.setTo( to );
 					ml.insert(m);
 				}
 			}
 		}
+	}
+	
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	{
+		Move m(Move::NOMOVE);
+		
+		for( const auto& to : movesBitmap )
+		{
+			baseTypes::tSquare from = to - delta;
+			
+			if( _checkAllowedMove( from, to, kingSquare, s ) )
+			{
+				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
+				{
+					m.setFrom( from );
+					m.setTo( to );
+					ml.insert(m);
+				}
+			}
+		}		
+	}
+	
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	{
+		Move m(Move::NOMOVE);
+		m.setFlag(Move::fpromotion);
+		
+		for( const auto& to : movesBitmap )
+		{
+			baseTypes::tSquare from = to - delta;
+			
+			if( _checkAllowedMove( from, to, kingSquare, s ) )
+			{
+				m.setFrom( from );
+				m.setTo( to );
+				for( Move::epromotion prom = Move::promQueen; prom <= Move::promKnight; prom = (Move::epromotion)( prom + 1 ) )
+				{
+					m.setPromotion( prom );
+					ml.insert(m);
+				}
+			}
+		}		
 	}
 	
 	template< MoveGenerator::genType mgType > void MoveGenerator::generateMoves( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
@@ -111,10 +154,12 @@ namespace libChess
 		const baseTypes::BitMap& thirdRankMask = baseTypes::BitMap::getRankMask( s.getTurn() == baseTypes::whiteTurn ? baseTypes::A3 : baseTypes::A6 );
 		const baseTypes::BitMap& seventhRankMask = baseTypes::BitMap::getRankMask( s.getTurn() == baseTypes::whiteTurn ? baseTypes::A7 : baseTypes::A2 );
 
-		const baseTypes::BitMap promotionPawns = pos.getOurBitmap( baseTypes::Pawns ) & seventhRankMask ;
-		const baseTypes::BitMap nonPromotionPawns = pos.getOurBitmap( baseTypes::Pawns ) ^ promotionPawns;
+		const baseTypes::BitMap promotingPawns = pos.getOurBitmap( baseTypes::Pawns ) & seventhRankMask ;
+		const baseTypes::BitMap nonPromotingPawns = pos.getOurBitmap( baseTypes::Pawns ) ^ promotingPawns;
 
 		const baseTypes::tSquare kingSquare = pos.getSquareOfThePiece( pos.getMyPiece( baseTypes::King ) );
+		
+		const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
 		
 		// populate the target squares bitmaps
 		baseTypes::BitMap kingTarget;
@@ -168,7 +213,7 @@ namespace libChess
 		}
 		
 		baseTypes::BitMap moveBitMap;
-		Move m( Move::NOMOVE );
+		//Move m( Move::NOMOVE );
 		//------------------------------------------------------
 		// king
 		//------------------------------------------------------
@@ -210,7 +255,169 @@ namespace libChess
 		//------------------------------------------------------
 		_generatePieceMoves< baseTypes::Knights, mgType >( pos, ++piece, kingSquare, occupiedSquares, target, s, ml );
 		
+		//------------------------------------------------------
+		// pawns
+		//------------------------------------------------------
+
+		if( mgType != MoveGenerator::captureMg && mgType != MoveGenerator::captureEvasionMg )
+		{
+			//--------------------------------------------------
+			// pawn push
+			//--------------------------------------------------
+			
+			baseTypes::BitMap movesBitMap = BitMapMoveGenerator::getPawnGroupAdvance( nonPromotingPawns, s.getTurn(), occupiedSquares );
+			// save it for double push
+			baseTypes::BitMap pawnPushed = movesBitMap;
+			movesBitMap &= target;
+			_insertPawn< mgType >( movesBitMap, pawnPush( s.getTurn() ) , kingSquare, pos, s, ml );
+
+			//--------------------------------------------------
+			// double pawn push
+			//--------------------------------------------------
+			
+			movesBitMap = BitMapMoveGenerator::getPawnGroupAdvance( (pawnPushed & thirdRankMask), s.getTurn(), occupiedSquares ) & target;
+			_insertPawn< mgType >( movesBitMap, pawnDoublePush( s.getTurn() ) , kingSquare, pos, s, ml );
+		}
 		
+		//--------------------------------------------------
+		// pawn capture
+		//--------------------------------------------------
+		if( mgType != MoveGenerator::quietMg && mgType != MoveGenerator::quietChecksMg && mgType != MoveGenerator::quietEvasionMg )
+		{
+			
+			//left capture
+			baseTypes::BitMap movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureLeft( nonPromotingPawns, s.getTurn(), opponent & target );
+			_insertPawn< mgType >( movesBitMap, pawnLeftCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+			
+			//right capture
+			movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureRight( nonPromotingPawns, s.getTurn(), opponent & target );
+			_insertPawn< mgType >( movesBitMap, pawnRightCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+		}
+		
+		//------------------------------------------------------
+		// pawns promotions
+		//------------------------------------------------------
+		if( mgType != MoveGenerator::captureMg && mgType != MoveGenerator::captureEvasionMg )
+		{
+			//--------------------------------------------------
+			// pawn push promotion
+			//--------------------------------------------------
+			baseTypes::BitMap movesBitMap = BitMapMoveGenerator::getPawnGroupAdvance( promotingPawns, s.getTurn(), occupiedSquares ) & target;
+			_insertPromotionPawn< mgType >( movesBitMap, pawnPush( s.getTurn() ) , kingSquare, s, ml );
+		}
+		
+		if( mgType != MoveGenerator::quietMg && mgType != MoveGenerator::quietChecksMg && mgType != MoveGenerator::quietEvasionMg )
+		{
+			//left capture promotion
+			baseTypes::BitMap movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureLeft( promotingPawns, s.getTurn(), opponent & target );
+			_insertPawn< mgType >( movesBitMap, pawnLeftCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+			
+			//right capture promotion
+			movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureRight( promotingPawns, s.getTurn(), opponent & target );
+			_insertPawn< mgType >( movesBitMap, pawnRightCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+			
+			//------------------------------------------------------
+			// en passant capture
+			//------------------------------------------------------
+			
+			
+			
+			if( s.getEpSquare() != baseTypes::squareNone )
+			{
+				Move m( Move::NOMOVE );
+				m.setFlag( Move::fenpassant );
+				
+				const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( s.getEpSquare(), color );
+				
+				for( const auto& from : epAttackerBitMap )
+				{
+					const baseTypes::tSquare captureSquare = baseTypes::getSquareFromFileRank( baseTypes::getFile( s.getEpSquare() ), baseTypes::getRank( from ) );
+					const baseTypes::BitMap occ = ( ( occupiedSquares ^ from ) ^ s.getEpSquare() ) ^ captureSquare;
+					
+					// check ep discovery
+					if( 
+						(
+							( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
+							+
+							( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
+						).isEmpty()
+					)
+					{
+						m.setFrom( from );
+						m.setTo( s.getEpSquare() );
+						ml.insert( m ); 
+					}
+				}
+			}
+		}
+		
+		//------------------------------------------------------
+		// king castle
+		//------------------------------------------------------
+		if( mgType != MoveGenerator::allEvasionMg && mgType != MoveGenerator::captureEvasionMg && mgType != MoveGenerator::quietEvasionMg && mgType!= MoveGenerator::captureMg)
+		{
+			if( s.getCheckers().isEmpty() )
+			{
+				if( s.hasCastleRight( baseTypes::wCastleOO, color ) )
+				{
+					
+				}
+				if( s.hasCastleRight( baseTypes::wCastleOOO, color ) )
+				{
+					
+				}
+			}
+			
+			/*	if((s.castleRights &((Position::wCastleOO)<<(2*color))) &&!s.checkers &&!(castlePath[color][kingSideCastle] & pos.getOccupationBitmap()))
+				{
+
+					bool castleDenied = false;
+					for( tSquare x = (tSquare)1; x<3; x++)
+					{
+						assert(kingSquare+x<squareNumber);
+						if(pos.getAttackersTo(kingSquare+x,pos.getOccupationBitmap()) & pos.getTheirBitmap(Position::Pieces))
+						{
+							castleDenied = true;
+							break;
+						}
+					}
+					if(!castleDenied)
+					{
+						m.bit.flags = Move::fcastle;
+						m.bit.from = kingSquare;
+						m.bit.to = kingSquare + 2;
+						if(type !=Movegen::quietChecksMg || pos.moveGivesCheck(m))
+						{
+							insertMove(m);
+						}
+					}
+
+
+				}
+				if((s.castleRights &((Position::wCastleOOO)<<(2*color))) && !s.checkers && !(castlePath[color][queenSideCastle] & pos.getOccupationBitmap()))
+				{
+					bool castleDenied = false;
+					for( tSquare x = (tSquare)1 ;x<3 ;x++)
+					{
+						assert(kingSquare-x<squareNumber);
+						if(pos.getAttackersTo(kingSquare-x, pos.getOccupationBitmap()) & pos.getTheirBitmap(Position::Pieces))
+						{
+							castleDenied = true;
+							break;
+						}
+					}
+					if(!castleDenied)
+					{
+						m.bit.flags = Move::fcastle;
+						m.bit.from = kingSquare;
+						m.bit.to = kingSquare - 2;
+						if(type != Movegen::quietChecksMg || pos.moveGivesCheck(m))
+						{
+							insertMove(m);
+						}
+					}
+				}*/
+		}
 	}
 	
 	template void MoveGenerator::generateMoves< MoveGenerator::captureMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml );
@@ -219,7 +426,6 @@ namespace libChess
 	
 	template<> void MoveGenerator::generateMoves< MoveGenerator::allMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
-		// todo add this code
 		if( pos.isInCheck() )
 		{
 			generateMoves< MoveGenerator::captureEvasionMg >( pos, ml );

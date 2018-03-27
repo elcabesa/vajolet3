@@ -856,54 +856,59 @@ namespace libChess
 		assert( baseTypes::isKing( getPieceAt( KingSquare ) ) );
 		assert( baseTypes::isRook( getPieceAt( RookSquare ) ) );
 		
-		baseTypes::tSquare rookFrom;
-		baseTypes::tSquare rookTo;
-		baseTypes::tSquare kingFrom;
-		baseTypes::tSquare kingTo;
+		baseTypes::tSquare rookLeft;
+		baseTypes::tSquare rookRight;
+		baseTypes::tSquare kingLeft;
+		baseTypes::tSquare kingRight;
 		
+		// todo rincontrollare tutto
 		if( color == baseTypes::white )
 		{
 			if( kingSide )
 			{
-				rookFrom = baseTypes::F1;
-				rookTo = RookSquare - 1;
-				kingFrom = KingSquare;
-				kingTo = baseTypes::G1;
+				rookLeft = baseTypes::F1;
+				rookRight = RookSquare - 1;
+				
+				kingLeft = KingSquare + 1;
+				kingRight = baseTypes::G1;
 			}
 			else
 			{
-				rookFrom = RookSquare + 1;
-				rookTo = baseTypes::D1;
-				kingFrom = baseTypes::C1;
-				kingTo = KingSquare;
+				rookLeft = RookSquare + 1;
+				rookRight = baseTypes::D1;
+				
+				kingLeft = baseTypes::C1;
+				kingRight = KingSquare - 1;
 			}
 		}
 		else
 		{
 			if( kingSide )
 			{
-				rookFrom = baseTypes::F8;
-				rookTo = RookSquare - 1;
-				kingFrom = KingSquare;
-				kingTo = baseTypes::G8;
+				rookLeft = baseTypes::F8;
+				rookRight = RookSquare - 1;
+				
+				kingLeft = KingSquare + 1;
+				kingRight = baseTypes::G8;
 			}
 			else
 			{
-				rookFrom = RookSquare + 1;
-				rookTo = baseTypes::D8;
-				kingFrom = baseTypes::C8;
-				kingTo = KingSquare;
+				rookLeft = RookSquare + 1;
+				rookRight = baseTypes::D8;
+				
+				kingLeft = baseTypes::C8;
+				kingRight = KingSquare - 1;
 			}
 		}
 		const unsigned int index = _calcCRPIndex( color, kingSide);
 		
 		// king path, containing king square
-		for( auto sq: baseTypes::tSquareRange( kingFrom, kingTo ) )
+		for( auto sq: baseTypes::tSquareRange( kingLeft, kingRight ) )
 		{
 			_castleRightsKingPath[ index ] += sq;
 		}
 		// rook path, without rook square
-		for( auto sq: baseTypes::tSquareRange( rookFrom, rookTo ) )
+		for( auto sq: baseTypes::tSquareRange( rookLeft, rookRight ) )
 		{
 			_castleRightsRookPath[ index ] += sq;
 		}
