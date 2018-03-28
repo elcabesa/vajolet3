@@ -159,8 +159,6 @@ namespace libChess
 
 		const baseTypes::tSquare kingSquare = pos.getSquareOfThePiece( pos.getMyPiece( baseTypes::King ) );
 		
-		const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
-		
 		// populate the target squares bitmaps
 		baseTypes::BitMap kingTarget;
 		baseTypes::BitMap target;
@@ -326,6 +324,7 @@ namespace libChess
 			{
 				Move m( Move::NOMOVE );
 				m.setFlag( Move::fenpassant );
+				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
 				
 				const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( s.getEpSquare(), color );
 				
@@ -358,65 +357,60 @@ namespace libChess
 		{
 			if( s.getCheckers().isEmpty() )
 			{
-				if( s.hasCastleRight( baseTypes::wCastleOO, color ) )
+				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::black : baseTypes::white;
+				
+				// kingSquare
+				if( s.hasCastleRight( baseTypes::wCastleOO, color ) && ( pos.getCastleOccupancyPath( color, true ) & pos.getOccupationBitmap() ).isEmpty() )
 				{
+					bool castleDenied = false;
+					for( auto sq: pos.getKingCastlePath( color, true ) )
+					{
+
+						if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, true ) ) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
+						{
+							castleDenied = true;
+							break;
+						}
+					}
 					
+					if( !castleDenied )
+					{
+						Move m( Move::NOMOVE ); 
+						m.setFlag( Move::fcastle );
+						m.setFrom( kingSquare );
+						m.setTo( color == baseTypes::white ? baseTypes::G1: baseTypes::G8 );
+						if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
+						{
+							ml.insert(m);
+						}
+					}
 				}
-				if( s.hasCastleRight( baseTypes::wCastleOOO, color ) )
+				// queenSquare
+				if( s.hasCastleRight( baseTypes::wCastleOOO, color ) && ( pos.getCastleOccupancyPath( color, false ) & pos.getOccupationBitmap() ).isEmpty() )
 				{
-					
+					bool castleDenied = false;
+					for( auto sq: pos.getKingCastlePath( color, false ) )
+					{
+						if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, false )) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
+						{
+							castleDenied = true;
+							break;
+						}
+					}
+					if( !castleDenied )
+					{
+						Move m( Move::NOMOVE ); 
+						m.setFlag( Move::fcastle );
+						m.setFrom( kingSquare );
+						m.setTo( color == baseTypes::white ? baseTypes::C1: baseTypes::C8 );
+						if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
+						{
+							ml.insert(m);
+						}
+					}
 				}
 			}
 			
-			/*	if((s.castleRights &((Position::wCastleOO)<<(2*color))) &&!s.checkers &&!(castlePath[color][kingSideCastle] & pos.getOccupationBitmap()))
-				{
-
-					bool castleDenied = false;
-					for( tSquare x = (tSquare)1; x<3; x++)
-					{
-						assert(kingSquare+x<squareNumber);
-						if(pos.getAttackersTo(kingSquare+x,pos.getOccupationBitmap()) & pos.getTheirBitmap(Position::Pieces))
-						{
-							castleDenied = true;
-							break;
-						}
-					}
-					if(!castleDenied)
-					{
-						m.bit.flags = Move::fcastle;
-						m.bit.from = kingSquare;
-						m.bit.to = kingSquare + 2;
-						if(type !=Movegen::quietChecksMg || pos.moveGivesCheck(m))
-						{
-							insertMove(m);
-						}
-					}
-
-
-				}
-				if((s.castleRights &((Position::wCastleOOO)<<(2*color))) && !s.checkers && !(castlePath[color][queenSideCastle] & pos.getOccupationBitmap()))
-				{
-					bool castleDenied = false;
-					for( tSquare x = (tSquare)1 ;x<3 ;x++)
-					{
-						assert(kingSquare-x<squareNumber);
-						if(pos.getAttackersTo(kingSquare-x, pos.getOccupationBitmap()) & pos.getTheirBitmap(Position::Pieces))
-						{
-							castleDenied = true;
-							break;
-						}
-					}
-					if(!castleDenied)
-					{
-						m.bit.flags = Move::fcastle;
-						m.bit.from = kingSquare;
-						m.bit.to = kingSquare - 2;
-						if(type != Movegen::quietChecksMg || pos.moveGivesCheck(m))
-						{
-							insertMove(m);
-						}
-					}
-				}*/
 		}
 	}
 	

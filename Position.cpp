@@ -38,7 +38,7 @@ namespace libChess
 		_setUsThem();
 	}
 	
-	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleRightsKingPath(other._castleRightsKingPath), _castleRightsRookPath(other._castleRightsRookPath)
+	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleKingPath(other._castleKingPath), _castleOccupancyPath(other._castleOccupancyPath), _castleRookInvolved(other._castleRookInvolved)
 	{
 		_actualState = &_stateList.back();
 		
@@ -59,8 +59,9 @@ namespace libChess
 		_bitBoard = other._bitBoard;
 		
 		_castleRightsMask = other._castleRightsMask;
-		_castleRightsKingPath = other._castleRightsKingPath;
-		_castleRightsRookPath = other._castleRightsRookPath;
+		_castleKingPath = other._castleKingPath;
+		_castleOccupancyPath = other._castleOccupancyPath;
+		_castleRookInvolved = other._castleRookInvolved;
 
 		_setUsThem();
 
@@ -590,6 +591,7 @@ namespace libChess
 		st.resetAllCastleRights();
 		_clearCastleRightsMask();
 		_clearCastleRightsPaths();
+		_clearCastleRookInvolved();
 		bool crEmpty = false;		
 
 		while ( (ss >> token) && !isspace(token) )
@@ -843,12 +845,12 @@ namespace libChess
 			cr = ( ksq < rsq ) ? baseTypes::bCastleOO : baseTypes::bCastleOOO;
 		}
 		
-		if ( false == _tryAddCastleRight( cr, ksq, rsq ) )
+		if ( true == _tryAddCastleRight( cr, ksq, rsq ) )
 		{
 			_setupCastlePath( color, kingSide, ksq, rsq );
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	bool Position::_setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare)
@@ -856,62 +858,88 @@ namespace libChess
 		assert( baseTypes::isKing( getPieceAt( KingSquare ) ) );
 		assert( baseTypes::isRook( getPieceAt( RookSquare ) ) );
 		
-		baseTypes::tSquare rookLeft;
-		baseTypes::tSquare rookRight;
-		baseTypes::tSquare kingLeft;
-		baseTypes::tSquare kingRight;
+		baseTypes::tSquare rookFrom;
+		baseTypes::tSquare rookTo;
+		baseTypes::tSquare kingFrom;
+		baseTypes::tSquare kingTo;
 		
 		// todo rincontrollare tutto
 		if( color == baseTypes::white )
 		{
 			if( kingSide )
 			{
-				rookLeft = baseTypes::F1;
-				rookRight = RookSquare - 1;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::G1;
 				
-				kingLeft = KingSquare + 1;
-				kingRight = baseTypes::G1;
+				rookFrom = RookSquare;
+				rookTo = baseTypes::F1;
+
 			}
 			else
 			{
-				rookLeft = RookSquare + 1;
-				rookRight = baseTypes::D1;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::C1;
 				
-				kingLeft = baseTypes::C1;
-				kingRight = KingSquare - 1;
+				rookFrom = RookSquare;
+				rookTo = baseTypes::D1;
+
 			}
 		}
 		else
 		{
 			if( kingSide )
 			{
-				rookLeft = baseTypes::F8;
-				rookRight = RookSquare - 1;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::G8;
 				
-				kingLeft = KingSquare + 1;
-				kingRight = baseTypes::G8;
+				rookFrom = RookSquare;
+				rookTo = baseTypes::F8;
+
 			}
 			else
 			{
-				rookLeft = RookSquare + 1;
-				rookRight = baseTypes::D8;
+				kingFrom = KingSquare;
+				kingTo = baseTypes::C8;
 				
-				kingLeft = baseTypes::C8;
-				kingRight = KingSquare - 1;
+				rookFrom = RookSquare;
+				rookTo = baseTypes::D8;
+
 			}
 		}
+		
+		baseTypes::tSquare rookLeft = std::min( rookFrom, rookTo );
+		baseTypes::tSquare rookRight = std::max( rookFrom, rookTo );
+		baseTypes::tSquare kingLeft = std::min( kingFrom, kingTo );
+		baseTypes::tSquare kingRight = std::max( kingFrom, kingTo );
+		
 		const unsigned int index = _calcCRPIndex( color, kingSide);
 		
-		// king path, containing king square
+		// king path, without king square
 		for( auto sq: baseTypes::tSquareRange( kingLeft, kingRight ) )
 		{
-			_castleRightsKingPath[ index ] += sq;
+			if( sq != kingFrom )
+			{
+				_castleKingPath[ index ] += sq;
+			}
 		}
-		// rook path, without rook square
+
+		// occupancy path without king and rook squares
 		for( auto sq: baseTypes::tSquareRange( rookLeft, rookRight ) )
 		{
-			_castleRightsRookPath[ index ] += sq;
+			if( sq != kingFrom && sq != rookFrom )
+			{
+				_castleOccupancyPath[ index ] += sq;
+			}
 		}
+		for( auto sq: baseTypes::tSquareRange( kingLeft, kingRight ) )
+		{
+			if( sq != kingFrom && sq != rookFrom )
+			{
+				_castleOccupancyPath[ index ] += sq;
+			}
+		}
+		
+		_castleRookInvolved[index] = rookFrom;
 		
 		return true;
 	}
@@ -1305,19 +1333,28 @@ todo readd this piece of code
 		for( auto& cr : _castleRightsMask )
 		{
 			cr = baseTypes::noCastleRights;
+			
 		}
 	}
 	
 	void Position::_clearCastleRightsPaths(void)
 	{
 		
-		for( auto& cr : _castleRightsKingPath )
+		for( auto& cr : _castleKingPath )
 		{
 			cr.clear();
 		}
-		for( auto& cr : _castleRightsRookPath )
+		for( auto& cr : _castleOccupancyPath )
 		{
 			cr.clear();
+		}
+	}
+	
+	void Position::_clearCastleRookInvolved(void)
+	{
+		for( auto& cr : _castleRookInvolved )
+		{
+			cr = baseTypes::squareNone;
 		}
 	}
 	

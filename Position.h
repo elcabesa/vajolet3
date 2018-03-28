@@ -61,6 +61,9 @@ namespace libChess
 		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
+		const baseTypes::BitMap& getKingCastlePath( const baseTypes::tColor color, const bool kingSide ) const;
+		const baseTypes::BitMap& getCastleOccupancyPath( const baseTypes::tColor color, const bool kingSide ) const;
+		baseTypes::tSquare getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const;
 		
 		/*****************************************************************
 		*	Methods
@@ -101,8 +104,11 @@ namespace libChess
 		// todo valutate the use of a iterator
 		baseTypes::BitMap *_us,*_them;	/*!< pointer to our & their pieces bitboard*/
 		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
-		std::array< baseTypes::BitMap, 4 > _castleRightsKingPath;	// path to be traversed by the king when castling
-		std::array< baseTypes::BitMap, 4 > _castleRightsRookPath;	// path to be traversed by the rook when castling
+		
+		// todo _castleKingPath & _castleRookPath possomno essere uniti in una sola bitmap in or
+		std::array< baseTypes::BitMap, 4 > _castleKingPath;	// path to be traversed by the king when castling
+		std::array< baseTypes::BitMap, 4 > _castleOccupancyPath;	// path that need to be free to be able to castle
+		std::array< baseTypes::tSquare, 4 > _castleRookInvolved;	// rook involved in the castling
 		
 	private:
 	
@@ -137,6 +143,7 @@ namespace libChess
 		
 		void _clearCastleRightsMask(void);
 		void _clearCastleRightsPaths(void);
+		void _clearCastleRookInvolved(void);
 		
 	
 		
@@ -213,6 +220,21 @@ namespace libChess
 	inline unsigned int Position::_calcCRPIndex( const baseTypes::tColor color, const bool kingSide )
 	{
 		return ( color * 2 ) + kingSide;
+	}
+	
+	inline const baseTypes::BitMap& Position::getKingCastlePath( const baseTypes::tColor color, const bool kingSide ) const
+	{
+		return _castleKingPath[ _calcCRPIndex( color, kingSide ) ];
+	}
+	
+	inline const baseTypes::BitMap& Position::getCastleOccupancyPath( const baseTypes::tColor color, const bool kingSide ) const
+	{
+		return _castleOccupancyPath[ _calcCRPIndex( color, kingSide ) ];
+	}
+	
+	inline baseTypes::tSquare Position::getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const
+	{
+		return _castleRookInvolved[ _calcCRPIndex( color, kingSide ) ];
 	}
 	
 	inline Score Position::getMvvLvaScore( const Move& m ) const
