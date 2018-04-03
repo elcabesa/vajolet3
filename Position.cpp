@@ -727,8 +727,9 @@ namespace libChess
 		{
 			
 			char col,row;
+			col = token;
 			if (
-				( (ss >> col) && (col >= 'a' && col <= 'h') )
+				( (col >= 'a' && col <= 'h') )
 				&& ( (ss >> row) && ( row == '3' || row == '6' ) )
 				)
 			{
@@ -747,18 +748,8 @@ namespace libChess
 			}
 			
 		}
-		
-		
+		// todo riguardare questo pezzo di codice, questa macchina a stati può essere scritta molto meglio
 		ss >> token;
-		if( token !=' ')
-		{
-			return false;
-		}
-
-		int fmc;
-		ss >> std::skipws >> fmc;
-		st.setFiftyMoveCnt(fmc);
-		
 		if( ss.eof() )
 		{
 			st.setPliesCnt( int( isBlackTurn() ) );
@@ -766,10 +757,34 @@ namespace libChess
 		}
 		else
 		{
-			int plies;
-			ss >> plies;
-			plies = std::max( 2 * ( plies - 1), 0) + int( isBlackTurn() );
-			st.setPliesCnt( plies );
+			if( token !=' ')
+			{
+				return false;
+			}
+			int fmc;
+			ss >> fmc;
+			
+			if( ss.eof() )
+			{
+				st.setPliesCnt( int( isBlackTurn() ) );
+				st.resetFiftyMoveCnt();
+			}
+			else
+			{
+				st.setFiftyMoveCnt(fmc);
+				
+				ss >> token;
+				if( token !=' ')	
+				{
+					return false;
+				}
+
+				int plies;
+				ss >> plies;
+				
+				plies = std::max( 2 * ( plies - 1), 0) + int( isBlackTurn() );
+				st.setPliesCnt( plies );
+			}
 		}
 		
 		st.resetCountersNullMove();
@@ -792,10 +807,7 @@ namespace libChess
 		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
 		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
 		
-		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
-
-		
-
+		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) ) );
 
 		/*
 		// todo readd those methods
@@ -1109,15 +1121,15 @@ namespace libChess
 		// todo manage chess960
 		if( m.isCastleMove() )
 		{
-			const bool kingSide = to > from;
+			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
 			
-			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::black : baseTypes::white, kingSide );
 			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
 			assert( rFrom < baseTypes::squareNumber );
 			assert( rTo < baseTypes::squareNumber );
 			
-			const baseTypes::bitboardIndex rook =  getPieceAt( rTo );
+			const baseTypes::bitboardIndex rook =  getPieceAt( rFrom );
 			
 			assert( rook < baseTypes::bitboardNumber );
 			assert( baseTypes::isRook(rook) );
@@ -1178,91 +1190,91 @@ todo readd this code
 		st.clearCastleRight( _castleRightsMask[ from ] | _castleRightsMask[ to ] );
 
 
-	if( baseTypes::isPawn( piece ) )
-	{
-		// double push en passant management
-		if(
-				MoveGenerator::isPawnDoublePush( from, to )
-				// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
-				//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
-				&& !(BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black )) & getTheirBitmap( baseTypes::Pawns ) ).isEmpty()
-		)
+		if( baseTypes::isPawn( piece ) )
 		{
-			st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
-		}
-		if( m.isPromotionMove() )
-		{
-			baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() );
-			assert ( promotedPiece < baseTypes::bitboardNumber );
-			_removePiece( piece, to );
-			_addPiece( promotedPiece, to );
-/*
-todo readd this piece of code
-			x.material += pstValue[promotedPiece][to]-pstValue[piece][to];
-			x.nonPawnMaterial += nonPawnValue[promotedPiece];//[to];
-*/
-
-			st.keyPromotePiece( piece, promotedPiece, to );
-			st.pawnKeyRemovePiece( piece, to );
-			st.materialKeyPromovePiece( piece, getPieceCount(piece), promotedPiece, getPieceCount( promotedPiece ) - 1 );
-		}
-		st.pawnKeyMovePiece( piece, from, to);
-		st.resetFiftyMoveCnt();
-		
-	}
-	
-	st.setCapturedPiece( capturedPiece );
-
-	st.changeTurn();
-	_swapUsThem();
-	/***********************************
-	swapped turn, below this line us & them and turn are switched
-	************************************/
-	
-
-	// todo check if it's slower of simply do (get attackers to king & them)
-	baseTypes::BitMap checkers(0);
-	if( moveIsCheck )
-	{
-		if( !m.isStandardMove() )
-		{
-			checkers += getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) );
-		}
-		else
-		{
-			if( st.getCheckingSquare( piece ).isSquareSet( to ) ) // should be old state, but checkingSquares has not been updated so far
+			// double push en passant management
+			if(
+					MoveGenerator::isPawnDoublePush( from, to )
+					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
+					//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
+					&& !(BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black )) & getTheirBitmap( baseTypes::Pawns ) ).isEmpty()
+			)
 			{
-				checkers += to;
+				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
 			}
+			if( m.isPromotionMove() )
+			{
+				baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() );
+				assert ( promotedPiece < baseTypes::bitboardNumber );
+				_removePiece( piece, to );
+				_addPiece( promotedPiece, to );
+	/*
+	todo readd this piece of code
+				x.material += pstValue[promotedPiece][to]-pstValue[piece][to];
+				x.nonPawnMaterial += nonPawnValue[promotedPiece];//[to];
+	*/
+
+				st.keyPromotePiece( piece, promotedPiece, to );
+				st.pawnKeyRemovePiece( piece, to );
+				st.materialKeyPromovePiece( piece, getPieceCount(piece), promotedPiece, getPieceCount( promotedPiece ) - 1 );
+			}
+			st.pawnKeyMovePiece( piece, from, to);
+			st.resetFiftyMoveCnt();
 			
-			if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )	// should be old state, but discoveryCheckers has not been updated so far
+		}
+		
+		st.setCapturedPiece( capturedPiece );
+
+		st.changeTurn();
+		_swapUsThem();
+		/***********************************
+		swapped turn, below this line us & them and turn are switched
+		************************************/
+		
+
+		// todo check if it's slower of simply do (get attackers to king & them)
+		baseTypes::BitMap checkers(0);
+		if( moveIsCheck )
+		{
+			if( !m.isStandardMove() )
 			{
-				if( !baseTypes::isRook( piece ) )
+				checkers += getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) );
+			}
+			else
+			{
+				if( st.getCheckingSquare( piece ).isSquareSet( to ) ) // should be old state, but checkingSquares has not been updated so far
 				{
-					assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
-					checkers += BitMapMoveGenerator::getRookMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Rooks ) );
+					checkers += to;
 				}
-				if( !baseTypes::isBishop( piece ) )
+				
+				if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )	// should be old state, but discoveryCheckers has not been updated so far
 				{
-					assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
-					checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Bishops ) );
+					if( !baseTypes::isRook( piece ) )
+					{
+						assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
+						checkers += BitMapMoveGenerator::getRookMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Rooks ) );
+					}
+					if( !baseTypes::isBishop( piece ) )
+					{
+						assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
+						checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Bishops ) );
+					}
 				}
 			}
 		}
-	}
-	st.setCheckers( checkers );
-	
-	_calcCheckingSquares();
-	
-	st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
-	st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		st.setCheckers( checkers );
+		
+		_calcCheckingSquares();
+		
+		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
 
-/* todo readd this code
-#ifdef	ENABLE_CHECK_CONSISTENCY
-	checkPosConsistency(1);
-#endif
+	/* todo readd this code
+	#ifdef	ENABLE_CHECK_CONSISTENCY
+		checkPosConsistency(1);
+	#endif
 
-*/
+	*/
 	}
 	
 	
@@ -1286,8 +1298,8 @@ todo readd this piece of code
 		// todo manage chess960
 		else if( m.isCastleMove() )
 		{
-			const bool kingSide = to > from;
-			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
+			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::white : baseTypes::black, kingSide );
 			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
 			assert( rFrom < baseTypes::squareNumber );

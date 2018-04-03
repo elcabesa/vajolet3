@@ -29,7 +29,7 @@ namespace libChess
 	
 	inline bool MoveGenerator::_checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
 	{
-		return ( ( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitmap( baseTypes::King ) ) & opponent ).isEmpty() == false );
+		return ( ( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitmap( baseTypes::King ) ) & opponent ).isEmpty() );
 	}
 	
 	template< baseTypes::bitboardIndex pieceType, MoveGenerator::genType mgType > inline void MoveGenerator::_generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
@@ -139,6 +139,71 @@ namespace libChess
 				}
 			}
 		}		
+	}
+	
+	inline void MoveGenerator::_generateEnPassantMoves( const Position& pos, const GameState& s, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	{
+		if( s.getEpSquare() != baseTypes::squareNone )
+			{
+				Move m( Move::NOMOVE );
+				m.setFlag( Move::fenpassant );
+				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
+				
+				const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( s.getEpSquare(), color );
+				
+				for( const auto& from : epAttackerBitMap )
+				{
+					const baseTypes::tSquare captureSquare = baseTypes::getSquareFromFileRank( baseTypes::getFile( s.getEpSquare() ), baseTypes::getRank( from ) );
+					const baseTypes::BitMap occ = ( ( occupiedSquares ^ from ) ^ s.getEpSquare() ) ^ captureSquare;
+					
+					// check ep discovery
+					if( 
+						(
+							( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
+							+
+							( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
+						).isEmpty()
+					)
+					{
+						m.setFrom( from );
+						m.setTo( s.getEpSquare() );
+						ml.insert( m ); 
+					}
+				}
+			}
+	}
+	
+	
+	
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& s, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, const baseTypes::tSquare destinationSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	{
+		
+		if( s.hasCastleRight( castleType, color ) && ( pos.getCastleOccupancyPath( color, isKingSideCastle ) & pos.getOccupationBitmap() ).isEmpty() )
+		{
+			bool castleDenied = false;
+			for( auto sq: pos.getKingCastlePath( color, isKingSideCastle ) )
+			{
+
+				if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, isKingSideCastle ) ) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
+				{
+					castleDenied = true;
+					break;
+				}
+			}
+			
+			if( !castleDenied )
+			{
+				Move m( Move::NOMOVE ); 
+				m.setFlag( Move::fcastle );
+				m.setFrom( kingSquare );
+				m.setTo( destinationSquare );
+				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
+				{
+					ml.insert(m);
+				}
+			}
+		}
+		
 	}
 	
 	template< MoveGenerator::genType mgType > void MoveGenerator::generateMoves( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
@@ -308,46 +373,17 @@ namespace libChess
 		{
 			//left capture promotion
 			baseTypes::BitMap movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureLeft( promotingPawns, s.getTurn(), opponent & target );
-			_insertPawn< mgType >( movesBitMap, pawnLeftCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+			_insertPromotionPawn< mgType >( movesBitMap, pawnLeftCapture( s.getTurn() ) , kingSquare, s, ml );
 			
 			//right capture promotion
 			movesBitMap = BitMapMoveGenerator::getPawnGroupCaptureRight( promotingPawns, s.getTurn(), opponent & target );
-			_insertPawn< mgType >( movesBitMap, pawnRightCapture( s.getTurn() ) , kingSquare, pos, s, ml );
+			_insertPromotionPawn< mgType >( movesBitMap, pawnRightCapture( s.getTurn() ) , kingSquare, s, ml );
 			
 			//------------------------------------------------------
 			// en passant capture
 			//------------------------------------------------------
+			_generateEnPassantMoves( pos, s, occupiedSquares, nonPromotingPawns, kingSquare, ml );
 			
-			
-			
-			if( s.getEpSquare() != baseTypes::squareNone )
-			{
-				Move m( Move::NOMOVE );
-				m.setFlag( Move::fenpassant );
-				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
-				
-				const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( s.getEpSquare(), color );
-				
-				for( const auto& from : epAttackerBitMap )
-				{
-					const baseTypes::tSquare captureSquare = baseTypes::getSquareFromFileRank( baseTypes::getFile( s.getEpSquare() ), baseTypes::getRank( from ) );
-					const baseTypes::BitMap occ = ( ( occupiedSquares ^ from ) ^ s.getEpSquare() ) ^ captureSquare;
-					
-					// check ep discovery
-					if( 
-						(
-							( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
-							+
-							( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
-						).isEmpty()
-					)
-					{
-						m.setFrom( from );
-						m.setTo( s.getEpSquare() );
-						ml.insert( m ); 
-					}
-				}
-			}
 		}
 		
 		//------------------------------------------------------
@@ -360,55 +396,12 @@ namespace libChess
 				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::black : baseTypes::white;
 				
 				// kingSquare
-				if( s.hasCastleRight( baseTypes::wCastleOO, color ) && ( pos.getCastleOccupancyPath( color, true ) & pos.getOccupationBitmap() ).isEmpty() )
-				{
-					bool castleDenied = false;
-					for( auto sq: pos.getKingCastlePath( color, true ) )
-					{
-
-						if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, true ) ) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
-						{
-							castleDenied = true;
-							break;
-						}
-					}
-					
-					if( !castleDenied )
-					{
-						Move m( Move::NOMOVE ); 
-						m.setFlag( Move::fcastle );
-						m.setFrom( kingSquare );
-						m.setTo( color == baseTypes::white ? baseTypes::G1: baseTypes::G8 );
-						if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
-						{
-							ml.insert(m);
-						}
-					}
-				}
+				baseTypes::tSquare destinationSquare = (color == baseTypes::white) ? baseTypes::G1: baseTypes::G8;
+				_generateCastleMove< mgType >( pos, s, baseTypes::wCastleOO, true, color, kingSquare, destinationSquare, ml );
+				
 				// queenSquare
-				if( s.hasCastleRight( baseTypes::wCastleOOO, color ) && ( pos.getCastleOccupancyPath( color, false ) & pos.getOccupationBitmap() ).isEmpty() )
-				{
-					bool castleDenied = false;
-					for( auto sq: pos.getKingCastlePath( color, false ) )
-					{
-						if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, false )) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
-						{
-							castleDenied = true;
-							break;
-						}
-					}
-					if( !castleDenied )
-					{
-						Move m( Move::NOMOVE ); 
-						m.setFlag( Move::fcastle );
-						m.setFrom( kingSquare );
-						m.setTo( color == baseTypes::white ? baseTypes::C1: baseTypes::C8 );
-						if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
-						{
-							ml.insert(m);
-						}
-					}
-				}
+				destinationSquare = (color == baseTypes::white) ? baseTypes::C1: baseTypes::C8;
+				_generateCastleMove< mgType >( pos, s, baseTypes::wCastleOOO, false, color, kingSquare, destinationSquare, ml );
 			}
 			
 		}
