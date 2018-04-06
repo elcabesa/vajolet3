@@ -51,8 +51,18 @@ namespace libChess
 		const baseTypes::BitMap& getOccupationBitmap() const;
 		const baseTypes::BitMap& getBitmap(const baseTypes::bitboardIndex in) const;
 		baseTypes::tSquare getSquareOfThePiece(const baseTypes::bitboardIndex piece) const;
-		const baseTypes::BitMap& getOurBitmap( const baseTypes::bitboardIndex piece )const;
-		const baseTypes::BitMap& getTheirBitmap( const baseTypes::bitboardIndex piece )const;
+		baseTypes::tSquare getSquareOfWhiteKing() const;
+		baseTypes::tSquare getSquareOfBlackKing() const;
+		baseTypes::tSquare getSquareOfMyKing() const;
+		baseTypes::tSquare getSquareOfEnemyKing() const;
+		
+		const baseTypes::BitMap& getOurBitmap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
+		const baseTypes::BitMap& getTheirBitmap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
+		const baseTypes::BitMap getOurQRSlidingBitMap()const;
+		const baseTypes::BitMap getTheirQRSlidingBitmap()const;
+		const baseTypes::BitMap getOurQBSlidingBitMap()const;
+		const baseTypes::BitMap getTheirQBSlidingBitmap()const;
+		
 		unsigned int getPieceCount(const baseTypes::bitboardIndex in) const;
 		baseTypes::bitboardIndex getPieceAt(const baseTypes::tSquare sq) const;
 		
@@ -183,6 +193,28 @@ namespace libChess
 	{
 		return getBitmap(piece).firstOne();
 	}
+	
+	inline baseTypes::tSquare Position::getSquareOfWhiteKing() const
+	{
+		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
+		return getBitmap(baseTypes::whiteKing).firstOne();
+	}
+	inline baseTypes::tSquare Position::getSquareOfBlackKing() const
+	{
+		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
+		return getBitmap(baseTypes::blackKing).firstOne();
+	}
+	inline baseTypes::tSquare Position::getSquareOfMyKing() const
+	{
+		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
+		return getBitmap( getMyPiece( baseTypes::King ) ).firstOne();
+	}
+	inline baseTypes::tSquare Position::getSquareOfEnemyKing() const
+	{
+		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
+		return getBitmap( getEnemyPiece( baseTypes::King ) ).firstOne();
+	}
+	
 	inline const baseTypes::BitMap& Position::getOurBitmap( const baseTypes::bitboardIndex piece )const
 	{
 		return _us[ piece ];
@@ -190,6 +222,23 @@ namespace libChess
 	inline const baseTypes::BitMap& Position::getTheirBitmap( const baseTypes::bitboardIndex piece )const
 	{
 		return _them[ piece ];
+	}
+	
+	inline const baseTypes::BitMap Position::getOurQRSlidingBitMap()const
+	{
+		return _us[ baseTypes::Queens ] + _us[ baseTypes::Rooks ];
+	}
+	inline const baseTypes::BitMap Position::getTheirQRSlidingBitmap()const
+	{
+		return _them[ baseTypes::Queens ] + _them[ baseTypes::Rooks ];
+	}
+	inline const baseTypes::BitMap Position::getOurQBSlidingBitMap()const
+	{
+		return _us[ baseTypes::Queens ] + _us[ baseTypes::Bishops ];
+	}
+	inline const baseTypes::BitMap Position::getTheirQBSlidingBitmap()const
+	{
+		return _them[ baseTypes::Queens ] + _them[ baseTypes::Bishops ];
 	}
 	
 	inline const baseTypes::BitMap Position::getAttackersTo(const baseTypes::tSquare to) const

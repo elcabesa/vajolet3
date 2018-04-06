@@ -601,7 +601,7 @@ namespace libChess
 			case 'K':
 			{
 				baseTypes::tSquare rsq = baseTypes::H1;
-				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfThePiece(baseTypes::whiteKing), baseTypes::H1 ) )
+				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfWhiteKing(), baseTypes::H1 ) )
 				{
 					if( getPieceAt( sq ) == baseTypes::whiteRooks )
 					{
@@ -619,7 +619,7 @@ namespace libChess
 			case 'Q':
 			{
 				baseTypes::tSquare rsq = baseTypes::A1;
-				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A1, getSquareOfThePiece(baseTypes::whiteKing) ) )
+				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A1, getSquareOfWhiteKing() ) )
 				{
 					if( getPieceAt( sq ) == baseTypes::whiteRooks )
 					{
@@ -636,7 +636,7 @@ namespace libChess
 			case 'k':
 			{
 				baseTypes::tSquare rsq = baseTypes::H8;
-				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfThePiece(baseTypes::blackKing), baseTypes::H8 ) )
+				for( const auto sq : baseTypes::tSquareNegativeRange( getSquareOfBlackKing(), baseTypes::H8 ) )
 				{
 					if( getPieceAt( sq ) == baseTypes::blackRooks )
 					{
@@ -653,7 +653,7 @@ namespace libChess
 			case 'q':
 			{
 				baseTypes::tSquare rsq = baseTypes::A8;
-				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A8, getSquareOfThePiece(baseTypes::blackKing) ) )
+				for( const auto sq : baseTypes::tSquareRange(  baseTypes::A8, getSquareOfBlackKing() ) )
 				{
 					if( getPieceAt( sq ) == baseTypes::blackRooks )
 					{
@@ -804,10 +804,10 @@ namespace libChess
 		
 		_calcCheckingSquares();
 	
-		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
 		
-		st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) ) );
+		st.setCheckers( getAttackersTo( getSquareOfMyKing() ) & getTheirBitmap();
 
 		/*
 		// todo readd those methods
@@ -826,7 +826,7 @@ namespace libChess
 			return false;
 		}
 		
-		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfThePiece( baseTypes::whiteKing ) : getSquareOfThePiece( baseTypes::blackKing ) );
+		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfWhiteKing() : getSquareOfBlackKing() );
 		const baseTypes::tRank kingRank = getRank(ksq);
 		
 		
@@ -1007,12 +1007,8 @@ namespace libChess
 	void Position::_calcCheckingSquares(void)
 	{
 		GameState &st = _getActualState();
-		
-		const baseTypes::bitboardIndex opponentKing = getEnemyPiece ( baseTypes::King );
-		assert( opponentKing < baseTypes::bitboardNumber );
 
-
-		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( opponentKing );
+		const baseTypes::tSquare OppKingSquare = getSquareOfEnemyKing();
 
 		const baseTypes::BitMap& occupancy = getOccupationBitmap();
 		const baseTypes::tColor color = isBlackTurn() ?  baseTypes::white : baseTypes::black;
@@ -1068,11 +1064,11 @@ namespace libChess
 		
 		_calcCheckingSquares();
 	
-		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
 		
 		// checker doesn't change, don't update them
-		//st.setCheckers( getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::blackPieces ) ) );
+		//st.setCheckers( getAttackersTo( getSquareOfMyKing() & getTheirBitmap();
 
 /* todo readd code
 #ifdef	ENABLE_CHECK_CONSISTENCY
@@ -1249,7 +1245,7 @@ namespace libChess
 		{
 			if( !m.isStandardMove() )
 			{
-				checkers += getAttackersTo( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) ) & getBitmap( getEnemyPiece( baseTypes::Pieces ) );
+				checkers += getAttackersTo( getSquareOfMyKing() ) & getTheirBitmap();
 			}
 			else
 			{
@@ -1262,13 +1258,13 @@ namespace libChess
 				{
 					if( !baseTypes::isRook( piece ) )
 					{
-						assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
-						checkers += BitMapMoveGenerator::getRookMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Rooks ) );
+						assert( getSquareOfMyKing() <= baseTypes::squareNumber );
+						checkers += BitMapMoveGenerator::getRookMoves( getSquareOfMyKing(), getOccupationBitmap() ) & getTheirQRSlidingBitmap();
 					}
 					if( !baseTypes::isBishop( piece ) )
 					{
-						assert( getSquareOfThePiece( getMyPiece( baseTypes::King ) ) <= baseTypes::squareNumber );
-						checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getOccupationBitmap() ) & ( getTheirBitmap( baseTypes::Queens ) + getTheirBitmap( baseTypes::Bishops ) );
+						assert( getSquareOfMyKing() <= baseTypes::squareNumber );
+						checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfMyKing(), getOccupationBitmap() ) & getTheirQBSlidingBitmap();
 					}
 				}
 			}
@@ -1277,8 +1273,8 @@ namespace libChess
 		
 		_calcCheckingSquares();
 		
-		st.setDiscoveryChechers( _calcPin( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfThePiece( getMyPiece( baseTypes::King ) ), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
 
 	/* todo readd this code
 	#ifdef	ENABLE_CHECK_CONSISTENCY
@@ -1417,7 +1413,7 @@ namespace libChess
 		// todo serve fare il doppio test per velocizzare?
 		if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
 		{
-			assert( getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ) < baseTypes::squareNumber );
+			assert( getSquareOfEnemyKing() < baseTypes::squareNumber );
 			/*
 			queen, rook, bishop and knight moves always give discovery check.
 			pawn and king can move and remain on the path, not allowing the discovery
@@ -1429,7 +1425,7 @@ namespace libChess
 				&& !isKing( piece ) 
 				)
 				// in case of king and pawn we need to check the alignment
-				|| !baseTypes::BitMap::areSquaresAligned( from, to, getSquareOfThePiece( getEnemyPiece( baseTypes::King ) ) ) 
+				|| !baseTypes::BitMap::areSquaresAligned( from, to, getSquareOfEnemyKing() ) 
 			)
 			{
 				return true;
@@ -1441,7 +1437,7 @@ namespace libChess
 			return false;
 		}
 		
-		baseTypes::tSquare kingSquare =  getSquareOfThePiece( getEnemyPiece( baseTypes::King ) );
+		baseTypes::tSquare kingSquare =  getSquareOfEnemyKing();
 		assert( kingSquare < baseTypes::squareNumber );
 		
 		if( m.isPromotionMove() )
@@ -1491,8 +1487,8 @@ namespace libChess
 			// pawn move and capture can can create a discovery check
 			return
 				!( 
-					( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( getOurBitmap( baseTypes::Queens ) + getOurBitmap( baseTypes::Rooks ) ) )
-				  + ( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & ( getOurBitmap( baseTypes::Queens ) + getOurBitmap( baseTypes::Bishops ) ) )
+					( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & getOurQRSlidingBitMap() )
+				  + ( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & getOurQBSlidingBitMap() )
 				).isEmpty();
 		}
 		
@@ -1530,7 +1526,7 @@ namespace libChess
 		baseTypes::bitboardIndex piece = getPieceAt( from );
 		assert( baseTypes::isValidPiece( piece ) );
 		
-		const baseTypes::tSquare OppKingSquare = getSquareOfThePiece( getEnemyPiece ( baseTypes::King ) );
+		const baseTypes::tSquare OppKingSquare = getSquareOfEnemyKing();
 		
 		return ( 
 			!( BitMapMoveGenerator::getKingMoves( OppKingSquare ).isSquareSet( to ) )

@@ -229,10 +229,10 @@ namespace libChess
 				if( 
 					(
 						/* test for horizontal/vertical discovery*/
-						( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
+						( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & pos.getTheirQRSlidingBitmap() )
 						+
 						/* test for diagonal discovery*/
-						( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
+						( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & pos.getTheirQBSlidingBitmap() ) 
 					).isEmpty()
 				)
 				{
@@ -265,7 +265,7 @@ namespace libChess
 			bool castleDenied = false;
 			for( auto sq: pos.getKingCastlePath( color, isKingSideCastle ) )
 			{
-				if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, isKingSideCastle ) ) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
+				if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, isKingSideCastle ) ) & pos.getTheirBitmap() ).isEmpty() == false )
 				{
 					castleDenied = true;
 					break;
@@ -296,9 +296,7 @@ namespace libChess
 	{
 		// initialize constants
 		const GameState& s = pos.getActualStateConst();
-		
-		//todo mettere baseTypes::Pieces come parametro di default a getTheyrBitmap?
-		const baseTypes::BitMap& opponent = pos.getTheirBitmap( baseTypes::Pieces );
+		const baseTypes::BitMap& opponent = pos.getTheirBitmap();
 		const baseTypes::BitMap& occupiedSquares = pos.getOccupationBitmap();
 
 		// pawns bitmaps
@@ -308,7 +306,7 @@ namespace libChess
 		const baseTypes::BitMap promotingPawns = pos.getOurBitmap( baseTypes::Pawns ) & seventhRankMask ;
 		const baseTypes::BitMap nonPromotingPawns = pos.getOurBitmap( baseTypes::Pawns ) ^ promotingPawns;
 
-		const baseTypes::tSquare kingSquare = pos.getSquareOfThePiece( pos.getMyPiece( baseTypes::King ) );
+		const baseTypes::tSquare kingSquare = pos.getSquareOfMyKing();
 		
 		// populate the target squares bitmaps
 		baseTypes::BitMap kingTarget;
@@ -318,29 +316,29 @@ namespace libChess
 		if( mgType == MoveGenerator::allEvasionMg )
 		{
 			assert( checkers.isEmpty() == false );
-			target = ( checkers + baseTypes::BitMap::getSquaresBetween( kingSquare, checkers.firstOne() ) ) & ~pos.getOurBitmap( baseTypes::Pieces );
-			kingTarget = ~pos.getOurBitmap( baseTypes::Pieces );
+			target = ( checkers + baseTypes::BitMap::getSquaresBetween( kingSquare, checkers.firstOne() ) ) & ~pos.getOurBitmap();
+			kingTarget = ~pos.getOurBitmap();
 		}
 		else if( mgType == MoveGenerator::captureEvasionMg )
 		{
 			assert( checkers.isEmpty() == false );
-			target = ( checkers ) & ~pos.getOurBitmap( baseTypes::Pieces );
-			kingTarget = target + pos.getTheirBitmap( baseTypes::Pieces );
+			target = ( checkers ) & ~pos.getOurBitmap();
+			kingTarget = target + pos.getTheirBitmap();
 		}
 		else if( mgType == MoveGenerator::quietEvasionMg )
 		{
 			assert( checkers.isEmpty() == false );
-			target = baseTypes::BitMap::getSquaresBetween( kingSquare, checkers.firstOne() ) & ~pos.getOurBitmap( baseTypes::Pieces );
+			target = baseTypes::BitMap::getSquaresBetween( kingSquare, checkers.firstOne() ) & ~pos.getOurBitmap();
 			kingTarget = ~occupiedSquares;
 		}
 		else if( mgType == MoveGenerator::allNonEvasionMg )
 		{
-			target= ~pos.getOurBitmap( baseTypes::Pieces );
+			target= ~pos.getOurBitmap();
 			kingTarget = target;
 		}
 		else if( mgType == MoveGenerator::captureMg )
 		{
-			target = pos.getTheirBitmap( baseTypes::Pieces );
+			target = pos.getTheirBitmap();
 			kingTarget = target;
 		}
 		else if( mgType == MoveGenerator::quietMg )
