@@ -21,28 +21,52 @@
 
 namespace libChess
 {
-	
-	inline bool MoveGenerator::_checkAllowedMove( const baseTypes::tSquare from, const baseTypes::tSquare to, const baseTypes::tSquare kingSquare, const GameState& s )
+	/*! \brief check whether a move is allowed or not
+	*
+	*  check whether a move is allowed or not because of pin against the king
+	*  return true if the move is legal, false otherwise
+	*/
+	inline bool MoveGenerator::_checkAllowedMove( const baseTypes::tSquare from, const baseTypes::tSquare to, const baseTypes::tSquare kingSquare, const GameState& st )
 	{
-		return ( ( s.getPinned() & from ).isEmpty() ) || baseTypes::BitMap::areSquaresAligned( from, to, kingSquare );
+		return 																	// the move is allowed 
+			( st.getPinned() & from ).isEmpty() 									// if the piece is not pinned
+			|| baseTypes::BitMap::areSquaresAligned( from, to, kingSquare );	// or if the move is along the pinning direction
 	}
 	
+	/*! \brief check whether a king move is legal or not
+	*
+	*	return false whether the destination square is attacked from an opponent piece, considering the king move too.
+	*	return true otherwise
+	*/
 	inline bool MoveGenerator::_checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
 	{
 		return ( ( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitmap( baseTypes::King ) ) & opponent ).isEmpty() );
 	}
 	
-	template< baseTypes::bitboardIndex pieceType, MoveGenerator::genType mgType > inline void MoveGenerator::_generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	/*! \brief generate the moves of a piece type and add it to the movelist
+	*
+
+	*/
+	template< baseTypes::bitboardIndex pieceType, MoveGenerator::genType mgType > inline void MoveGenerator::_generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
+		
+		/*
+		 get the piece bitmap
+		*/
 		const baseTypes::BitMap bFrom = pos.getBitmap( piece );
 		
+		/*
+		 iterate for all the pieces
+		*/
 		for( const auto& from : bFrom )
 		{
-			
 			m.setFrom( from );
-			baseTypes::BitMap moveBitMap;
 			
+			/*
+			 generate the moves depending on the piece type
+			*/
+			baseTypes::BitMap moveBitMap;
 			if( pieceType == baseTypes::Queens )
 			{
 				moveBitMap = BitMapMoveGenerator::getQueenMoves( from, occupiedSquares ) & target;
@@ -60,11 +84,20 @@ namespace libChess
 				// todo confrontare con vajolet2 e controllare se è molto più lento, in vajolet2 faccio un controllo diverso di inchiodatura
 				moveBitMap = BitMapMoveGenerator::getKnightMoves( from ) & target;
 			}
+			else
+			{
+				/*piece type not managed*/
+				assert(false);
+				return;
+			}
 
+			/*
+				iterate the bitmap and add the moves to the list
+			*/
 			for( const auto& to : moveBitMap )
 			{
 				
-				if( _checkAllowedMove( from, to, kingSquare, s ) )
+				if( _checkAllowedMove( from, to, kingSquare, st ) )
 				{
 					if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 					{
@@ -73,18 +106,26 @@ namespace libChess
 					}
 				}
 			}
-		}
-		
+		}		
 	}
 	
+	/*! \brief generate the moves of the king piece tpye and add it to the movelist
+	*
+
+	*/
 	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
 		m.setFrom( kingSquare );
-		
+		/*
+		generate the moves
+		*/
 		baseTypes::BitMap moveBitMap = BitMapMoveGenerator::getKingMoves( kingSquare ) & target;
 
+		/*
+		 iterate the bitmap and add the moves to the list
+		*/
 		for( const auto& to : moveBitMap )
 		{
 			if( _checkKingAllowedMove( pos, to, occupiedSquares, opponent ) )
@@ -99,15 +140,22 @@ namespace libChess
 		}
 	}
 	
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	/*! \brief insert pawns move on the move list besed on move delta
+	*
+
+	*/
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
+		/*
+		 iterate the bitmap and add the moves to the list
+		*/
 		for( const auto& to : movesBitmap )
 		{
 			baseTypes::tSquare from = to - delta;
 			
-			if( _checkAllowedMove( from, to, kingSquare, s ) )
+			if( _checkAllowedMove( from, to, kingSquare, st ) )
 			{
 				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 				{
@@ -119,11 +167,18 @@ namespace libChess
 		}		
 	}
 	
+	/*! \brief insert promoting pawns move on the move list besed on move delta
+	*
+
+	*/
 	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		m.setFlag(Move::fpromotion);
-		
+				
+		/*
+		 iterate the bitmap and add the moves to the list
+		*/
 		for( const auto& to : movesBitmap )
 		{
 			baseTypes::tSquare from = to - delta;
@@ -132,6 +187,10 @@ namespace libChess
 			{
 				m.setFrom( from );
 				m.setTo( to );
+						
+				/*
+				iterate all the promotion types
+				*/
 				for( Move::epromotion prom = Move::promQueen; prom <= Move::promKnight; prom = (Move::epromotion)( prom + 1 ) )
 				{
 					m.setPromotion( prom );
@@ -141,49 +200,71 @@ namespace libChess
 		}		
 	}
 	
-	inline void MoveGenerator::_generateEnPassantMoves( const Position& pos, const GameState& s, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	/*! \brief generate and insert en passant pawns move on the move list
+	*
+
+	*/
+	inline void MoveGenerator::_generateEnPassantMoves( const Position& pos, const GameState& st, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
-		if( s.getEpSquare() != baseTypes::squareNone )
+		/*
+		if en passant square is iset
+		*/
+		if( st.getEpSquare() != baseTypes::squareNone )
+		{
+			const baseTypes::tColor color = pos.isBlackTurn() ? baseTypes::white : baseTypes::black;
+			const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( st.getEpSquare(), color );
+			
+			/*
+			for every attacker
+			*/
+			for( const auto& from : epAttackerBitMap )
 			{
-				Move m( Move::NOMOVE );
-				m.setFlag( Move::fenpassant );
-				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::white : baseTypes::black;
 				
-				const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( s.getEpSquare(), color );
+				const baseTypes::tSquare captureSquare = baseTypes::getSquareFromFileRank( baseTypes::getFile( st.getEpSquare() ), baseTypes::getRank( from ) );
+				const baseTypes::BitMap occ = ( ( occupiedSquares ^ from ) ^ st.getEpSquare() ) ^ captureSquare;
 				
-				for( const auto& from : epAttackerBitMap )
+				/*
+				check whether the ep is forbidden because of discovery check
+				*/
+				if( 
+					(
+						/* test for horizontal/vertical discovery*/
+						( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
+						+
+						/* test for diagonal discovery*/
+						( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
+					).isEmpty()
+				)
 				{
-					const baseTypes::tSquare captureSquare = baseTypes::getSquareFromFileRank( baseTypes::getFile( s.getEpSquare() ), baseTypes::getRank( from ) );
-					const baseTypes::BitMap occ = ( ( occupiedSquares ^ from ) ^ s.getEpSquare() ) ^ captureSquare;
-					
-					// check ep discovery
-					if( 
-						(
-							( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & ( pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Rooks ) ) )
-							+
-							( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & (pos.getTheirBitmap( baseTypes::Queens ) + pos.getTheirBitmap( baseTypes::Bishops ) ) ) 
-						).isEmpty()
-					)
-					{
-						m.setFrom( from );
-						m.setTo( s.getEpSquare() );
-						ml.insert( m ); 
-					}
+					/* finally insert the move*/
+					Move m( Move::NOMOVE );
+					m.setFlag( Move::fenpassant );
+					m.setFrom( from );
+					m.setTo( st.getEpSquare() );
+					ml.insert( m ); 
 				}
 			}
+		}
 	}
 	
 	
-	
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& s, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, const baseTypes::tSquare destinationSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	/*! \brief generate and insert a castling moves on the move list
+	*
+
+	*/
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, const baseTypes::tSquare destinationSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
-		
-		if( s.hasCastleRight( castleType, color ) && ( pos.getCastleOccupancyPath( color, isKingSideCastle ) & pos.getOccupationBitmap() ).isEmpty() )
+		/*
+		check wheter the king has the castle right adn the paths are free
+		*/
+		if( st.hasCastleRight( castleType, color ) && ( pos.getCastleOccupancyPath( color, isKingSideCastle ) & pos.getOccupationBitmap() ).isEmpty() )
 		{
+			/*
+			check whether the castling is deined by a check in the castle path
+			*/
 			bool castleDenied = false;
 			for( auto sq: pos.getKingCastlePath( color, isKingSideCastle ) )
 			{
-
 				if( ( pos.getAttackersTo( sq, pos.getOccupationBitmap() ^ pos.getCastleRookInvolved( color, isKingSideCastle ) ) & pos.getTheirBitmap( baseTypes::Pieces ) ).isEmpty() == false )
 				{
 					castleDenied = true;
@@ -191,27 +272,32 @@ namespace libChess
 				}
 			}
 			
+			/* if the castle is allowed insert the move*/
 			if( !castleDenied )
 			{
 				Move m( Move::NOMOVE ); 
 				m.setFlag( Move::fcastle );
 				m.setFrom( kingSquare );
 				m.setTo( destinationSquare );
+				
 				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 				{
 					ml.insert(m);
 				}
 			}
 		}
-		
 	}
 	
+	/*! \brief movegenerator template
+	*
+
+	*/
 	template< MoveGenerator::genType mgType > void MoveGenerator::generateMoves( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		// initialize constants
 		const GameState& s = pos.getActualStateConst();
 		
-		//todo mettere baseTypes::Pieces come parametro di default?
+		//todo mettere baseTypes::Pieces come parametro di default a getTheyrBitmap?
 		const baseTypes::BitMap& opponent = pos.getTheirBitmap( baseTypes::Pieces );
 		const baseTypes::BitMap& occupiedSquares = pos.getOccupationBitmap();
 
@@ -402,22 +488,23 @@ namespace libChess
 				// queenSquare
 				destinationSquare = (color == baseTypes::white) ? baseTypes::C1: baseTypes::C8;
 				_generateCastleMove< mgType >( pos, s, baseTypes::wCastleOOO, false, color, kingSquare, destinationSquare, ml );
-			}
-			
+			}	
 		}
 	}
-	
-	template void MoveGenerator::generateMoves< MoveGenerator::captureMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml );
-	template void MoveGenerator::generateMoves< MoveGenerator::quietMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml );
-	template void MoveGenerator::generateMoves< MoveGenerator::quietChecksMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml );
-	
+
+	/*! \brief generate all the legal moves
+	*
+
+	*/
 	template<> void MoveGenerator::generateMoves< MoveGenerator::allMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
+		/* if in check generate evasion */
 		if( pos.isInCheck() )
 		{
 			generateMoves< MoveGenerator::captureEvasionMg >( pos, ml );
 			generateMoves< MoveGenerator::quietEvasionMg >( pos, ml );
 		}
+		/* otherwise generate all moves */
 		else
 		{
 			generateMoves< MoveGenerator::captureMg >( pos, ml );
