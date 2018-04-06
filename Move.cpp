@@ -42,6 +42,12 @@ namespace libChess
 		{
 			s += getPieceName( baseTypes::blackQueens + getPromotionType() );
 		}
+		
+		// todo in case of castling in frc960 come la scrivo la mossa, guiardare stockfish??????
+		if( isCastleMove() )
+		{
+			s += " CASTLE";
+		}
 		return s;
 	}
 	

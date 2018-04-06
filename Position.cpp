@@ -1118,7 +1118,6 @@ namespace libChess
 		bool moveIsCheck = moveGivesCheck( m );
 		
 		// do castle additional instruction
-		// todo manage chess960
 		if( m.isCastleMove() )
 		{
 			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
@@ -1134,57 +1133,69 @@ namespace libChess
 			assert( rook < baseTypes::bitboardNumber );
 			assert( baseTypes::isRook(rook) );
 			
-			_movePiece( rook, rFrom, rTo );
+			
+			_removePiece( rook, rFrom );
+			if( from != to )
+			{
+				_movePiece( piece, from, to );
+			}
+			_addPiece( rook, rTo );
+			
+			// update hashKey
 			st.keyMovePiece( rook, rFrom, rTo);
+			st.keyMovePiece( piece, from, to );
 			
 			// todo readd this code
 			// st.material += pstValue[rook][rTo] - pstValue[rook][rFrom];
+			//x.material += pstValue[piece][to] - pstValue[piece][from];
 			
 			
 		}
-		
-		// do capture
-		else if( capturedPiece != baseTypes::empty )
-		{
-			if( baseTypes::isPawn(capturedPiece) )
+		else
+		{	// do capture
+			if( capturedPiece != baseTypes::empty )
 			{
-
-				if( m.isEnPassantMove() )
+				if( baseTypes::isPawn(capturedPiece) )
 				{
-					captureSquare -= MoveGenerator::pawnPush( st.getTurn() );
+
+					if( m.isEnPassantMove() )
+					{
+						captureSquare -= MoveGenerator::pawnPush( st.getTurn() );
+					}
+					assert( captureSquare < baseTypes::squareNumber );
+					st.pawnKeyRemovePiece( capturedPiece, captureSquare );
 				}
-				assert( captureSquare < baseTypes::squareNumber );
-				st.pawnKeyRemovePiece( capturedPiece, captureSquare );
+				/*
+				todo readd this piece of code
+				x.nonPawnMaterial -= nonPawnValue[capture];//[captureSquare];
+				*/
+
+
+				// remove piece
+				_removePiece( capturedPiece, captureSquare );
+				// update material
+				/*
+				todo readd this piece of code
+				x.material -= pstValue[capture][captureSquare];
+				*/
+
+				// update keys
+				st.keyRemovePiece( capturedPiece, captureSquare);
+				st.materialKeyRemovePiece( capturedPiece, getPieceCount( capturedPiece ) );
+			
+				// reset fifty move counter
+				st.resetFiftyMoveCnt();
 			}
-			/*
-			todo readd this piece of code
-			x.nonPawnMaterial -= nonPawnValue[capture];//[captureSquare];
-			*/
-
-
-			// remove piece
-			_removePiece( capturedPiece, captureSquare );
-			// update material
-			/*
-			todo readd this piece of code
-			x.material -= pstValue[capture][captureSquare];
-			*/
-
-			// update keys
-			st.keyRemovePiece( capturedPiece, captureSquare);
-			st.materialKeyRemovePiece( capturedPiece, getPieceCount( capturedPiece ) );
 		
-			// reset fifty move counter
-			st.resetFiftyMoveCnt();
+			// update hashKey
+			st.keyMovePiece( piece, from, to );
+			_movePiece( piece, from, to );
+			/*
+			todo readd this code
+			x.material += pstValue[piece][to] - pstValue[piece][from];
+			*/
 		}
-		
-		// update hashKey
-		st.keyMovePiece( piece, from, to );
-		_movePiece( piece, from, to );
-/*
-todo readd this code
-		x.material += pstValue[piece][to] - pstValue[piece][from];
-	*/
+
 
 		// Update castle rights if needed
 		st.clearCastleRight( _castleRightsMask[ from ] | _castleRightsMask[ to ] );
@@ -1289,14 +1300,7 @@ todo readd this code
 		baseTypes::bitboardIndex piece = getPieceAt( to );
 		assert( baseTypes::isValidPiece( piece ) );
 		
-		if( m.isPromotionMove() )
-		{
-			_removePiece( piece, to);
-			piece = isWhitePiece( piece ) ? baseTypes::whitePawns : baseTypes::blackPawns;
-			_addPiece( piece, to);
-		}
-		// todo manage chess960
-		else if( m.isCastleMove() )
+		if( m.isCastleMove() )
 		{
 			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
 			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::white : baseTypes::black, kingSide );
@@ -1310,23 +1314,40 @@ todo readd this code
 			assert( rook < baseTypes::bitboardNumber );
 			assert( baseTypes::isRook(rook) );
 			
-			_movePiece( rook, rTo, rFrom );
-		}
-		
-		_movePiece( piece, to, from );
-		
-		assert( st.getCapturedPiece() < baseTypes::bitboardNumber );
-		if( st.getCapturedPiece() )
-		{
-			baseTypes::tSquare capSq = to;
-			if( m.isEnPassantMove() )
+			_removePiece( rook, rTo );
+			if( from != to )
 			{
-				capSq += MoveGenerator::pawnPush( st.getTurn() );
+				_movePiece( piece, to, from );
 			}
-			assert( capSq < baseTypes::squareNumber );
-			
-			_addPiece( st.getCapturedPiece(), capSq );
+			_addPiece( rook, rFrom );
 		}
+		else
+		{
+			if( m.isPromotionMove() )
+			{
+				_removePiece( piece, to);
+				piece = isWhitePiece( piece ) ? baseTypes::whitePawns : baseTypes::blackPawns;
+				_addPiece( piece, to);
+				
+			}
+			_movePiece( piece, to, from );
+			
+			assert( st.getCapturedPiece() < baseTypes::bitboardNumber );
+			if( st.getCapturedPiece() )
+			{
+				baseTypes::tSquare capSq = to;
+				if( m.isEnPassantMove() )
+				{
+					capSq += MoveGenerator::pawnPush( st.getTurn() );
+				}
+				assert( capSq < baseTypes::squareNumber );
+				
+				_addPiece( st.getCapturedPiece(), capSq );
+			}
+		}
+		
+		
+		
 		
 		_popState();
 		_swapUsThem();
@@ -1451,9 +1472,8 @@ todo readd this code
 		}
 		else if( m.isCastleMove() )
 		{
-			const bool kingSide = to > from;
-			
-			const baseTypes::tSquare rFrom = kingSide ? to + baseTypes::east: to + baseTypes::ovest + baseTypes::ovest;
+			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
+			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::black : baseTypes::white, kingSide );
 			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
 			baseTypes::BitMap occ = ( ( ( getOccupationBitmap() ^ from ) ^ rFrom ) + rTo) + to;

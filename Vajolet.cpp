@@ -58,14 +58,22 @@ unsigned long long perft(libChess::Position& pos, unsigned int depth)
 	unsigned long long tot = 0;
 	libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
 	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
-	if (depth == 1) {
+	/*if (depth == 1) {
 		return ml.size();
-	}
+	}*/
 	
 	for( auto& m: ml )
-	{
+	{	
+		/*for( unsigned int i=0;i< pos.getStateSize();i++)
+		{
+			std::cout<<(pos.getState(i).getCurrentMove().to_string())<<std::endl;
+		}*/
+
+		//std::cout<<"do move "<<m.to_string()<<std::endl;
+		//std::cout<<"do"<<std::endl;
 		pos.doMove(m);
 		tot += perft( pos, depth - 1);
+		//std::cout<<"undo move "<<m.to_string()<<std::endl;
 		pos.undoMove();
 	}
 	return tot;
@@ -93,9 +101,11 @@ unsigned long long divide(libChess::Position& pos, unsigned int depth)
 	*/
 	for( auto& m: ml )
 	{
+		std::cout<<"un move "<<m.to_string()<<std::endl;
 		pos.doMove(m);
 		unsigned long long int n = perft( pos, depth - 1);
 		tot += n;
+		std::cout<<"undo move "<<m.to_string()<<std::endl;
 		pos.undoMove();
 		std::cout<<m.to_string()<<": "<<n<<std::endl;
 	}
@@ -111,10 +121,54 @@ int main(void)
 	init();
 	
 	libChess::Position pos;
-	pos.setupFromFen("r2n3r/1bNk2pp/6P1/pP3p2/3pPqnP/1P1P1p1R/2P3B1/Q1B1bKN1 b - e3");
+/*	pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
+	std::cout<<perft(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 2)<<std::endl;
+	std::cout<<perft(pos, 3)<<std::endl;
+	std::cout<<perft(pos, 4)<<std::endl;
+	std::cout<<perft(pos, 5)<<std::endl;
+	std::cout<<perft(pos, 6)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;
 	
+	pos.setupFromFen("r1k2r1q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K2R1Q w KQkq - 0 1 ");
 	
-	std::cout<<divide(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 2)<<std::endl;
+	std::cout<<perft(pos, 3)<<std::endl;
+	std::cout<<perft(pos, 4)<<std::endl;
+	std::cout<<perft(pos, 5)<<std::endl;
+	std::cout<<perft(pos, 6)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;
+	
+	pos.setupFromFen("8/8/8/4B2b/6nN/8/5P2/2R1K2k w Q - 0 1");
+	
+	std::cout<<perft(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 2)<<std::endl;
+	std::cout<<perft(pos, 3)<<std::endl;
+	std::cout<<perft(pos, 4)<<std::endl;
+	std::cout<<perft(pos, 5)<<std::endl;
+	std::cout<<perft(pos, 6)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;
+*/	
+	pos.setupFromFen("2r5/8/8/8/8/8/6PP/k2KR3 w K - 0 1");
+	
+	std::cout<<perft(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 2)<<std::endl;
+	std::cout<<perft(pos, 3)<<std::endl;
+	std::cout<<perft(pos, 4)<<std::endl;
+	std::cout<<perft(pos, 5)<<std::endl;
+	std::cout<<perft(pos, 6)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;
+	
+	pos.setupFromFen("4r3/3k4/8/8/8/8/6PP/qR1K1R2 w KQ - 0 1");
+	
+	std::cout<<perft(pos, 1)<<std::endl;
+	std::cout<<perft(pos, 2)<<std::endl;
+	std::cout<<perft(pos, 3)<<std::endl;
+	std::cout<<perft(pos, 4)<<std::endl;
+	std::cout<<perft(pos, 5)<<std::endl;
+	std::cout<<perft(pos, 6)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;
 	
 	return 0;
 }
