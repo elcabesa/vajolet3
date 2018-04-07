@@ -2,11 +2,17 @@ sudo: false
 
 language: 
   - cpp
+env:
+  - CC=gcc-6
+  - CXX=g++-6
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+    packages:
+      - gcc-6
+      - g++-6
 
 before_install:
   - pip install --user cpp-coveralls
