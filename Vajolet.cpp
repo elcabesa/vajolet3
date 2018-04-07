@@ -121,6 +121,12 @@ int main(void)
 	init();
 	
 	libChess::Position pos;
+	pos.setupFromFen();
+	int i = 0;
+	while(true)
+	{
+		std::cout<<(++i)<<": "<<perft(pos, 6)<<std::endl;
+	}
 /*	pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
 	std::cout<<perft(pos, 1)<<std::endl;
 	std::cout<<perft(pos, 2)<<std::endl;
@@ -149,7 +155,7 @@ int main(void)
 	std::cout<<perft(pos, 5)<<std::endl;
 	std::cout<<perft(pos, 6)<<std::endl;
 	std::cout<<perft(pos, 7)<<std::endl;
-*/	
+	
 	pos.setupFromFen("2r5/8/8/8/8/8/6PP/k2KR3 w K - 0 1");
 	
 	std::cout<<perft(pos, 1)<<std::endl;
@@ -168,7 +174,7 @@ int main(void)
 	std::cout<<perft(pos, 4)<<std::endl;
 	std::cout<<perft(pos, 5)<<std::endl;
 	std::cout<<perft(pos, 6)<<std::endl;
-	std::cout<<perft(pos, 7)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;*/
 	
 	return 0;
 }

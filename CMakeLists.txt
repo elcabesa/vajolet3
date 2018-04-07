@@ -73,12 +73,13 @@ target_link_libraries (Vajolet libChess)
       include_directories("${gtest_SOURCE_DIR}/include")
     endif()
 
-    enable_testing()
-    # Now simply link against gtest or gtest_main as needed. Eg
     add_executable(Vajolet_unitTest test/UnitTest.cpp test/BitMapMoveGeneratorTest.cpp test/BitBoardIndexTest.cpp test/BitMapTest.cpp test/HashKeysTest.cpp test/MoveListTest.cpp test/MoveGeneratorTest.cpp test/MoveTest.cpp test/PositionTest.cpp test/ScoreTest.cpp test/StateTest.cpp test/tSquareTest.cpp)
     target_link_libraries(Vajolet_unitTest libChess gtest )
-    add_test(NAME example_test COMMAND Vajolet_unitTest)
-    
- 
-    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS Vajolet_unitTest)
+	
+	add_custom_command(
+        TARGET Vajolet_unitTest POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/test/perft.txt
+                ${CMAKE_CURRENT_BINARY_DIR}/perft.txt)
+
 	

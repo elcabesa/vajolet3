@@ -153,12 +153,10 @@ static const std::vector<positions> perftPos ={
 		
 		for (auto & p : perftPos)
 		{
-			std::cout<<p.Fen<<std::endl;
 			pos.setupFromFen( p.Fen ); 
 			for( unsigned int i = 0; i < p.PerftValue.size() && i<2; i++)
 			{
 				unsigned long long int res = perft( pos, i+1);
-				std::cout<<i+1<<" "<<res<<std::endl;
 				EXPECT_EQ( p.PerftValue[i], res);
 			}
 		}
@@ -169,44 +167,31 @@ static const std::vector<positions> perftPos ={
 	TEST(MoveGenerator,perft2)
 	{
 		
-		
 		std::ifstream infile("perft.txt");
 		
+		ASSERT_FALSE(infile.fail());
 		
 		Position pos;
 		
 		std::string line;
-		
-
 		
 		while (std::getline(infile, line))
 		{
 			std::size_t found = line.find_first_of(",");
 			std::string fen = line.substr(0, found);
 			pos.setupFromFen( fen ); 
-			std::cout<<fen<<std::endl;
 
 			unsigned int i = 0;
-			while (found!=std::string::npos)
+			while (found != std::string::npos && i < 2 )
 			{	
 				std::size_t start = found+1;
 				found=line.find_first_of(",",found + 1 );
 				
 				unsigned long long ull = std::stoull (line.substr(start, found-start));
-				std::cout<<ull<<std::endl;
 				unsigned long long int res = perft( pos, ++i);
 				ASSERT_EQ(ull, res);
-				
-				
 			}
-			/*std::cout<<p.Fen<<std::endl;
-			pos.setupFromFen( p.Fen ); 
-			for( unsigned int i = 0; i < p.PerftValue.size(); i++)
-			{
-				unsigned long long int res = perft( pos, i+1);
-				std::cout<<i+1<<" "<<res<<std::endl;
-				ASSERT_EQ( p.PerftValue[i], res);
-			}*/
+
 		}
 	}
 
