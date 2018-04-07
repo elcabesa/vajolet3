@@ -146,15 +146,11 @@ namespace libChess
 	
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getRookPseudoMoves( const baseTypes::tSquare& from)
 	{
-		// todo evalutate the possibility to use directly the simplified formula
-		// return *( _magicMovesRindices [ sq ]  );
-		return _getRookMoves( from, baseTypes::BitMap(0) );
+		return *( _magicMovesRindices [ from ]  );
 	}
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopPseudoMoves( const baseTypes::tSquare& from)
 	{
-		// todo evalutate the possibility to use directly the simplified formula
-		// return *( _magicMovesBindices [ sq ]  );
-		return _getBishopMoves( from, baseTypes::BitMap(0) );
+		return *( _magicMovesBindices [ from ]  );
 	}
 	
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& occupancy )

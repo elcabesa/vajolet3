@@ -171,7 +171,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& s, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		m.setFlag(Move::fpromotion);
@@ -183,7 +183,7 @@ namespace libChess
 		{
 			baseTypes::tSquare from = to - delta;
 			
-			if( _checkAllowedMove( from, to, kingSquare, s ) )
+			if( _checkAllowedMove( from, to, kingSquare, st ) )
 			{
 				m.setFrom( from );
 				m.setTo( to );
