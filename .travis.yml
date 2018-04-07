@@ -3,8 +3,9 @@ sudo: false
 language: 
   - cpp
 env:
-  - CC=gcc-6
-  - CXX=g++-6
+  global:
+    - CC=gcc-6
+    - CXX=g++-6
 
 addons:
   apt:
