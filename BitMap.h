@@ -135,7 +135,7 @@ namespace libChess
 			*/
 			bool moreThanOneBit() const;
 
-			/*	\brief convert bitmpap to string
+			/*	\brief convert bitmap to string
 				\author Marco Belli
 				\version 1.0
 				\date 17/08/2017
@@ -155,6 +155,13 @@ namespace libChess
 				\date 17/08/2017
 			*/
 			bool isSquareSet(const tFile f, const tRank r) const;
+			
+			/*	\brief return true if this bitmap intersect with the given one
+				\author Marco Belli
+				\version 1.0
+				\date 6/04/2018
+			*/
+			bool isIntersecting( const BitMap& other ) const;
 			
 		private:
 		
@@ -277,6 +284,12 @@ namespace libChess
 		inline bool BitMap::isSquareSet(const tFile f, const tRank r) const
 		{
 			return (_b & getBitmapFromSquare( f, r )._b);
+		}
+		
+		inline bool BitMap::isIntersecting( const BitMap& other ) const
+		{
+			//todo write unit test
+			return (_b & other._b );
 		}
 		
 		

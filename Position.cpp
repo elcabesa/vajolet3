@@ -120,7 +120,7 @@ namespace libChess
 		baseTypes::eTurn turn = getActualStateConst().getTurn();
 		
 		_us = &_bitBoard[ turn ];
-		_them = &_bitBoard[ getSwitchedTurn(turn) ];
+		_them = &_bitBoard[ getSwitchedTurn( turn ) ];
 	}
 	
 	inline void Position::_swapUsThem()
@@ -804,10 +804,10 @@ namespace libChess
 		
 		_calcCheckingSquares();
 	
-		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), getOurQBSlidingBitMap(), getOurQRSlidingBitMap() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 		
-		st.setCheckers( getAttackersTo( getSquareOfMyKing() ) & getTheirBitmap();
+		st.setCheckers( getAttackersTo( getSquareOfMyKing() ) & getTheirBitMap() );
 
 		/*
 		// todo readd those methods
@@ -827,7 +827,7 @@ namespace libChess
 		}
 		
 		const baseTypes::tSquare ksq = ( rookRank == baseTypes::one ? getSquareOfWhiteKing() : getSquareOfBlackKing() );
-		const baseTypes::tRank kingRank = getRank(ksq);
+		const baseTypes::tRank kingRank = getRank( ksq );
 		
 		
 		
@@ -984,14 +984,14 @@ namespace libChess
 				+ ( BitMapMoveGenerator::getKingMoves( to ) & ( getBitmap( baseTypes::whiteKing ) + getBitmap( baseTypes::blackKing ) ) );
 		
 		// bishop like movers
-		baseTypes::BitMap mask = getBitmap( baseTypes::blackBishops ) + getBitmap( baseTypes::whiteBishops )+ getBitmap( baseTypes::blackQueens ) + getBitmap( baseTypes::whiteQueens );
-		if( ( mask & BitMapMoveGenerator::getBishopPseudoMoves(to) ).isEmpty() == false )
+		baseTypes::BitMap mask = getOurQBSlidingBitMap() + getTheirQBSlidingBitMap();
+		if( ( mask.isIntersecting( BitMapMoveGenerator::getBishopPseudoMoves(to) ) )
 		{
 			res += ( BitMapMoveGenerator::getBishopMoves( to, occupancy ) & mask );
 		}
 		// rook like movers
-		mask = getBitmap( baseTypes::blackRooks ) + getBitmap( baseTypes::whiteRooks )+ getBitmap( baseTypes::blackQueens ) + getBitmap( baseTypes::whiteQueens );
-		if( ( mask & BitMapMoveGenerator::getRookPseudoMoves(to) ).isEmpty() == false )
+		mask = getOurQRSlidingBitMap() + getTheirQRSlidingBitMap();
+		if( ( mask.isIntersecting( BitMapMoveGenerator::getRookPseudoMoves(to) ) )
 		{
 			res += ( BitMapMoveGenerator::getRookMoves( to, occupancy ) & mask );
 		}
@@ -1010,7 +1010,7 @@ namespace libChess
 
 		const baseTypes::tSquare OppKingSquare = getSquareOfEnemyKing();
 
-		const baseTypes::BitMap& occupancy = getOccupationBitmap();
+		const baseTypes::BitMap& occupancy = getOccupationBitMap();
 		const baseTypes::tColor color = isBlackTurn() ?  baseTypes::white : baseTypes::black;
 
 		st.setCheckingSquare( getMyPiece( baseTypes::King ), baseTypes::BitMap(0) );
@@ -1030,20 +1030,20 @@ namespace libChess
 	}
 	
 	
-	const baseTypes::BitMap Position::_calcPin( const baseTypes::tSquare kingSquare, const baseTypes::eTurn turn ) const
+	const baseTypes::BitMap Position::_calcPin( const baseTypes::tSquare kingSquare, const baseTypes::BitMap& bishopLikeBitMap, const baseTypes::BitMap& rookLikeBitMap ) const
 	{
 		assert( kingSquare < baseTypes::squareNumber );
 		baseTypes::BitMap result(0);
 		// calc pinners/pinned candidate
-		baseTypes::BitMap pin = BitMapMoveGenerator::getBishopPseudoMoves( kingSquare ) & ( getBitmap( baseTypes::Bishops + turn ) + getBitmap( baseTypes::Queens + turn ) );
-		pin += BitMapMoveGenerator::getRookPseudoMoves(kingSquare) & ( getBitmap( baseTypes::Rooks + turn ) + getBitmap( baseTypes::Queens + turn ) );
+		baseTypes::BitMap pin = BitMapMoveGenerator::getBishopPseudoMoves( kingSquare ) & bishopLikeBitMap;
+		pin += BitMapMoveGenerator::getRookPseudoMoves(kingSquare) & rookLikeBitMap;
 
 		for(  const auto pinSq : pin )
 		{
-			baseTypes::BitMap b = baseTypes::BitMap::getSquaresBetween( kingSquare, pinSq ) & getOccupationBitmap();
+			baseTypes::BitMap b = baseTypes::BitMap::getSquaresBetween( kingSquare, pinSq ) & getOccupationBitMap();
 			if ( !b.moreThanOneBit() )
 			{
-				result += b & getBitmap( getMyPiece( baseTypes::Pieces ) );
+				result += b & getOurBitMap();
 			}
 		}
 		return result;
@@ -1063,9 +1063,9 @@ namespace libChess
 		_swapUsThem();
 		
 		_calcCheckingSquares();
-	
-		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
+		
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), getOurQBSlidingBitMap(), getOurQRSlidingBitMap() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 		
 		// checker doesn't change, don't update them
 		//st.setCheckers( getAttackersTo( getSquareOfMyKing() & getTheirBitmap();
@@ -1204,7 +1204,7 @@ namespace libChess
 					MoveGenerator::isPawnDoublePush( from, to )
 					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
 					//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
-					&& !(BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black )) & getTheirBitmap( baseTypes::Pawns ) ).isEmpty()
+					&& (BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) )
 			)
 			{
 				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
@@ -1245,7 +1245,7 @@ namespace libChess
 		{
 			if( !m.isStandardMove() )
 			{
-				checkers += getAttackersTo( getSquareOfMyKing() ) & getTheirBitmap();
+				checkers += getAttackersTo( getSquareOfMyKing() ) & getTheirBitMap();
 			}
 			else
 			{
@@ -1259,12 +1259,12 @@ namespace libChess
 					if( !baseTypes::isRook( piece ) )
 					{
 						assert( getSquareOfMyKing() <= baseTypes::squareNumber );
-						checkers += BitMapMoveGenerator::getRookMoves( getSquareOfMyKing(), getOccupationBitmap() ) & getTheirQRSlidingBitmap();
+						checkers += BitMapMoveGenerator::getRookMoves( getSquareOfMyKing(), getOccupationBitMap() ) & getTheirQRSlidingBitMap();
 					}
 					if( !baseTypes::isBishop( piece ) )
 					{
 						assert( getSquareOfMyKing() <= baseTypes::squareNumber );
-						checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfMyKing(), getOccupationBitmap() ) & getTheirQBSlidingBitmap();
+						checkers += BitMapMoveGenerator::getBishopMoves( getSquareOfMyKing(), getOccupationBitMap() ) & getTheirQBSlidingBitMap();
 					}
 				}
 			}
@@ -1273,8 +1273,8 @@ namespace libChess
 		
 		_calcCheckingSquares();
 		
-		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), st.getTurn() ) );
-		st.setPinned( _calcPin( getSquareOfMyKing(), getSwitchedTurn( st.getTurn() ) ) );
+		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), getOurQBSlidingBitMap(), getOurQRSlidingBitMap() ) );
+		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 
 	/* todo readd this code
 	#ifdef	ENABLE_CHECK_CONSISTENCY
@@ -1449,7 +1449,7 @@ namespace libChess
 			}
 			
 			// to square is check die to pawn move
-			baseTypes::BitMap occ = getOccupationBitmap() ^ from;
+			baseTypes::BitMap occ = getOccupationBitMap() ^ from;
 			
 			switch( m.getPromotionType() )
 			{
@@ -1472,7 +1472,7 @@ namespace libChess
 			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::black : baseTypes::white, kingSide );
 			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
 			
-			baseTypes::BitMap occ = ( ( ( getOccupationBitmap() ^ from ) ^ rFrom ) + rTo) + to;
+			baseTypes::BitMap occ = ( ( ( getOccupationBitMap() ^ from ) ^ rFrom ) + rTo) + to;
 			
 			return   ( BitMapMoveGenerator::getRookPseudoMoves( rTo ).isSquareSet( kingSquare ) )
 					 && ( BitMapMoveGenerator::getRookMoves( rTo, occ ).isSquareSet( kingSquare ));
@@ -1483,7 +1483,7 @@ namespace libChess
 			// filemask & rankMask
 			// todo evalutate to reuse old code 
 			baseTypes::BitMap captureSquare = baseTypes::BitMap::getFileMask( to ) & baseTypes::BitMap::getRankMask( from );
-			baseTypes::BitMap occ = ( ( getOccupationBitmap() ^ from ) ^ to ) ^ captureSquare;
+			baseTypes::BitMap occ = ( ( getOccupationBitMap() ^ from ) ^ to ) ^ captureSquare;
 			// pawn move and capture can can create a discovery check
 			return
 				!( 

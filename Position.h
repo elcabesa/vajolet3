@@ -48,7 +48,7 @@ namespace libChess
 		const GameState& getState(unsigned int n)const;
 		unsigned int getStateSize() const;
 		
-		const baseTypes::BitMap& getOccupationBitmap() const;
+		const baseTypes::BitMap& getOccupationBitMap() const;
 		const baseTypes::BitMap& getBitmap(const baseTypes::bitboardIndex in) const;
 		baseTypes::tSquare getSquareOfThePiece(const baseTypes::bitboardIndex piece) const;
 		baseTypes::tSquare getSquareOfWhiteKing() const;
@@ -56,12 +56,12 @@ namespace libChess
 		baseTypes::tSquare getSquareOfMyKing() const;
 		baseTypes::tSquare getSquareOfEnemyKing() const;
 		
-		const baseTypes::BitMap& getOurBitmap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
-		const baseTypes::BitMap& getTheirBitmap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
+		const baseTypes::BitMap& getOurBitMap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
+		const baseTypes::BitMap& getTheirBitMap( const baseTypes::bitboardIndex piece = baseTypes::Pieces )const;
 		const baseTypes::BitMap getOurQRSlidingBitMap()const;
-		const baseTypes::BitMap getTheirQRSlidingBitmap()const;
+		const baseTypes::BitMap getTheirQRSlidingBitMap()const;
 		const baseTypes::BitMap getOurQBSlidingBitMap()const;
-		const baseTypes::BitMap getTheirQBSlidingBitmap()const;
+		const baseTypes::BitMap getTheirQBSlidingBitMap()const;
 		
 		unsigned int getPieceCount(const baseTypes::bitboardIndex in) const;
 		baseTypes::bitboardIndex getPieceAt(const baseTypes::tSquare sq) const;
@@ -143,7 +143,7 @@ namespace libChess
 		HashKey _calcPawnKey(void) const;
 		HashKey _calcMaterialKey(void) const;
 		void _calcCheckingSquares(void);
-		const baseTypes::BitMap _calcPin(const baseTypes::tSquare kingSquare,const baseTypes::eTurn turn) const;
+		const baseTypes::BitMap _calcPin( const baseTypes::tSquare kingSquare, const baseTypes::BitMap& bishopLikeBitMap, const baseTypes::BitMap& rookLikeBitMap ) const;
 		
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
 		bool _tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq );
@@ -169,7 +169,7 @@ namespace libChess
 		return *_actualState;
 	}
 	
-	inline const baseTypes::BitMap& Position::getOccupationBitmap() const
+	inline const baseTypes::BitMap& Position::getOccupationBitMap() const
 	{
 		return _bitBoard[ baseTypes::occupiedSquares ];
 	}
@@ -215,11 +215,11 @@ namespace libChess
 		return getBitmap( getEnemyPiece( baseTypes::King ) ).firstOne();
 	}
 	
-	inline const baseTypes::BitMap& Position::getOurBitmap( const baseTypes::bitboardIndex piece )const
+	inline const baseTypes::BitMap& Position::getOurBitMap( const baseTypes::bitboardIndex piece )const
 	{
 		return _us[ piece ];
 	}
-	inline const baseTypes::BitMap& Position::getTheirBitmap( const baseTypes::bitboardIndex piece )const
+	inline const baseTypes::BitMap& Position::getTheirBitMap( const baseTypes::bitboardIndex piece )const
 	{
 		return _them[ piece ];
 	}
@@ -228,7 +228,7 @@ namespace libChess
 	{
 		return _us[ baseTypes::Queens ] + _us[ baseTypes::Rooks ];
 	}
-	inline const baseTypes::BitMap Position::getTheirQRSlidingBitmap()const
+	inline const baseTypes::BitMap Position::getTheirQRSlidingBitMap()const
 	{
 		return _them[ baseTypes::Queens ] + _them[ baseTypes::Rooks ];
 	}
@@ -236,7 +236,7 @@ namespace libChess
 	{
 		return _us[ baseTypes::Queens ] + _us[ baseTypes::Bishops ];
 	}
-	inline const baseTypes::BitMap Position::getTheirQBSlidingBitmap()const
+	inline const baseTypes::BitMap Position::getTheirQBSlidingBitMap()const
 	{
 		return _them[ baseTypes::Queens ] + _them[ baseTypes::Bishops ];
 	}

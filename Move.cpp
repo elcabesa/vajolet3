@@ -46,7 +46,7 @@ namespace libChess
 		// todo in case of castling in frc960 come la scrivo la mossa, guiardare stockfish??????
 		if( isCastleMove() )
 		{
-			s += " CASTLE";
+			//s += " CASTLE";
 		}
 		return s;
 	}
