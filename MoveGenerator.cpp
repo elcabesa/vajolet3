@@ -54,7 +54,7 @@ namespace libChess
 		/*
 		 get the piece bitmap
 		*/
-		const baseTypes::BitMap bFrom = pos.getBitmap( piece );
+		const baseTypes::BitMap& bFrom = pos.getBitmap( piece );
 		
 		/*
 		 iterate for all the pieces
@@ -303,7 +303,7 @@ namespace libChess
 		// populate the target squares bitmaps
 		baseTypes::BitMap kingTarget;
 		baseTypes::BitMap target;
-		const baseTypes::BitMap checkers = st.getCheckers();
+		const baseTypes::BitMap& checkers = st.getCheckers();
 		
 		if( mgType == MoveGenerator::allEvasionMg )
 		{
