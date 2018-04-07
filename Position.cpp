@@ -985,13 +985,13 @@ namespace libChess
 		
 		// bishop like movers
 		baseTypes::BitMap mask = getOurQBSlidingBitMap() + getTheirQBSlidingBitMap();
-		if( ( mask.isIntersecting( BitMapMoveGenerator::getBishopPseudoMoves(to) ) )
+		if( mask.isIntersecting( BitMapMoveGenerator::getBishopPseudoMoves(to) ) )
 		{
 			res += ( BitMapMoveGenerator::getBishopMoves( to, occupancy ) & mask );
 		}
 		// rook like movers
 		mask = getOurQRSlidingBitMap() + getTheirQRSlidingBitMap();
-		if( ( mask.isIntersecting( BitMapMoveGenerator::getRookPseudoMoves(to) ) )
+		if( mask.isIntersecting( BitMapMoveGenerator::getRookPseudoMoves(to) ) )
 		{
 			res += ( BitMapMoveGenerator::getRookMoves( to, occupancy ) & mask );
 		}
@@ -1204,7 +1204,7 @@ namespace libChess
 					MoveGenerator::isPawnDoublePush( from, to )
 					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
 					//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
-					&& (BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) )
+					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
 			)
 			{
 				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
