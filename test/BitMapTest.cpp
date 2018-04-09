@@ -152,6 +152,32 @@ namespace {
 
 
 	}
+	
+	TEST(BitMap, isIntersecting)
+	{
+		BitMap b(0);
+		BitMap c(0);
+		BitMap d(0);
+		
+		b += tSquare::A1;
+		b += tSquare::B3;
+		b += tSquare::F7;
+		b += tSquare::F8;
+		
+		c += tSquare::A2;
+		c += tSquare::B3;
+		c += tSquare::E4;
+		c += tSquare::D7;
+		
+		d += tSquare::A3;
+		d += tSquare::B4;
+		d += tSquare::D7;
+		d += tSquare::D8;
+		
+		ASSERT_TRUE( b.isIntersecting( c ) );
+		ASSERT_FALSE( b.isIntersecting( d ) );
+		
+	}
 
 	TEST(BitMap, iterator)
 	{
@@ -265,6 +291,15 @@ namespace {
 		ASSERT_FALSE( b.isEmpty() );
 		BitMap b2(0);
 		ASSERT_TRUE( b2.isEmpty() );
+		
+	}
+	
+	TEST(BitMap, isNotEmpty)
+	{
+		BitMap b(64382);
+		ASSERT_TRUE( b.isNotEmpty() );
+		BitMap b2(0);
+		ASSERT_FALSE( b2.isNotEmpty() );
 		
 	}
 	

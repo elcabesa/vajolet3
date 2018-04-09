@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <array>
+#include <iterator>
 #include "State.h"
 #include "BitMap.h"
 #include "BitBoardIndex.h"
@@ -107,18 +108,20 @@ namespace libChess
 		*	Members
 		******************************************************************/
 		std::vector<GameState> _stateList;
-		// todo valutate the use of a iterator
-		GameState* _actualState;
+		std::vector<GameState>::reverse_iterator _actualState;
 		std::array< baseTypes::bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
 		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
-		// todo valutate the use of a iterator
-		baseTypes::BitMap *_us,*_them;	/*!< pointer to our & their pieces bitboard*/
+		std::array< baseTypes::BitMap, baseTypes::bitboardNumber >::iterator /*baseTypes::BitMap*/ _us,_them;	/*!< pointer to our & their pieces bitboard*/
 		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
 		
-		// todo _castleKingPath & _castleRookPath possomno essere uniti in una sola bitmap in or
+
 		std::array< baseTypes::BitMap, 4 > _castleKingPath;	// path to be traversed by the king when castling
 		std::array< baseTypes::BitMap, 4 > _castleOccupancyPath;	// path that need to be free to be able to castle
 		std::array< baseTypes::tSquare, 4 > _castleRookInvolved;	// rook involved in the castling
+		std::array< baseTypes::tSquare, 4 > _castleKingFinalSquare;	// king destination square of castling
+		std::array< baseTypes::tSquare, 4 > _castleRookFinalSquare;	// rook destination square of castling
+		
+		std::array< baseTypes::tSquare, 2 > _kingsSquare;
 		
 	private:
 	
@@ -150,6 +153,8 @@ namespace libChess
 		
 		bool _setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare);
 		static unsigned int _calcCRPIndex( const baseTypes::tColor color, const bool kingSide );
+		
+		void _setKingsSquare(void);
 		
 		void _clearCastleRightsMask(void);
 		void _clearCastleRightsPaths(void);
@@ -196,23 +201,19 @@ namespace libChess
 	
 	inline baseTypes::tSquare Position::getSquareOfWhiteKing() const
 	{
-		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
-		return getBitmap(baseTypes::whiteKing).firstOne();
+		return _kingsSquare[ baseTypes::white ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfBlackKing() const
 	{
-		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
-		return getBitmap(baseTypes::blackKing).firstOne();
+		return _kingsSquare[ baseTypes::black ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfMyKing() const
 	{
-		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
-		return getBitmap( getMyPiece( baseTypes::King ) ).firstOne();
+		return _kingsSquare[ getActualStateConst().getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfEnemyKing() const
 	{
-		// todo provare a fare un codice migliore, probabilmente si puo aggiungere la posizione dei re nella classe
-		return getBitmap( getEnemyPiece( baseTypes::King ) ).firstOne();
+		return _kingsSquare[ getActualStateConst().getTurn() == baseTypes::blackTurn ? baseTypes::white : baseTypes::black ];
 	}
 	
 	inline const baseTypes::BitMap& Position::getOurBitMap( const baseTypes::bitboardIndex piece )const
@@ -255,8 +256,7 @@ namespace libChess
 	{
 		return getActualStateConst().getTurn() == baseTypes::blackTurn;
 	}
-	
-	// todo move this function as public of state to speedup move generation
+
 	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const
 	{
 		return in + getActualStateConst().getTurn();
@@ -294,7 +294,8 @@ namespace libChess
 		assert( isValidPiece( getPieceAt( m.getTo() ) ) || m.isEnPassantMove() );
 		
 		Score s = MVVValue[ getPieceAt( m.getTo() ) ] - LVAValue[ getPieceAt( m.getFrom() ) ];
-				
+		
+		// todo da riaggiungere?		
 		/*if ( m.isPromotionMove() )
 		{
 			s += (pieceValue[ baseTypes::whiteQueens +m.bit.promotion ] - pieceValue[whitePawns])[0];
@@ -310,7 +311,14 @@ namespace libChess
 	
 	inline bool Position::isInCheck( void ) const
 	{
-		return !getActualStateConst().getCheckers().isEmpty();
+		return getActualStateConst().getCheckers().isNotEmpty();
+	}
+	
+	inline void Position::_setKingsSquare(void)
+	{ 
+		_kingsSquare[ baseTypes::white ] = getBitmap(baseTypes::whiteKing).firstOne();
+		_kingsSquare[ baseTypes::black ] = getBitmap(baseTypes::blackKing).firstOne();
+		
 	}
 }
 

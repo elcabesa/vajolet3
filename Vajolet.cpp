@@ -58,7 +58,8 @@ unsigned long long perft(libChess::Position& pos, unsigned int depth)
 	unsigned long long tot = 0;
 	libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
 	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
-	if (depth == 1) {
+	if (depth == 1)
+	{
 		return ml.size();
 	}
 	
@@ -121,13 +122,17 @@ int main(void)
 	init();
 	
 	libChess::Position pos;
-	/*pos.setupFromFen();
+	pos.setupFromFen();
 	int i = 0;
 	while(true)
 	{
-		std::cout<<(++i)<<": "<<perft(pos, 6)<<std::endl;
-	}*/
-	pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
+		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
+		unsigned long long res = perft(pos, 7);
+		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
+		std::cout<<(++i)<<": "<<res<<" ("<<res/1000.0/(end-start) <<"Mnps)"<<std::endl;
+		
+	}
+	/*pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
 	std::cout<<perft(pos, 1)<<std::endl;
 	std::cout<<perft(pos, 2)<<std::endl;
 	std::cout<<perft(pos, 3)<<std::endl;
@@ -174,7 +179,7 @@ int main(void)
 	std::cout<<perft(pos, 4)<<std::endl;
 	std::cout<<perft(pos, 5)<<std::endl;
 	std::cout<<perft(pos, 6)<<std::endl;
-	std::cout<<perft(pos, 7)<<std::endl;
+	std::cout<<perft(pos, 7)<<std::endl;*/
 	
 	return 0;
 }

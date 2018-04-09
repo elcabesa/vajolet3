@@ -154,7 +154,7 @@ static const std::vector<positions> perftPos ={
 		for (auto & p : perftPos)
 		{
 			pos.setupFromFen( p.Fen ); 
-			for( unsigned int i = 0; i < p.PerftValue.size() /*&& i<2*/; i++)
+			for( unsigned int i = 0; i < p.PerftValue.size() && i<2; i++)
 			{
 				unsigned long long int res = perft( pos, i+1);
 				EXPECT_EQ( p.PerftValue[i], res);
@@ -182,7 +182,7 @@ static const std::vector<positions> perftPos ={
 			pos.setupFromFen( fen ); 
 
 			unsigned int i = 0;
-			while (found != std::string::npos /*&& i < 2 */)
+			while (found != std::string::npos && i < 2 )
 			{	
 				std::size_t start = found+1;
 				found=line.find_first_of(",",found + 1 );

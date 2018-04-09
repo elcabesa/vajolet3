@@ -25,7 +25,6 @@
 
 // todo cercare funzioni comuni
 // semplificare funzioni dividendole in pezzi più piccoli
-// todo in molti posti uso la posizione del re... provare a salvare le posizioni del re nella posizione per velocizzare
 //todo evalutate the removal of moveIsCheck, candidate, pinned etc etc
 namespace libChess
 {
@@ -36,11 +35,13 @@ namespace libChess
 		_getActualState().setTurn( baseTypes::whiteTurn );
 		
 		_setUsThem();
+		
+		//_setKingsSquare();
 	}
 	
-	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleKingPath(other._castleKingPath), _castleOccupancyPath(other._castleOccupancyPath), _castleRookInvolved(other._castleRookInvolved)
+	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleKingPath(other._castleKingPath), _castleOccupancyPath(other._castleOccupancyPath), _castleRookInvolved(other._castleRookInvolved), _castleKingFinalSquare(other._castleKingFinalSquare), _castleRookFinalSquare(other._castleRookFinalSquare), _kingsSquare(other._kingsSquare)
 	{
-		_actualState = &_stateList.back();
+		_actualState = _stateList.rbegin();
 		
 		_setUsThem();
 		
@@ -52,7 +53,7 @@ namespace libChess
 			return *this;
 
 		_stateList = other._stateList;
-		_actualState = &_stateList.back();
+		_actualState = _stateList.rbegin();
 		
 		
 		_squares = other._squares;
@@ -64,6 +65,10 @@ namespace libChess
 		_castleRookInvolved = other._castleRookInvolved;
 
 		_setUsThem();
+		
+		_kingsSquare = other._kingsSquare;
+		_castleKingFinalSquare = other._castleKingFinalSquare;
+		_castleRookFinalSquare = other._castleKingFinalSquare;
 
 		return *this;
 	}
@@ -73,7 +78,7 @@ namespace libChess
 	{
 		_stateList.clear();
 		_stateList.emplace_back(GameState());
-		_actualState = &_stateList.back();
+		_actualState = _stateList.rbegin();
 		
 	}
 	
@@ -94,14 +99,14 @@ namespace libChess
 	inline GameState& Position::_pushState(void)
 	{
 		_stateList.emplace_back( getActualStateConst() );
-		_actualState = &_stateList.back();
+		_actualState = _stateList.rbegin();
 		return _getActualState();
 	}
 	
 	inline void Position::_popState(void)
 	{
 		_stateList.pop_back();
-		_actualState = &_stateList.back();
+		_actualState = _stateList.rbegin();
 	}
 	
 	const GameState& Position::getState(unsigned int n)const
@@ -117,10 +122,10 @@ namespace libChess
 	
 	inline void Position::_setUsThem(void)
 	{
-		baseTypes::eTurn turn = getActualStateConst().getTurn();
+		const baseTypes::eTurn turn = getActualStateConst().getTurn();
 		
-		_us = &_bitBoard[ turn ];
-		_them = &_bitBoard[ getSwitchedTurn( turn ) ];
+		_us = _bitBoard.begin() + (int)turn ;
+		_them = _bitBoard.begin() + (int)getSwitchedTurn( turn );
 	}
 	
 	inline void Position::_swapUsThem()
@@ -564,6 +569,8 @@ namespace libChess
 			return false;
 		}
 		
+		_setKingsSquare();
+		
 		// turn
 		ss >> token;
 		if( token == 'w' )
@@ -808,6 +815,7 @@ namespace libChess
 		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 		
 		st.setCheckers( getAttackersTo( getSquareOfMyKing() ) & getTheirBitMap() );
+		
 
 		/*
 		// todo readd those methods
@@ -843,7 +851,7 @@ namespace libChess
 		
 		baseTypes::eCastle cr;
 		baseTypes::tColor color;
-		const bool kingSide = ( ksq < rsq );
+		const bool kingSide = Move::isKingsideCastle( ksq, rsq );
 		
 		if ( kingRank == baseTypes::one ) 
 		{
@@ -919,6 +927,8 @@ namespace libChess
 			}
 		}
 		
+		
+		
 		baseTypes::tSquare rookLeft = std::min( rookFrom, rookTo );
 		baseTypes::tSquare rookRight = std::max( rookFrom, rookTo );
 		baseTypes::tSquare kingLeft = std::min( kingFrom, kingTo );
@@ -934,6 +944,9 @@ namespace libChess
 				_castleKingPath[ index ] += sq;
 			}
 		}
+		
+		_castleKingFinalSquare[index] = kingTo;
+		_castleRookFinalSquare[index] = rookTo;
 
 		// occupancy path without king and rook squares
 		for( auto sq: baseTypes::tSquareRange( rookLeft, rookRight ) )
@@ -1090,10 +1103,10 @@ namespace libChess
 	}
 	void Position::doMove( const Move &m )
 	{
-		// todo save turn in a variable
 		assert( m != Move::NOMOVE );
 		
 		GameState& st = _pushState();
+		const baseTypes::eTurn turn = st.getTurn();
 		st.setCurrentMove( m );
 		
 		const baseTypes::tSquare from = m.getFrom();
@@ -1103,7 +1116,7 @@ namespace libChess
 		const baseTypes::bitboardIndex piece = getPieceAt( from );
 		assert( baseTypes::isValidPiece( piece ) );
 
-		const baseTypes::bitboardIndex capturedPiece = m.isEnPassantMove() ? ( st.getTurn() ? baseTypes::whitePawns : baseTypes::blackPawns) : getPieceAt( to );
+		const baseTypes::bitboardIndex capturedPiece = m.isEnPassantMove() ? ( turn ? baseTypes::whitePawns : baseTypes::blackPawns) : getPieceAt( to );
 		assert( capturedPiece != baseTypes::separationBitmap );
 		assert( capturedPiece != baseTypes::whitePieces );
 		assert( capturedPiece != baseTypes::blackPieces );
@@ -1117,14 +1130,13 @@ namespace libChess
 		// do castle additional instruction
 		if( m.isCastleMove() )
 		{
-			// todo create a function in move class ( to > from )
-			const bool kingSide = ( baseTypes::getFile(to) > baseTypes::getFile(from) );
+			const bool kingSide = Move::isKingsideCastle( from, to );
+			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( turn == baseTypes::blackTurn ) , kingSide);
 			
 			const baseTypes::tSquare rFrom = to;
-			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F8: baseTypes::F1 ) : ( ( st.getTurn() ) ? baseTypes::D8: baseTypes::D1 );
+			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
 
-			// todo create a function in move generator or add this information in a array in postion among other castle arrays
-			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G8: baseTypes::G1 ) : ( ( st.getTurn() ) ? baseTypes::C8: baseTypes::C1 );
+			const baseTypes::tSquare kTo = _castleKingFinalSquare[index];
 			const baseTypes::tSquare kFrom = from;
 			
 			
@@ -1165,7 +1177,7 @@ namespace libChess
 
 					if( m.isEnPassantMove() )
 					{
-						captureSquare -= MoveGenerator::pawnPush( st.getTurn() );
+						captureSquare -= MoveGenerator::pawnPush( turn );
 					}
 					assert( captureSquare < baseTypes::squareNumber );
 					st.pawnKeyRemovePiece( capturedPiece, captureSquare );
@@ -1212,14 +1224,14 @@ namespace libChess
 			if(
 					MoveGenerator::isPawnDoublePush( from, to )
 					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
-					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
+					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( turn ), ( turn == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
 			)
 			{
-				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( st.getTurn() ) ) );
+				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( turn ) ) );
 			}
 			if( m.isPromotionMove() )
 			{
-				baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() );
+				baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( turn + baseTypes::Queens + m.getPromotionType() );
 				assert ( promotedPiece < baseTypes::bitboardNumber );
 				_removePiece( piece, to );
 				_addPiece( promotedPiece, to );
@@ -1242,6 +1254,7 @@ namespace libChess
 
 		st.changeTurn();
 		_swapUsThem();
+		_setKingsSquare();
 		/***********************************
 		swapped turn, below this line us & them and turn are switched
 		************************************/
@@ -1262,7 +1275,7 @@ namespace libChess
 					checkers += to;
 				}
 				
-				if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )	// should be old state, but discoveryCheckers has not been updated so far
+				if( st.isDiscoveryCheckers(from) )	// should be old state, but discoveryCheckers has not been updated so far
 				{
 					if( !baseTypes::isRook( piece ) )
 					{
@@ -1296,8 +1309,8 @@ namespace libChess
 	
 	void Position::undoMove( void )
 	{
-		// todo save turn in a variable
 		const GameState& st = getActualStateConst();
+		const baseTypes::eTurn turn = st.getTurn();
 		const Move& m = st.getCurrentMove();
 		assert( m != Move::NOMOVE );
 		const baseTypes::tSquare to = m.getTo();
@@ -1308,12 +1321,14 @@ namespace libChess
 		if( m.isCastleMove() )
 		{
 			
-			const bool kingSide = ( baseTypes::getFile(to) > baseTypes::getFile(from) );
+			const bool kingSide = Move::isKingsideCastle( from, to );
+			
+			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( turn == baseTypes::whiteTurn ) , kingSide);
 			
 			const baseTypes::tSquare rFrom = to;
-			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F1: baseTypes::F8 ) : ( ( st.getTurn() ) ? baseTypes::D1: baseTypes::D8 );
-			
-			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G1: baseTypes::G8 ) : ( ( st.getTurn() ) ? baseTypes::C1: baseTypes::C8 );
+			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
+
+			const baseTypes::tSquare kTo = _castleKingFinalSquare[index];
 			const baseTypes::tSquare kFrom = from;
 			
 			piece = getPieceAt( kTo );
@@ -1353,7 +1368,7 @@ namespace libChess
 				baseTypes::tSquare capSq = to;
 				if( m.isEnPassantMove() )
 				{
-					capSq += MoveGenerator::pawnPush( st.getTurn() );
+					capSq += MoveGenerator::pawnPush( turn );
 				}
 				assert( capSq < baseTypes::squareNumber );
 				
@@ -1366,6 +1381,7 @@ namespace libChess
 		
 		_popState();
 		_swapUsThem();
+		_setKingsSquare();
 
 
 /*	todo read this code
@@ -1414,6 +1430,7 @@ namespace libChess
 	bool Position::moveGivesCheck( const Move& m ) const
 	{
 		const GameState& st = getActualStateConst();
+		const baseTypes::eTurn turn = st.getTurn();
 		
 		assert( m!= Move::NOMOVE );
 		const baseTypes::tSquare to = m.getTo();
@@ -1429,9 +1446,7 @@ namespace libChess
 		}
 		
 		// Discovery check ?
-		// todo serve fare il doppio test per velocizzare?
-		// todo questa linea èpresente in 4 punit diversi... posso fare codice comune?
-		if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+		if( st.isDiscoveryCheckers(from) )
 		{
 			assert( getSquareOfEnemyKing() < baseTypes::squareNumber );
 			/*
@@ -1463,7 +1478,7 @@ namespace libChess
 		if( m.isPromotionMove() )
 		{
 			// to square is check 
-			if( st.getCheckingSquare( (baseTypes::bitboardIndex)( st.getTurn() + baseTypes::Queens + m.getPromotionType() ) ).isSquareSet( to ) )
+			if( st.getCheckingSquare( (baseTypes::bitboardIndex)( turn + baseTypes::Queens + m.getPromotionType() ) ).isSquareSet( to ) )
 			{
 				return true;
 			}
@@ -1488,14 +1503,16 @@ namespace libChess
 		}
 		else if( m.isCastleMove() )
 		{
-			const bool kingSide = ( baseTypes::getFile(to) >  baseTypes::getFile(from) );
-			const baseTypes::tSquare rFrom = to;
-			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F8: baseTypes::F1 ) : ( ( st.getTurn() ) ? baseTypes::D8: baseTypes::D1 );
-
-			// todo create a function in move generator or add this information in a array in postion among other castle arrays
-			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G8: baseTypes::G1 ) : ( ( st.getTurn() ) ? baseTypes::C8: baseTypes::C1 );
-			const baseTypes::tSquare kFrom = from;
+			const bool kingSide = Move::isKingsideCastle( from, to );
 			
+			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( turn == baseTypes::blackTurn ) , kingSide);
+			
+			const baseTypes::tSquare rFrom = to;
+			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
+
+			const baseTypes::tSquare kTo = _castleKingFinalSquare[index];
+			const baseTypes::tSquare kFrom = from;
+				
 			baseTypes::BitMap occ = ( ( ( getOccupationBitMap() ^ kFrom ) ^ rFrom ) + rTo) + kTo;
 			
 			return   ( BitMapMoveGenerator::getRookPseudoMoves( rTo ).isSquareSet( kingSquare ) )
@@ -1510,10 +1527,10 @@ namespace libChess
 			baseTypes::BitMap occ = ( ( getOccupationBitMap() ^ from ) ^ to ) ^ captureSquare;
 			// pawn move and capture can can create a discovery check
 			return
-				!( 
+				( 
 					( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & getOurQRSlidingBitMap() )
 				  + ( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & getOurQBSlidingBitMap() )
-				).isEmpty();
+				).isNotEmpty();
 		}
 		
 		return false;
@@ -1534,7 +1551,7 @@ namespace libChess
 		// Direct check & discovery?
 		return ( 
 			st.getCheckingSquare( piece ).isSquareSet( to ) 
-			&& ( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+			&& st.isDiscoveryCheckers(from)
 			);
 
 		
@@ -1555,7 +1572,7 @@ namespace libChess
 		return ( 
 			!( BitMapMoveGenerator::getKingMoves( OppKingSquare ).isSquareSet( to ) )
 			&& st.getCheckingSquare( piece ).isSquareSet( to ) 
-			&& ( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
+			&& st.isDiscoveryCheckers(from)
 			);
 	}
 }

@@ -270,11 +270,35 @@ namespace {
 		Move y(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 		ASSERT_STREQ( "d7e8b", y.to_string().c_str() );
 		
-		Move z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fcastle, Move::promBishop);
+		Move z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fenpassant, Move::promBishop);
 		ASSERT_STREQ( "d7e8", z.to_string().c_str() );
 		
 		Move w(baseTypes::tSquare::A1, baseTypes::tSquare::A1);
 		ASSERT_STREQ( "0000", w.to_string().c_str() );
+		
+		Move w1(baseTypes::tSquare::E1, baseTypes::tSquare::H1, Move::fcastle);
+		ASSERT_STREQ( "e1g1", w1.to_string().c_str() );
+		
+		Move w2(baseTypes::tSquare::E1, baseTypes::tSquare::H1, Move::fcastle);
+		ASSERT_STREQ( "e1h1", w2.to_string(true).c_str() );
+		
+		Move w3(baseTypes::tSquare::E1, baseTypes::tSquare::A1, Move::fcastle);
+		ASSERT_STREQ( "e1c1", w3.to_string().c_str() );
+		
+		Move w4(baseTypes::tSquare::E1, baseTypes::tSquare::A1, Move::fcastle);
+		ASSERT_STREQ( "e1a1", w4.to_string(true).c_str() );
+		
+		Move w5(baseTypes::tSquare::E8, baseTypes::tSquare::H8, Move::fcastle);
+		ASSERT_STREQ( "e8g8", w5.to_string().c_str() );
+		
+		Move w6(baseTypes::tSquare::E8, baseTypes::tSquare::H8, Move::fcastle);
+		ASSERT_STREQ( "e8h8", w6.to_string(true).c_str() );
+		
+		Move w7(baseTypes::tSquare::E8, baseTypes::tSquare::A8, Move::fcastle);
+		ASSERT_STREQ( "e8c8", w7.to_string().c_str() );
+		
+		Move w8(baseTypes::tSquare::E8, baseTypes::tSquare::A8, Move::fcastle);
+		ASSERT_STREQ( "e8a8", w8.to_string(true).c_str() );
 		
 	}
 	
@@ -517,7 +541,7 @@ namespace {
 		extMove y(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fpromotion, Move::promBishop);
 		ASSERT_STREQ( "d7e8b", y.to_string().c_str() );
 		
-		extMove z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fcastle, Move::promBishop);
+		extMove z(baseTypes::tSquare::D7, baseTypes::tSquare::E8, Move::fenpassant, Move::promBishop);
 		ASSERT_STREQ( "d7e8", z.to_string().c_str() );
 		
 	}

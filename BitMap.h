@@ -114,6 +114,13 @@ namespace libChess
 			*/
 			int bitCnt() const;
 			
+			/*	\brief return true if the bitboard is not empty
+				\author Marco Belli
+				\version 1.0
+				\date 09/04/2018
+			*/
+			bool isNotEmpty() const;
+			
 			/*	\brief tell whether the bitboard is empty or not
 				\author Marco Belli
 				\version 1.0
@@ -264,6 +271,11 @@ namespace libChess
 		{
 			return _b == 0ull;
 		}
+		
+		inline bool BitMap::isNotEmpty() const
+		{
+			return _b;
+		}
 
 		inline tSquare BitMap::firstOne() const
 		{
@@ -288,7 +300,6 @@ namespace libChess
 		
 		inline bool BitMap::isIntersecting( const BitMap& other ) const
 		{
-			//todo write unit test
 			return (_b & other._b );
 		}
 		

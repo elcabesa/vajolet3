@@ -90,12 +90,12 @@ namespace libChess
 		bool isCastleMove() const;
 		bool isEnPassantMove() const;
 		bool isStandardMove() const;
-		std::string to_string() const;
+		std::string to_string( const bool chess960 = false ) const;
 		
 		/*****************************************************************
 		*	static methods
 		******************************************************************/
-		// todo , si può fare private e poi avere metodi per fare clean e confronto?
+		static bool isKingsideCastle( const baseTypes::tSquare from, const baseTypes::tSquare to);
 		static const Move NOMOVE;
 		
 		/*****************************************************************
@@ -165,6 +165,10 @@ namespace libChess
 	inline unsigned short Move::getPacked()const
 	{
 		return _u._packed;
+	}
+	inline bool Move::isKingsideCastle( const baseTypes::tSquare from, const baseTypes::tSquare to)
+	{
+		return to > from;
 	}
 
 	

@@ -24,7 +24,8 @@
 namespace libChess
 {
 	const Move Move::NOMOVE(0);
-	std::string Move::to_string(void) const
+	
+	std::string Move::to_string( const bool chess960 ) const
 	{
 		std::string s;
 
@@ -35,19 +36,44 @@ namespace libChess
 		}
 		// from
 		s += libChess::baseTypes::to_string( getFrom() );
-		// to
-		s += libChess::baseTypes::to_string( getTo() );
+		
+		if( isCastleMove() )
+		{
+			// todo manage chess frc with uci option
+			// to
+			if( chess960 )
+			{
+				// chess 960
+				s += libChess::baseTypes::to_string( getTo() );
+			}
+			else
+			{
+				// standard chess
+				baseTypes::tSquare to = getTo();
+				const baseTypes::tSquare from = getFrom();
+				const bool kingSide = isKingsideCastle( from, to );
+				if( kingSide )
+				{
+					to += baseTypes::ovest;
+				}
+				else
+				{
+					to += baseTypes::east + baseTypes::east;
+				}
+				s += libChess::baseTypes::to_string( to );
+			}
+		}
+		else
+		{
+			// to
+			s += libChess::baseTypes::to_string( getTo() );
+		}
 		//promotion
 		if( isPromotionMove() )
 		{
 			s += getPieceName( baseTypes::blackQueens + getPromotionType() );
 		}
 		
-		// todo in case of castling in frc960 come la scrivo la mossa, guiardare stockfish??????
-		if( isCastleMove() )
-		{
-			//s += " CASTLE";
-		}
 		return s;
 	}
 	

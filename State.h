@@ -82,6 +82,7 @@ namespace libChess
 		******************************************************************/
 		bool hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color = baseTypes::white ) const;
 		bool hasEpSquareSet(void)const;
+		bool isDiscoveryCheckers( baseTypes::tSquare sq ) const;
 		
 	protected:
 		/*****************************************************************
@@ -471,6 +472,12 @@ namespace libChess
 	inline bool GameState::hasEpSquareSet() const
 	{
 		return _epSquare != baseTypes::squareNone;
+	}
+	
+	inline bool GameState::isDiscoveryCheckers( baseTypes::tSquare sq ) const
+	{
+		// todo serve fare il doppio test per velocizzare?
+		return getDiscoveryCheckers().isNotEmpty() && ( getDiscoveryCheckers().isSquareSet( sq ) );
 	}
 }
 
