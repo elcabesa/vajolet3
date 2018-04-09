@@ -736,7 +736,7 @@ namespace libChess
 				st.setEpSquare( (baseTypes::tSquare) ( ( col - 'a' ) + 8 * ( row - '1' ) ) );
 				
 				// todo riguardare
-				if ( ( getAttackersTo( st.getEpSquare() ) & getBitmap( getMyPiece( baseTypes::Pawns ) ) ).isEmpty() )
+				if( !( getAttackersTo( st.getEpSquare() ).isIntersecting( getBitmap( getMyPiece( baseTypes::Pawns ) ) ) ) )
 				{
 					st.setEpSquare( baseTypes::squareNone );
 				}
@@ -1090,6 +1090,7 @@ namespace libChess
 	}
 	void Position::doMove( const Move &m )
 	{
+		// todo save turn in a variable
 		assert( m != Move::NOMOVE );
 		
 		GameState& st = _pushState();
@@ -1116,13 +1117,21 @@ namespace libChess
 		// do castle additional instruction
 		if( m.isCastleMove() )
 		{
-			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
+			// todo create a function in move class ( to > from )
+			const bool kingSide = ( baseTypes::getFile(to) > baseTypes::getFile(from) );
 			
-			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::black : baseTypes::white, kingSide );
-			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			const baseTypes::tSquare rFrom = to;
+			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F8: baseTypes::F1 ) : ( ( st.getTurn() ) ? baseTypes::D8: baseTypes::D1 );
+
+			// todo create a function in move generator or add this information in a array in postion among other castle arrays
+			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G8: baseTypes::G1 ) : ( ( st.getTurn() ) ? baseTypes::C8: baseTypes::C1 );
+			const baseTypes::tSquare kFrom = from;
+			
 			
 			assert( rFrom < baseTypes::squareNumber );
 			assert( rTo < baseTypes::squareNumber );
+			assert( kFrom < baseTypes::squareNumber );
+			assert( kTo < baseTypes::squareNumber );
 			
 			const baseTypes::bitboardIndex rook =  getPieceAt( rFrom );
 			
@@ -1131,15 +1140,15 @@ namespace libChess
 			
 			
 			_removePiece( rook, rFrom );
-			if( from != to )
+			if( kFrom != kTo )
 			{
-				_movePiece( piece, from, to );
+				_movePiece( piece, kFrom, kTo );
 			}
 			_addPiece( rook, rTo );
 			
 			// update hashKey
 			st.keyMovePiece( rook, rFrom, rTo);
-			st.keyMovePiece( piece, from, to );
+			st.keyMovePiece( piece, kFrom, kTo );
 			
 			// todo readd this code
 			// st.material += pstValue[rook][rTo] - pstValue[rook][rFrom];
@@ -1203,7 +1212,6 @@ namespace libChess
 			if(
 					MoveGenerator::isPawnDoublePush( from, to )
 					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
-					//&& !( getAttackersTo( (baseTypes::tSquare)( ( from + to ) >> 1 ) ) & _them[ baseTypes::Pawns ] ).isEmpty()
 					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( st.getTurn() ), ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
 			)
 			{
@@ -1288,22 +1296,32 @@ namespace libChess
 	
 	void Position::undoMove( void )
 	{
+		// todo save turn in a variable
 		const GameState& st = getActualStateConst();
 		const Move& m = st.getCurrentMove();
 		assert( m != Move::NOMOVE );
 		const baseTypes::tSquare to = m.getTo();
 		const baseTypes::tSquare from = m.getFrom();
 		baseTypes::bitboardIndex piece = getPieceAt( to );
-		assert( baseTypes::isValidPiece( piece ) );
+		
 		
 		if( m.isCastleMove() )
 		{
-			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
-			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::white : baseTypes::black, kingSide );
-			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			
+			const bool kingSide = ( baseTypes::getFile(to) > baseTypes::getFile(from) );
+			
+			const baseTypes::tSquare rFrom = to;
+			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F1: baseTypes::F8 ) : ( ( st.getTurn() ) ? baseTypes::D1: baseTypes::D8 );
+			
+			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G1: baseTypes::G8 ) : ( ( st.getTurn() ) ? baseTypes::C1: baseTypes::C8 );
+			const baseTypes::tSquare kFrom = from;
+			
+			piece = getPieceAt( kTo );
 			
 			assert( rFrom < baseTypes::squareNumber );
 			assert( rTo < baseTypes::squareNumber );
+			assert( kFrom < baseTypes::squareNumber );
+			assert( kTo < baseTypes::squareNumber );
 			
 			const baseTypes::bitboardIndex rook =  getPieceAt( rTo );
 			
@@ -1311,14 +1329,15 @@ namespace libChess
 			assert( baseTypes::isRook(rook) );
 			
 			_removePiece( rook, rTo );
-			if( from != to )
+			if( kFrom != kTo )
 			{
-				_movePiece( piece, to, from );
+				_movePiece( piece, kTo, kFrom );
 			}
 			_addPiece( rook, rFrom );
 		}
 		else
 		{
+			assert( baseTypes::isValidPiece( piece ) );
 			if( m.isPromotionMove() )
 			{
 				_removePiece( piece, to);
@@ -1411,6 +1430,7 @@ namespace libChess
 		
 		// Discovery check ?
 		// todo serve fare il doppio test per velocizzare?
+		// todo questa linea èpresente in 4 punit diversi... posso fare codice comune?
 		if( !st.getDiscoveryCheckers().isEmpty() && ( st.getDiscoveryCheckers().isSquareSet( from ) ) )
 		{
 			assert( getSquareOfEnemyKing() < baseTypes::squareNumber );
@@ -1468,11 +1488,15 @@ namespace libChess
 		}
 		else if( m.isCastleMove() )
 		{
-			const bool kingSide = ( baseTypes::getFile(to) == baseTypes::G );
-			const baseTypes::tSquare rFrom = getCastleRookInvolved( st.getTurn() ? baseTypes::black : baseTypes::white, kingSide );
-			const baseTypes::tSquare rTo = kingSide ? to + baseTypes::ovest : to + baseTypes::east;
+			const bool kingSide = ( baseTypes::getFile(to) >  baseTypes::getFile(from) );
+			const baseTypes::tSquare rFrom = to;
+			const baseTypes::tSquare rTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::F8: baseTypes::F1 ) : ( ( st.getTurn() ) ? baseTypes::D8: baseTypes::D1 );
+
+			// todo create a function in move generator or add this information in a array in postion among other castle arrays
+			const baseTypes::tSquare kTo = kingSide ? ( ( st.getTurn() ) ? baseTypes::G8: baseTypes::G1 ) : ( ( st.getTurn() ) ? baseTypes::C8: baseTypes::C1 );
+			const baseTypes::tSquare kFrom = from;
 			
-			baseTypes::BitMap occ = ( ( ( getOccupationBitMap() ^ from ) ^ rFrom ) + rTo) + to;
+			baseTypes::BitMap occ = ( ( ( getOccupationBitMap() ^ kFrom ) ^ rFrom ) + rTo) + kTo;
 			
 			return   ( BitMapMoveGenerator::getRookPseudoMoves( rTo ).isSquareSet( kingSquare ) )
 					 && ( BitMapMoveGenerator::getRookMoves( rTo, occ ).isSquareSet( kingSquare ));

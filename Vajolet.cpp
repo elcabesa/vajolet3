@@ -51,16 +51,16 @@ static void init(void)
 unsigned long long perft(libChess::Position& pos, unsigned int depth)
 {
 
-	if (depth == 0) {
+	/*if (depth == 0) {
 		return 1;
-	}
+	}*/
 
 	unsigned long long tot = 0;
 	libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
 	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
-	/*if (depth == 1) {
+	if (depth == 1) {
 		return ml.size();
-	}*/
+	}
 	
 	for( auto& m: ml )
 	{	
@@ -121,13 +121,13 @@ int main(void)
 	init();
 	
 	libChess::Position pos;
-	pos.setupFromFen();
+	/*pos.setupFromFen();
 	int i = 0;
 	while(true)
 	{
 		std::cout<<(++i)<<": "<<perft(pos, 6)<<std::endl;
-	}
-/*	pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
+	}*/
+	pos.setupFromFen("r1k1r2q/p1ppp1pp/8/8/8/8/P1PPP1PP/R1K1R2Q w KQkq - 0 1");
 	std::cout<<perft(pos, 1)<<std::endl;
 	std::cout<<perft(pos, 2)<<std::endl;
 	std::cout<<perft(pos, 3)<<std::endl;
@@ -174,7 +174,7 @@ int main(void)
 	std::cout<<perft(pos, 4)<<std::endl;
 	std::cout<<perft(pos, 5)<<std::endl;
 	std::cout<<perft(pos, 6)<<std::endl;
-	std::cout<<perft(pos, 7)<<std::endl;*/
+	std::cout<<perft(pos, 7)<<std::endl;
 	
 	return 0;
 }

@@ -89,7 +89,7 @@ namespace libChess
 		template< MoveGenerator::genType mgType > static void _generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml );
-		template< MoveGenerator::genType mgType > static void _generateCastleMove( const Position& pos, const GameState& st,  const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, const baseTypes::tSquare destinationSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml );
+		template< MoveGenerator::genType mgType > static void _generateCastleMove( const Position& pos, const GameState& st,  const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		static void _generateEnPassantMoves( const Position& pos, const GameState& st, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		
 	};

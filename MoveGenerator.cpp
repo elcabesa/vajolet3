@@ -40,7 +40,7 @@ namespace libChess
 	*/
 	inline bool MoveGenerator::_checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
 	{
-		return ( ( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitMap( baseTypes::King ) ) & opponent ).isEmpty() );
+		return !( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitMap( baseTypes::King ) ).isIntersecting( opponent ) );
 	}
 	
 	/*! \brief generate the moves of a piece type and add it to the movelist
@@ -253,19 +253,20 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, const baseTypes::tSquare destinationSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		/*
 		check wheter the king has the castle right adn the paths are free
 		*/
 		if( st.hasCastleRight( castleType, color ) && !( pos.getCastleOccupancyPath( color, isKingSideCastle ).isIntersecting( pos.getOccupationBitMap() ) ) )
 		{
+			const baseTypes::tSquare rookSq = pos.getCastleRookInvolved( color, isKingSideCastle );
 			/*
 			check whether the castling is deined by a check in the castle path
 			*/
 			for( auto sq: pos.getKingCastlePath( color, isKingSideCastle ) )
 			{
-				if( pos.getAttackersTo( sq, pos.getOccupationBitMap() ^ pos.getCastleRookInvolved( color, isKingSideCastle ) ).isIntersecting( pos.getTheirBitMap() ) )
+				if( pos.getAttackersTo( sq, pos.getOccupationBitMap() ^ rookSq ).isIntersecting( pos.getTheirBitMap() ) )
 				{
 					return;
 				}
@@ -275,7 +276,7 @@ namespace libChess
 			Move m( Move::NOMOVE ); 
 			m.setFlag( Move::fcastle );
 			m.setFrom( kingSquare );
-			m.setTo( destinationSquare );
+			m.setTo( rookSq );
 			
 			if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
 			{
@@ -477,12 +478,10 @@ namespace libChess
 				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::black : baseTypes::white;
 				
 				// kingSquare
-				baseTypes::tSquare destinationSquare = ( color == baseTypes::white ) ? baseTypes::G1: baseTypes::G8;
-				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOO, true, color, kingSquare, destinationSquare, ml );
+				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOO, true, color, kingSquare, ml );
 				
 				// queenSquare
-				destinationSquare = ( color == baseTypes::white ) ? baseTypes::C1: baseTypes::C8;
-				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOOO, false, color, kingSquare, destinationSquare, ml );
+				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOOO, false, color, kingSquare, ml );
 			}	
 		}
 	}
