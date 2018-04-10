@@ -328,8 +328,9 @@ namespace libChess
 		}
 		s += " ";
 		
+		// todo use uci option for chess960
 		// castling rights
-		s += st.getCastleRightsString();
+		s += getCastleRightsString( st, false );
 		s += " ";
 		
 		// epsquare
@@ -423,7 +424,8 @@ namespace libChess
 		if( st.hasCastleRight( baseTypes::wCastleOOO ) ) symmSt.setCastleRight( baseTypes::bCastleOOO );
 		if( st.hasCastleRight( baseTypes::bCastleOO ) ) symmSt.setCastleRight( baseTypes::wCastleOO );
 		if( st.hasCastleRight( baseTypes::bCastleOOO ) ) symmSt.setCastleRight( baseTypes::wCastleOOO );
-		s += symmSt.getCastleRightsString();
+		// todo use uci option for chess960
+		s += getCastleRightsString( symmSt, false );
 		
 		s += " ";
 		// epsquare
@@ -481,8 +483,9 @@ namespace libChess
 		s += std::to_string( st.getFiftyMoveCnt() ) + "\n";
 		s += "castleRights ";
 		
+		// todo use uci option for chess960
 		// castling rights
-		s += st.getCastleRightsString();
+		s += getCastleRightsString( st, false );
 		s += "\n";
 		
 		s += "epsquare ";
@@ -1574,5 +1577,40 @@ namespace libChess
 			&& st.getCheckingSquare( piece ).isSquareSet( to ) 
 			&& st.isDiscoveryCheckers(from)
 			);
+	}
+	
+	inline std::string Position::getCastleRightsString( const GameState& st, const bool chess960 ) const
+	{
+		// TODO print chess960 CR
+		std::string s;
+		// castling rights
+		bool hasSomeCastleRight = false;
+		if( st.hasCastleRight( baseTypes::wCastleOO ) )
+		{
+			s += "K";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( baseTypes::wCastleOOO) )
+		{
+			s += "Q";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( baseTypes::bCastleOO) )
+		{
+			s += "k";
+			hasSomeCastleRight = true;
+		}
+		if( st.hasCastleRight( baseTypes::bCastleOOO) )
+		{
+			s += "q";
+			hasSomeCastleRight = true;
+		}
+		
+		if( false == hasSomeCastleRight )
+		{
+			s += "-";
+		}
+		
+		return s;
 	}
 }

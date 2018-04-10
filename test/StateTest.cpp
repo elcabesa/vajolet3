@@ -227,7 +227,8 @@ namespace {
 		ASSERT_EQ( baseTypes::tSquare::A6, st.getEpSquare() );
 	}
 	
-	TEST(GameState, getCastleRightsString)
+	// todo moved to position, rewrite this test if possibile
+	/*TEST(GameState, getCastleRightsString)
 	{
 		GameStateFixture g;
 		
@@ -273,7 +274,7 @@ namespace {
 		ASSERT_STREQ( "KQkq", g.getCastleRightsString().c_str() );
 
 			
-	}
+	}*/
 	
 	TEST(GameState, getEpSquareString)
 	{

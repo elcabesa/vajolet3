@@ -23,7 +23,7 @@
 #include "BitMapMoveGenerator.h"
 
 #include <chrono>
-#include "MoveGenerator.h"
+#include "MoveSelector.h"
 #include "Position.h"
 
 
@@ -56,14 +56,13 @@ unsigned long long perft(libChess::Position& pos, unsigned int depth)
 	}*/
 
 	unsigned long long tot = 0;
-	libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
-	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
+	libChess::MoveSelector ms( pos );
 	if (depth == 1)
 	{
-		return ml.size();
+		return ms.getMoveList().size();
 	}
 	
-	for( auto& m: ml )
+	for( auto& m: ms.getMoveList() )
 	{	
 		/*for( unsigned int i=0;i< pos.getStateSize();i++)
 		{
@@ -89,18 +88,17 @@ unsigned long long divide(libChess::Position& pos, unsigned int depth)
 	}
 
 	unsigned long long tot = 0;
-	libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
-	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
+	libChess::MoveSelector ms( pos );
 	/*if (depth == 1) {
 		std::cout<<pos.display()<<std::endl;
-		for( auto m: ml)
+		for( auto m: ms.getMoveList())
 		{
 			std::cout<<m.to_string()<<std::endl;
 		}
-		return ml.size();
+		return ms.getMoveList().size();
 	}
 	*/
-	for( auto& m: ml )
+	for( auto& m: ms.getMoveList() )
 	{
 		std::cout<<"un move "<<m.to_string()<<std::endl;
 		pos.doMove(m);
@@ -127,7 +125,7 @@ int main(void)
 	while(true)
 	{
 		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
-		unsigned long long res = perft(pos, 7);
+		unsigned long long res = perft(pos, i+1);
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		std::cout<<(++i)<<": "<<res<<" ("<<res/1000.0/(end-start) <<"Mnps)"<<std::endl;
 		

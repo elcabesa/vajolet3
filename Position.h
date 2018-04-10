@@ -76,6 +76,8 @@ namespace libChess
 		const baseTypes::BitMap& getCastleOccupancyPath( const baseTypes::tColor color, const bool kingSide ) const;
 		baseTypes::tSquare getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const;
 		
+		std::string getCastleRightsString( const GameState& st, const bool chess960 ) const;
+		
 		/*****************************************************************
 		*	Methods
 		******************************************************************/

@@ -60,7 +60,6 @@ namespace libChess
 		baseTypes::eCastle getCastleRights() const;
 		baseTypes::tSquare getEpSquare() const;
 		
-		std::string getCastleRightsString() const;
 		std::string getEpSquareString() const;
 		
 		unsigned int getFiftyMoveCnt() const;
@@ -428,42 +427,7 @@ namespace libChess
 		}
 		return s;
 	}
-	
-	inline std::string GameState::getCastleRightsString(void) const
-	{
-		// TODO print chess960 CR
-		std::string s;
-		// castling rights
-		bool hasSomeCastleRight = false;
-		if( hasCastleRight( baseTypes::wCastleOO ) )
-		{
-			s += "K";
-			hasSomeCastleRight = true;
-		}
-		if( hasCastleRight( baseTypes::wCastleOOO) )
-		{
-			s += "Q";
-			hasSomeCastleRight = true;
-		}
-		if( hasCastleRight( baseTypes::bCastleOO) )
-		{
-			s += "k";
-			hasSomeCastleRight = true;
-		}
-		if( hasCastleRight( baseTypes::bCastleOOO) )
-		{
-			s += "q";
-			hasSomeCastleRight = true;
-		}
-		
-		if( false == hasSomeCastleRight )
-		{
-			s += "-";
-		}
-		
-		return s;
-	}
-	
+
 	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color ) const
 	{
 		return (_castleRights & ( cr << ( 2 * color ) ) );
