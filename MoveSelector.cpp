@@ -20,4 +20,45 @@
 
 namespace libChess
 {
+	unsigned int MoveSelector::getNumberOfLegalMoves( void )
+	{
+		MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, _ml );
+		return _ml.size();
+	}
+	
+	const Move& MoveSelector::getNextMove()
+	{
+		while(true)
+		{
+			switch( _stagedGeneratorState )
+			{
+				case generateCaptureMoves:
+					// todo generate only capture moves!!
+					MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, _ml );
+					_ml.ignoreMove( _ttMove );
+
+					// todo readd this line
+					//scoreCaptureMoves();
+
+					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					break;
+				case iterateGoodCaptureMoves:
+					return _ml.findNextBestMove();
+					break;
+				case getTT:
+					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					/* todo riaggiungere isMoveLegal al posto del codice sottostante*/
+					if( Move::NOMOVE != _ttMove )
+					{
+						return _ttMove;
+					}
+					break;
+
+				default:
+					return Move::NOMOVE;
+			}
+		}
+		
+		return _ml.findNextBestMove();
+	}
 }

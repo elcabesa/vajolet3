@@ -50,7 +50,8 @@ namespace libChess
 			/*****************************************************************
 			*	constructors
 			******************************************************************/
-			MoveSelector( const Position& pos );
+			MoveSelector( const Position& pos, const Move& ttMove = Move::NOMOVE );
+
 			/*****************************************************************
 			*	Operators
 			******************************************************************/
@@ -63,7 +64,8 @@ namespace libChess
 			*	methods
 			******************************************************************/
 			// todo rimuovere
-			MoveList< MoveGenerator::maxMovePerPosition >& getMoveList( void );
+			unsigned int getNumberOfLegalMoves( void );
+			const Move& getNextMove();
 			/*****************************************************************
 			*	static methods
 			******************************************************************/
@@ -72,21 +74,53 @@ namespace libChess
 			*	members
 			******************************************************************/
 		private:
-		const Position& _pos;
-		MoveList< MoveGenerator::maxMovePerPosition > _ml;
+			const Position& _pos;
+			const Move& _ttMove;
+			// todo is possibile to allocate it only if necessary?
+			MoveList< MoveGenerator::maxMovePerPosition > _ml;
+			
+			enum eStagedGeneratorState
+			{
+				getTT,
+				generateCaptureMoves,
+				iterateGoodCaptureMoves,
+				getKillers,
+				getCounters,
+				generateQuietMoves,
+				iterateQuietMoves,
+				iterateBadCaptureMoves,
+				finishedNormalStage,
+
+				getTTevasion,
+				generateCaptureEvasionMoves,
+				iterateCaptureEvasionMoves,
+				generateQuietEvasionMoves,
+				iterateQuietEvasionMoves,
+				finishedEvasionStage,
+
+				getQsearchTT,
+				generateQuiescentMoves,
+				iterateQuiescentMoves,
+				finishedQuiescentStage,
+
+				getProbCutTT,
+				generateProbCutCaptures,
+				iterateProbCutCaptures,
+				finishedProbCutStage,
+
+				getQsearchTTquiet,
+				generateQuiescentCaptures,
+				iterateQuiescentCaptures,
+				generateQuietCheks,
+				iterateQuietChecks,
+				finishedQuiescentQuietStage,
+
+			}_stagedGeneratorState;
 	};
 	
-	MoveSelector::MoveSelector( const Position& pos ):_pos(pos)
+	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _stagedGeneratorState( getTT )
 	{	
-		MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, _ml );
 	}
-	
-	MoveList< MoveGenerator::maxMovePerPosition >& MoveSelector::getMoveList( void )
-	{
-		return _ml;
-	}
-	
-	
 	
 }
 

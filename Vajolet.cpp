@@ -59,10 +59,10 @@ unsigned long long perft(libChess::Position& pos, unsigned int depth)
 	libChess::MoveSelector ms( pos );
 	if (depth == 1)
 	{
-		return ms.getMoveList().size();
+		return ms.getNumberOfLegalMoves();
 	}
-	
-	for( auto& m: ms.getMoveList() )
+	libChess::Move m;
+	while( libChess::Move::NOMOVE != ( m = ms.getNextMove() ) )
 	{	
 		/*for( unsigned int i=0;i< pos.getStateSize();i++)
 		{
@@ -98,7 +98,8 @@ unsigned long long divide(libChess::Position& pos, unsigned int depth)
 		return ms.getMoveList().size();
 	}
 	*/
-	for( auto& m: ms.getMoveList() )
+	libChess::Move m;
+	while( libChess::Move::NOMOVE != ( m = ms.getNextMove() ) )
 	{
 		std::cout<<"un move "<<m.to_string()<<std::endl;
 		pos.doMove(m);
@@ -125,7 +126,7 @@ int main(void)
 	while(true)
 	{
 		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
-		unsigned long long res = perft(pos, i+1);
+		unsigned long long res = perft( pos, 6 );
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		std::cout<<(++i)<<": "<<res<<" ("<<res/1000.0/(end-start) <<"Mnps)"<<std::endl;
 		
