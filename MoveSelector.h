@@ -51,6 +51,7 @@ namespace libChess
 			*	constructors
 			******************************************************************/
 			MoveSelector( const Position& pos, const Move& ttMove = Move::NOMOVE );
+			~MoveSelector();
 
 			/*****************************************************************
 			*	Operators
@@ -77,7 +78,7 @@ namespace libChess
 			const Position& _pos;
 			const Move& _ttMove;
 			// todo is possibile to allocate it only if necessary?
-			MoveList< MoveGenerator::maxMovePerPosition > _ml;
+			MoveList< MoveGenerator::maxMovePerPosition > *_ml;
 			
 			enum eStagedGeneratorState
 			{
@@ -118,10 +119,14 @@ namespace libChess
 			}_stagedGeneratorState;
 	};
 	
-	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _stagedGeneratorState( getTT )
+	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr), _stagedGeneratorState( getTT )
 	{	
 	}
 	
+	MoveSelector::~MoveSelector()
+	{
+		delete _ml;
+	}
 }
 
 #endif /* MOVESELECTOR_H_ */

@@ -101,6 +101,7 @@ namespace libChess
 		Score getMvvLvaScore( const Move& m ) const;
 		
 		bool isInCheck( void ) const;
+		bool isMoveLegal( const Move& m ) const;
 		
 		
 	
@@ -113,11 +114,10 @@ namespace libChess
 		std::vector<GameState>::reverse_iterator _actualState;
 		std::array< baseTypes::bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
 		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
-		std::array< baseTypes::BitMap, baseTypes::bitboardNumber >::iterator /*baseTypes::BitMap*/ _us,_them;	/*!< pointer to our & their pieces bitboard*/
-		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
+		std::array< baseTypes::BitMap, baseTypes::bitboardNumber >::iterator _us,_them;	/*!< pointer to our & their pieces bitboard*/
 		
-
-		std::array< baseTypes::BitMap, 4 > _castleKingPath;	// path to be traversed by the king when castling
+		std::array< baseTypes::eCastle, baseTypes::squareNumber > _castleRightsMask;	// cr mask used to speed up do move
+		std::array< baseTypes::BitMap, 4 > _castleKingPath;			// path to be traversed by the king when castling
 		std::array< baseTypes::BitMap, 4 > _castleOccupancyPath;	// path that need to be free to be able to castle
 		std::array< baseTypes::tSquare, 4 > _castleRookInvolved;	// rook involved in the castling
 		std::array< baseTypes::tSquare, 4 > _castleKingFinalSquare;	// king destination square of castling
@@ -161,6 +161,8 @@ namespace libChess
 		void _clearCastleRightsMask(void);
 		void _clearCastleRightsPaths(void);
 		void _clearCastleRookInvolved(void);
+		
+		bool _checkPositionConsistency(void) const;
 		
 	
 		

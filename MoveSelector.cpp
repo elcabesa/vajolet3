@@ -22,8 +22,9 @@ namespace libChess
 {
 	unsigned int MoveSelector::getNumberOfLegalMoves( void )
 	{
-		MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, _ml );
-		return _ml.size();
+		MoveList< MoveGenerator::maxMovePerPosition > ml;
+		MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, ml );
+		return ml.size();
 	}
 	
 	const Move& MoveSelector::getNextMove()
@@ -34,8 +35,9 @@ namespace libChess
 			{
 				case generateCaptureMoves:
 					// todo generate only capture moves!!
-					MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, _ml );
-					_ml.ignoreMove( _ttMove );
+					_ml = new MoveList< MoveGenerator::maxMovePerPosition >;
+					MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, *_ml );
+					_ml->ignoreMove( _ttMove );
 
 					// todo readd this line
 					//scoreCaptureMoves();
@@ -43,12 +45,12 @@ namespace libChess
 					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
 					break;
 				case iterateGoodCaptureMoves:
-					return _ml.findNextBestMove();
+					return _ml->findNextBestMove();
 					break;
 				case getTT:
 					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
-					/* todo riaggiungere isMoveLegal al posto del codice sottostante*/
-					if( Move::NOMOVE != _ttMove )
+
+					if( _pos.isMoveLegal( _ttMove ) )
 					{
 						return _ttMove;
 					}
@@ -59,6 +61,6 @@ namespace libChess
 			}
 		}
 		
-		return _ml.findNextBestMove();
+		return _ml->findNextBestMove();
 	}
 }

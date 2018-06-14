@@ -336,6 +336,22 @@ namespace {
 		ASSERT_FALSE( b3 == b );
 	}
 	
+	TEST(BitMap, operatorComparison2)
+	{
+		BitMap b(12692365593);
+		BitMap b2(12692365593);
+		BitMap b3(1243780067094);
+		
+		ASSERT_FALSE( b != b2 );
+		ASSERT_TRUE( b != b3 );
+		ASSERT_TRUE( b2 != b3 );
+		ASSERT_FALSE( b != b );
+		ASSERT_FALSE( b2 != b2 );
+		ASSERT_FALSE( b3 != b3 );
+		ASSERT_TRUE( b3 != b2 );
+		ASSERT_TRUE( b3 != b );
+	}
+	
 	TEST(BitMap, operatorPlusEqual2)
 	{
 		std::vector<tSquare>v;

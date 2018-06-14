@@ -39,43 +39,47 @@ namespace libChess
 			*	constructors
 			******************************************************************/
 			BitMap(){};
-			BitMap ( const BitMap & ) = default;	
-			explicit BitMap(uint64_t b): _b(b){}
+			BitMap ( const BitMap & ) = default;
+			explicit BitMap( uint64_t b ): _b(b){}
 			
 			/*****************************************************************
 			*	Operators
 			******************************************************************/
 			
-			inline bool operator ==(const BitMap& rhs) const { return _b == rhs._b;}
+			inline bool operator ==(const BitMap& rhs) const { return _b == rhs._b; }
 			
-			inline BitMap& operator += (const tSquare sq) { _b |= getBitmapFromSquare(sq)._b; return (*this); }
-			inline BitMap& operator +=(const BitMap& x) { _b |= x._b; return (*this); }
+			inline bool operator !=(const BitMap& rhs) const { return _b != rhs._b; }
 			
-			inline BitMap& operator &=(const tSquare sq) { _b &= getBitmapFromSquare(sq)._b; return (*this); }
-			inline BitMap& operator &=(const BitMap& x) { _b &= x._b; return (*this); }
+			inline BitMap& operator += ( const tSquare sq ) { _b |= getBitmapFromSquare(sq)._b; return (*this); }
+			inline BitMap& operator +=( const BitMap& x ) { _b |= x._b; return (*this); }
 			
-			inline BitMap& operator = (const tSquare sq) { _b = getBitmapFromSquare(sq)._b; return (*this); }
-			inline BitMap& operator = (const BitMap& x) { _b = x._b; return (*this); }
+			inline BitMap& operator &=( const tSquare sq ) { _b &= getBitmapFromSquare(sq)._b; return (*this); }
+			inline BitMap& operator &=( const BitMap& x ) { _b &= x._b; return (*this); }
 			
-			inline BitMap operator +(const tSquare sq) const { return BitMap(_b | getBitmapFromSquare(sq)._b); }
-			inline BitMap operator +(const BitMap& rhs) const { return BitMap(_b | rhs._b); }
+			inline BitMap& operator = ( const tSquare sq ) { _b = getBitmapFromSquare(sq)._b; return (*this); }
+			inline BitMap& operator = ( const BitMap& x ) { _b = x._b; return (*this); }
 			
-			inline BitMap operator &(const tSquare sq) const { return BitMap(_b & getBitmapFromSquare(sq)._b); }
-			inline BitMap operator &(const BitMap& rhs) const { return BitMap(_b & rhs._b); }
+			friend BitMap operator +( BitMap lhs, const tSquare sq ){ return lhs += sq; }
+			friend BitMap operator +( BitMap lhs, const BitMap& rhs ){ return lhs += rhs; }
 			
-			inline BitMap operator ^(const tSquare sq) const { return BitMap(_b ^ getBitmapFromSquare(sq)._b); }
-			inline BitMap operator ^(const BitMap& rhs) const { return BitMap(_b ^ rhs._b); }
+			friend BitMap operator &( BitMap lhs, const tSquare sq ){ return lhs &= sq; }
+			friend BitMap operator &( BitMap lhs, const BitMap& rhs ){ return lhs &= rhs; }
 			
-			inline BitMap& operator ^=(const tSquare sq) { _b ^= getBitmapFromSquare(sq)._b; return (*this); }
-			inline BitMap& operator ^=(const BitMap& x) { _b ^= x._b; return (*this); }
+			inline BitMap& operator ^=(const tSquare sq ) { _b ^= getBitmapFromSquare(sq)._b; return (*this); }
+			inline BitMap& operator ^=(const BitMap& x ) { _b ^= x._b; return (*this); }
 			
-			inline BitMap operator <<(const unsigned int shift) const { return BitMap(_b << shift);}
-			inline BitMap operator >>(const unsigned int shift) const { return BitMap(_b >> shift);}
+			friend BitMap operator ^( BitMap lhs, const tSquare sq ){ return lhs ^= sq; }
+			friend BitMap operator ^( BitMap lhs, const BitMap& rhs ){ return lhs ^= rhs; }
 			
-			inline BitMap& operator <<=(const unsigned int shift) { _b <<= shift; return (*this);}
-			inline BitMap& operator >>=(const unsigned int shift) { _b >>= shift; return (*this);}
+			inline BitMap& operator <<=(const unsigned int shift ) { _b <<= shift; return (*this); }
+			inline BitMap& operator >>=(const unsigned int shift ) { _b >>= shift; return (*this); }
 			
-			inline BitMap operator~() const { return BitMap(~_b ); }
+			friend BitMap operator <<( BitMap lhs, const unsigned int shift ){ return lhs <<= shift; }
+			friend BitMap operator >>( BitMap lhs, const unsigned int shift ){ return lhs >>= shift; }
+			
+
+			
+			friend BitMap operator~( BitMap lhs ){ lhs._b = ~lhs._b; return lhs; }
 			
 			/*****************************************************************
 			*	Iterator

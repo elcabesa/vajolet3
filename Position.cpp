@@ -818,13 +818,9 @@ namespace libChess
 		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 		
 		st.setCheckers( getAttackersTo( getSquareOfMyKing() ) & getTheirBitMap() );
-		
+	
 
-		/*
-		// todo readd those methods
-		checkPosConsistency(1);
-		*/
-		return true;
+		return _checkPositionConsistency();
 	}
 	
 	bool Position::_setupCastleRight(const baseTypes::tSquare rsq)
@@ -1086,11 +1082,8 @@ namespace libChess
 		// checker doesn't change, don't update them
 		//st.setCheckers( getAttackersTo( getSquareOfMyKing() & getTheirBitmap();
 
-/* todo readd code
-#ifdef	ENABLE_CHECK_CONSISTENCY
-		checkPosConsistency(1);
-#endif
-*/	
+		assert( _checkPositionConsistency() == true );
+	
 	}
 	
 	void Position::undoNullMove( void )
@@ -1098,11 +1091,7 @@ namespace libChess
 		_popState();
 		_swapUsThem();
 
-		/* todo readd code
-#ifdef ENABLE_CHECK_CONSISTENCY
-		checkPosConsistency(0);
-#endif
-*/
+		assert( _checkPositionConsistency() == true );
 	}
 	void Position::doMove( const Move &m )
 	{
@@ -1300,12 +1289,7 @@ namespace libChess
 		st.setDiscoveryChechers( _calcPin( getSquareOfEnemyKing(), getOurQBSlidingBitMap(), getOurQRSlidingBitMap() ) );
 		st.setPinned( _calcPin( getSquareOfMyKing(), getTheirQBSlidingBitMap(), getTheirQRSlidingBitMap() ) );
 
-	/* todo readd this code
-	#ifdef	ENABLE_CHECK_CONSISTENCY
-		checkPosConsistency(1);
-	#endif
-
-	*/
+		assert( _checkPositionConsistency() == true );
 	}
 	
 	
@@ -1378,19 +1362,12 @@ namespace libChess
 				_addPiece( st.getCapturedPiece(), capSq );
 			}
 		}
-		
-		
-		
-		
+			
 		_popState();
 		_swapUsThem();
 		_setKingsSquare();
 
-
-/*	todo read this code
-#ifdef	ENABLE_CHECK_CONSISTENCY
-		checkPosConsistency(0);
-#endif*/
+		assert( _checkPositionConsistency() == true );
 		
 		
 	}
@@ -1581,36 +1558,515 @@ namespace libChess
 	
 	inline std::string Position::getCastleRightsString( const GameState& st, const bool chess960 ) const
 	{
-		// TODO print chess960 CR
 		std::string s;
 		// castling rights
 		bool hasSomeCastleRight = false;
-		if( st.hasCastleRight( baseTypes::wCastleOO ) )
+		
+		struct sCastle
 		{
-			s += "K";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( baseTypes::wCastleOOO) )
+			baseTypes::eCastle castleType;
+			baseTypes::tColor color;
+			bool kingSide;
+			std::string normalString;
+		};
+		
+		std::list<sCastle> cl = { 
+			{ baseTypes::wCastleOO, baseTypes::white, true, "K" },
+			{ baseTypes::wCastleOOO, baseTypes::white, false, "Q" },
+			{ baseTypes::bCastleOO, baseTypes::black, true, "k" },
+			{ baseTypes::bCastleOOO, baseTypes::black, false, "q" }
+		};
+		
+		for( auto& cr : cl )
 		{
-			s += "Q";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( baseTypes::bCastleOO) )
-		{
-			s += "k";
-			hasSomeCastleRight = true;
-		}
-		if( st.hasCastleRight( baseTypes::bCastleOOO) )
-		{
-			s += "q";
-			hasSomeCastleRight = true;
+			if( st.hasCastleRight( cr.castleType ) )
+			{
+				if( chess960 )
+				{
+					baseTypes::tSquare rSq = getCastleRookInvolved( cr.color, cr.kingSide );
+					std::string castleRight = baseTypes::to_string( baseTypes::getFile( rSq ) );
+					if( cr.color == baseTypes::white)
+					{
+						for ( auto& c: castleRight )
+						{
+							c = toupper(c);
+						}
+					}
+					s += castleRight;
+				}
+				else
+				{
+					s += cr.normalString;
+				}
+				hasSomeCastleRight = true;
+			}
+			
 		}
 		
 		if( false == hasSomeCastleRight )
 		{
-			s += "-";
+			s = "-";
 		}
 		
 		return s;
+	}
+	
+	/*! \brief do a sanity check on the board
+	\author Marco Belli
+	\version 1.0
+	\date 11/04/2018
+	*/
+	bool Position::_checkPositionConsistency(void) const
+	{
+		// todo add error logging!!
+		const GameState& st = getActualStateConst();
+		/*************************************************
+		check turn
+		*************************************************/
+		if( st.getTurn() != baseTypes::whiteTurn && st.getTurn() != baseTypes::blackTurn )
+		{
+			return false;
+		}
+		
+		/*************************************************
+		bitboard/Square congruence
+		*************************************************/
+		for( auto sq: baseTypes::tSquareRange() )
+		{
+			const baseTypes::bitboardIndex piece = getPieceAt(sq);
+			
+			if( isValidPiece( piece ) )
+			{
+				if( false == getBitmap( piece ).isSquareSet( sq ) )
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if( true == getOccupationBitMap().isSquareSet( sq ) )
+				{
+					return false;
+				}
+			}
+		}
+		/*************************************************
+		bitmaps intersections
+		*************************************************/
+		for( auto i : baseTypes::bitboardIndexRange() )
+		{
+			for( auto j : baseTypes::bitboardIndexRange() )
+			{
+				if( i != j && isValidPiece(i) && isValidPiece(j) && getBitmap( i ).isIntersecting( getBitmap( j ) ) )
+				{
+					return false;
+				}
+			}
+		}
+		
+		/*************************************************
+		check special bitboards
+		*************************************************/
+		if( getOurBitMap().isIntersecting( getTheirBitMap() ) )
+		{
+			return false;
+		}
+		
+		if( getOurBitMap() + getTheirBitMap() != getOccupationBitMap() )
+		{
+			return false;
+		}
+		
+		/*************************************************
+		check pieces bitboards
+		*************************************************/
+		
+		{
+			baseTypes::BitMap test(0);
+			
+			for( auto i : baseTypes::bitboardIndexRange( baseTypes::whiteKing, baseTypes::whitePawns ) )
+			{
+				test += getBitmap( i );
+			}
+			if( test != getBitmap( baseTypes::whitePieces ) )
+			{
+				return false;
+			}
+		}
+		{
+			baseTypes::BitMap test(0);
+			
+			for( auto i : baseTypes::bitboardIndexRange( baseTypes::blackKing, baseTypes::blackPawns ) )
+			{
+				test += getBitmap( i );
+			}
+			if( test != getBitmap( baseTypes::blackPieces ) )
+			{
+				return false;
+			}
+		}
+		
+		/*************************************************
+		check keys
+		*************************************************/
+		if( st.getKey() != _calcKey() )
+		{
+			return false;
+		}
+		
+		if( st.getPawnKey() != _calcPawnKey() )
+		{
+			return false;
+		}
+		
+		if( st.getMaterialKey() != _calcMaterialKey() )
+		{
+			return false;
+		}
+		
+		/*************************************************
+		kings verification
+		*************************************************/
+		if( getBitmap( baseTypes::whiteKing ).bitCnt() != 1 )
+		{
+			return false;
+		}
+		if( getBitmap( baseTypes::whiteKing ).firstOne() != getSquareOfWhiteKing() )
+		{
+			return false;
+		}
+		
+		if( getBitmap( baseTypes::blackKing ).bitCnt() != 1 )
+		{
+			return false;
+		}
+		if( getBitmap( baseTypes::blackKing ).firstOne() != getSquareOfBlackKing() )
+		{
+			return false;
+		}
+		
+		/*************************************************
+		us, them verification
+		*************************************************/
+		if( st.getTurn() == baseTypes::whiteTurn )
+		{
+			if( getOurBitMap() != getBitmap( baseTypes::whitePieces ) )
+			{
+				return false;
+			}
+			if( getTheirBitMap() != getBitmap( baseTypes::blackPieces ) )
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if( getOurBitMap() != getBitmap( baseTypes::blackPieces ) )
+			{
+				return false;
+			}
+			if( getTheirBitMap() != getBitmap( baseTypes::whitePieces ) )
+			{
+				return false;
+			}
+		}
+/*
+
+		// todo readd this code as soon as material value is added
+
+		simdScore sc=calcMaterialValue();
+		if((sc[0]!=x.material[0]) || (sc[1]!=x.material[1]))
+		{
+			display();
+			sync_cout<<sc[0]<<":"<<x.material[0]<<sync_endl;
+			sync_cout<<sc[1]<<":"<<x.material[1]<<sync_endl;
+			sync_cout<<"material error"<<sync_endl;
+			sync_cout<<(nn?"DO error":"undoError") <<sync_endl;
+			while(1){}
+			return false;
+		}
+		simdScore score = calcNonPawnMaterialValue();
+		if(score[0]!= x.nonPawnMaterial[0] ||
+			score[1]!= x.nonPawnMaterial[1] ||
+			score[2]!= x.nonPawnMaterial[2] ||
+			score[3]!= x.nonPawnMaterial[3]
+		){
+			display();
+			sync_cout<<score[0]<<":"<<x.nonPawnMaterial[0]<<sync_endl;
+			sync_cout<<score[1]<<":"<<x.nonPawnMaterial[1]<<sync_endl;
+			sync_cout<<score[2]<<":"<<x.nonPawnMaterial[2]<<sync_endl;
+			sync_cout<<score[3]<<":"<<x.nonPawnMaterial[3]<<sync_endl;
+			sync_cout<<"non pawn material error"<<sync_endl;
+			sync_cout<<(nn?"DO error":"undoError") <<sync_endl;
+			while(1){}
+			return false;
+		}*/
+		return true;
+	}
+	
+	bool Position::isMoveLegal( const Move& m )const
+	{
+
+		// todo order test base on % of test passing
+		
+		if( m == Move::NOMOVE )
+		{
+			return false;
+		}
+		
+		
+		const baseTypes::bitboardIndex piece = getPieceAt( m.getFrom() ) ;
+		
+		// empty from square
+		if( piece == baseTypes::empty )
+		{
+			return false;
+		}
+
+		// pezzo del colore sbagliato
+		if( isWhiteTurn() ? isBlackPiece( piece ) : isWhitePiece( piece ) )
+		{
+			return false;
+		}
+
+		//casa di destinazione occupata da un nostro pezzo
+		if( getOurBitMap().isSquareSet( m.getTo() ) )
+		{
+			return false;
+		}
+		
+		const GameState& st = getActualStateConst();
+		baseTypes::BitMap checkers = st.getCheckers();
+		
+		// todo il doppio controllo da uno speedup??
+		if( checkers.isNotEmpty() )
+		{
+			//scacco doppio posso solo muovere il re
+			if( checkers.moreThanOneBit() )
+			{
+				if( !isKing( piece ) )
+				{
+					return false;
+				}
+			}
+			// scacco singolo i pezzi che non sono re possono catturare il pezzo attaccante oppure mettersi nel mezzo
+			else 
+			{
+				if( !isKing(piece)
+					&& !(
+						( checkers.isSquareSet( m.getTo() - ( m.isEnPassantMove() ? MoveGenerator::pawnPush( st.getTurn() ) : 0 ) ) ) // cattura
+						|| /*(*/ ( baseTypes::BitMap::getSquaresBetween( getSquareOfMyKing(), checkers.firstOne() ).isSquareSet( m.getTo() ) )/*.isIntersecting( ~getOurBitMap() ) )*/ // pezzo nel mezzo
+					)
+				)
+				{
+					return false;
+				}
+			}
+			
+		}
+
+		if( st.getPinned().isSquareSet( m.getFrom() ) && false == baseTypes::BitMap::areSquaresAligned( m.getFrom(), m.getTo(), getSquareOfMyKing() ) )
+		{
+			return false;
+		}
+		
+		
+		// promozione impossibile!!
+		if ( m.isPromotionMove() && ( ( baseTypes::getRank( m.getFrom() ) != ( st.getTurn() ? baseTypes::seven : baseTypes::two ) ) || !baseTypes::isPawn( piece ) ) )
+		{
+			return false;
+		}
+		
+		// malformed promotion, it should not happens
+		/*if (  false == m.isPromotionMove() && ( m.getPromotionType() != Move::promQueen ) )
+		{
+			return false;
+		}*/
+
+		//arrocco impossibile
+/*		//todo riscrivere in base al chess960 chess frc??
+		if( m.isCastleMove() )
+		{
+			if( !isKing( piece ) || (FILES[m.bit.from]!=FILES[E1]) || (abs(m.bit.from-m.bit.to)!=2 ) || (RANKS[m.bit.from]!=RANKS[A1] && RANKS[m.bit.from]!=RANKS[A8]))
+			{
+				return false;
+			}
+		}*/
+/*
+		//en passant impossibile
+*/		if( m.isEnPassantMove() && ( !isPawn(piece) || ( m.getTo() != st.getEpSquare() ) ) )
+		{
+			return false;
+		}
+
+/*		
+// todo readd all this code
+
+
+		switch(piece)
+		{
+			case Position::whiteKing:
+			case Position::blackKing:
+			{
+				if( m.isCastleMove() )
+				{
+					int color = s.nextMove?1:0;
+					if(!(s.castleRights &  bitSet((tSquare)((((int)m.bit.from-(int)m.bit.to)>0)+2*color)))
+						|| (Movegen::getCastlePath(color,((int)m.bit.from-(int)m.bit.to)>0) & bitBoard[occupiedSquares])
+					)
+					{
+						return false;
+					}
+					if(m.bit.to>m.bit.from)
+					{
+						for(tSquare x=(tSquare)m.bit.from;x<=(tSquare)m.bit.to ;x++){
+							if(getAttackersTo(x,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces])
+							{
+								return false;
+							}
+						}
+					}else{
+						for(tSquare x=(tSquare)m.bit.to;x<=(tSquare)m.bit.from ;x++)
+						{
+							if(getAttackersTo(x,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces])
+							{
+								return false;
+							}
+						}
+					}
+				}
+				else{
+					if(!(Movegen::attackFrom<Position::whiteKing>((tSquare)m.bit.from) &bitSet((tSquare)m.bit.to)) || (bitSet((tSquare)m.bit.to)&Us[Pieces]))
+					{
+						return false;
+					}
+					//king moves should not leave king in check
+					if((getAttackersTo((tSquare)m.bit.to,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces]))
+					{
+						return false;
+					}
+				}
+
+
+
+
+
+			}
+				break;
+
+			case Position::whiteRooks:
+			case Position::blackRooks:
+				assert(m.bit.from<squareNumber);
+				if(!(Movegen::getRookPseudoAttack((tSquare)m.bit.from) & bitSet((tSquare)m.bit.to)) || !(Movegen::attackFrom<Position::whiteRooks>((tSquare)m.bit.from,bitBoard[occupiedSquares])& bitSet((tSquare)m.bit.to)))
+				{
+					return false;
+				}
+				break;
+
+			case Position::whiteQueens:
+			case Position::blackQueens:
+				assert(m.bit.from<squareNumber);
+				if(
+					!(
+						(Movegen::getBishopPseudoAttack((tSquare)m.bit.from) | Movegen::getRookPseudoAttack((tSquare)m.bit.from))
+						& bitSet((tSquare)m.bit.to)
+					)
+					||
+					!(
+						(
+
+							Movegen::attackFrom<Position::whiteBishops>((tSquare)m.bit.from,bitBoard[occupiedSquares])
+							| Movegen::attackFrom<Position::whiteRooks>((tSquare)m.bit.from,bitBoard[occupiedSquares])
+						)
+						& bitSet((tSquare)m.bit.to)
+					)
+				)
+				{
+					return false;
+				}
+				break;
+
+			case Position::whiteBishops:
+			case Position::blackBishops:
+				if(!(Movegen::getBishopPseudoAttack((tSquare)m.bit.from) & bitSet((tSquare)m.bit.to)) || !(Movegen::attackFrom<Position::whiteBishops>((tSquare)m.bit.from,bitBoard[occupiedSquares])& bitSet((tSquare)m.bit.to)))
+				{
+					return false;
+				}
+				break;
+
+			case Position::whiteKnights:
+			case Position::blackKnights:
+				if(!(Movegen::attackFrom<Position::whiteKnights>((tSquare)m.bit.from)& bitSet((tSquare)m.bit.to)))
+				{
+					return false;
+				}
+
+				break;
+
+			case Position::whitePawns:
+
+				if(
+					// not valid pawn push
+					(m.bit.from+pawnPush(s.nextMove)!= m.bit.to || (bitSet((tSquare)m.bit.to)&bitBoard[occupiedSquares]))
+					// not valid pawn double push
+					&& ((m.bit.from+2*pawnPush(s.nextMove)!= m.bit.to) || (RANKS[m.bit.from]!=1) || ((bitSet((tSquare)m.bit.to) | bitSet((tSquare)(m.bit.to-8)))&bitBoard[occupiedSquares]))
+					// not valid pawn attack
+					&& (!(Movegen::attackFrom<Position::whitePawns>((tSquare)m.bit.from)&bitSet((tSquare)m.bit.to)) || !((bitSet((tSquare)m.bit.to)) &(Them[Pieces]|bitSet(s.epSquare))))
+				){
+					return false;
+				}
+				if(RANKS[m.bit.from]==6 && m.bit.flags!=Move::fpromotion){
+					return false;
+
+				}
+				if( m.isEnPassantMove() ){
+
+					bitMap captureSquare= FILEMASK[s.epSquare] & RANKMASK[m.bit.from];
+					bitMap occ= bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet(s.epSquare)^captureSquare;
+					tSquare kingSquare=getSquareOfThePiece((bitboardIndex)(whiteKing+s.nextMove));
+					assert(kingSquare<squareNumber);
+					if((Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Them[Position::Queens] | Them[Position::Rooks]))|
+								(Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Them[Position::Queens] | Them[Position::Bishops])))
+					{
+					return false;
+					}
+				}
+
+				break;
+			case Position::blackPawns:
+				if(
+					// not valid pawn push
+					(m.bit.from+pawnPush(s.nextMove)!= m.bit.to || (bitSet((tSquare)m.bit.to)&bitBoard[occupiedSquares]))
+					// not valid pawn double push
+					&& ((m.bit.from+2*pawnPush(s.nextMove)!= m.bit.to) || (RANKS[m.bit.from]!=6) || ((bitSet((tSquare)m.bit.to) | bitSet((tSquare)(m.bit.to+8)))&bitBoard[occupiedSquares]))
+					// not valid pawn attack
+					&& (!(Movegen::attackFrom<Position::blackPawns>((tSquare)m.bit.from)&bitSet((tSquare)m.bit.to)) || !((bitSet((tSquare)m.bit.to)) &(Them[Position::Pieces]| bitSet(s.epSquare))))
+				){
+					return false;
+				}
+
+				if(RANKS[m.bit.from]==1 && m.bit.flags!=Move::fpromotion){
+					return false;
+
+				}
+				if( m.isEnPassantMove() ){
+					bitMap captureSquare = FILEMASK[s.epSquare] & RANKMASK[m.bit.from];
+					bitMap occ = bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet(s.epSquare)^captureSquare;
+					tSquare kingSquare = getSquareOfThePiece((bitboardIndex)(whiteKing+s.nextMove));
+					assert(kingSquare<squareNumber);
+					if((Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Them[Queens] | Them[Rooks]))|
+								(Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Them[Queens] | Them[Bishops])))
+					{
+					return false;
+					}
+				}
+				break;
+			default:
+				return false;
+
+		}
+
+*/
+		return true;
 	}
 }
