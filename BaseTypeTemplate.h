@@ -30,7 +30,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType& operator++(myType& r)
+		static inline myType& operator++( myType& r )
 		{
 			return r = (myType)( (int)r + 1 );
 		}
@@ -41,7 +41,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType& operator--(myType& r)
+		static inline myType& operator--( myType& r )
 		{
 			return r = (myType)( (int)r - 1 );
 		}
@@ -52,7 +52,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType operator++(myType& r,int)
+		static inline myType operator++( myType& r, int )
 		{
 			myType n = r;
 			++r;
@@ -65,7 +65,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType operator--(myType& r,int)
+		static inline myType operator--( myType& r, int )
 		{
 			myType n = r;
 			--r;
@@ -78,7 +78,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType operator+(const myType d1, const int d2) { return myType( (int)d1 + d2 ); }
+		static inline myType operator+( const myType d1, const int d2 ){ return myType( (int)d1 + d2 ); }
 		
 		/*	\brief operator- for tFile/tRank/tSquare
 			\author Marco Belli
@@ -86,7 +86,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <typename myType>
-		static inline myType operator-(const myType d1, const int d2) { return myType( (int)d1 - d2 ); }
+		static inline myType operator-( const myType d1, const int d2 ){ return myType( (int)d1 - d2 ); }
 
 		/*	\brief operator+= for tFile/tRank/tSquare
 			\author Marco Belli
@@ -94,7 +94,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <class myType>
-		static inline myType& operator+=(myType& d1, const int d2) { d1 = d1 + d2; return d1; }
+		static inline myType& operator+=( myType& d1, const int d2 ){ d1 = d1 + d2; return d1; }
 		
 		/*	\brief operator-= for tFile/tRank/tSquare
 			\author Marco Belli
@@ -102,7 +102,7 @@ namespace libChess
 			\date 20/02/2018
 		*/
 		template <class myType>
-		static inline myType& operator-=(myType& d1, const int d2) { d1 = d1 - d2; return d1; }
+		static inline myType& operator-=( myType& d1, const int d2 ) { d1 = d1 - d2; return d1; }
 		
 		
 		/*	\brief range class used to iterate in for(auto a: range())

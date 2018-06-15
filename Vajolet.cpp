@@ -99,14 +99,14 @@ int main(void)
 	
 	libChess::Position pos;
 	pos.setupFromFen();
-	
+	int i = 1;
 	while(true)
 	{
 		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		long long int tot = 0;
-		tot = perft(pos,7);
+		tot = perft(pos,i++);
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
-		std::cout<<(tot)<<" " <<(end-start) <<"ms "<< (tot/(end-start))<<"mps "<< std::endl;
+		std::cout<<(tot)<<" " <<(end-start) <<"ms "<<((end-start) !=0 ? (tot/(end-start)): 0 )<<" mps "<< std::endl;
 	}
 	
 	

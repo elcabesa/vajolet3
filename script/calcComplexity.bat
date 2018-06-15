@@ -1,1 +1,1 @@
-lizard -l cpp  -x"../.git/*" -x"../Release/*" -x"../ReleaseClang/*" -x"../Debug/*" -x"../DebugClang/*" -x"../build/*" -x"../test/*" .. >complexity.txt
+C:\Users\mabe\AppData\Local\Programs\Python\Python36-32\Scripts\lizard -l cpp  -x"../.git/*" -x"../Release/*" -x"../ReleaseClang/*" -x"../Debug/*" -x"../DebugClang/*" -x"../build/*" -x"../test/*" .. >complexity.txt

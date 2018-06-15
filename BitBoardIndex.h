@@ -51,9 +51,6 @@ namespace libChess
 			blackPawns = 14,				//14	00001110
 			blackPieces = 15,				//15	00001111
 
-
-
-
 			bitboardNumber = 16,
 
 			King = whiteKing,

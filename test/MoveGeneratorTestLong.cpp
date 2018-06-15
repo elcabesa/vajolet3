@@ -78,6 +78,7 @@ namespace {
 				
 				unsigned long long ull = std::stoull (line.substr(start, found-start));
 				unsigned long long int res = perft( pos, ++i);
+				std::cout<<res<<std::endl;
 				ASSERT_EQ(ull, res);
 			}
 

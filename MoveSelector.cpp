@@ -34,9 +34,8 @@ namespace libChess
 			switch( _stagedGeneratorState )
 			{
 				case generateCaptureMoves:
-					// todo generate only capture moves!!
 					_ml = new MoveList< MoveGenerator::maxMovePerPosition >;
-					MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, *_ml );
+					MoveGenerator::generateMoves< MoveGenerator::captureMg >( _pos, *_ml );
 					_ml->ignoreMove( _ttMove );
 
 					// todo readd this line
@@ -44,10 +43,65 @@ namespace libChess
 
 					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
 					break;
+				case generateCaptureEvasionMoves:
+					_ml = new MoveList< MoveGenerator::maxMovePerPosition >;
+					MoveGenerator::generateMoves< MoveGenerator::captureEvasionMg >( _pos, *_ml );
+					_ml->ignoreMove( _ttMove );
+
+					// todo readd killer moves
+					// todo readd this line
+					//scoreCaptureMoves();
+
+					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					break;
+				case generateQuietMoves:
+					_ml->reset();
+					MoveGenerator::generateMoves< MoveGenerator::quietMg >( _pos, *_ml );
+					_ml->ignoreMove( _ttMove );
+					
+					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					
+					break;
+				case generateQuietEvasionMoves:
+
+					_ml->reset();
+					MoveGenerator::generateMoves< MoveGenerator::quietEvasionMg >( _pos, *_ml );
+					_ml->ignoreMove( _ttMove );
+
+					//todo readd this line
+					//scoreQuietEvasion();
+					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+				break;
+				
+				case iterateCaptureEvasionMoves:
+					//todo rifare tutto il codice mancante
+					if( const Move& m = _ml->findNextBestMove(); m != Move::NOMOVE )
+					{
+						return m;
+					}
+					else
+					{
+						_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					}
+					break;
 				case iterateGoodCaptureMoves:
-					return _ml->findNextBestMove();
+					//todo rifare tutto il codice mancante
+					if( const Move& m = _ml->findNextBestMove(); m != Move::NOMOVE )
+					{
+						return m;
+					}
+					else
+					{
+						// todo rimettere _stagedGeneratorState +1 e riunificare i metodi
+						_stagedGeneratorState = generateQuietMoves;
+					}
+					break;
+				case iterateQuietEvasionMoves:
+				case iterateQuietMoves:
+						return _ml->findNextBestMove();
 					break;
 				case getTT:
+				case getTTevasion:
 					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
 
 					if( _pos.isMoveLegal( _ttMove ) )
@@ -61,6 +115,8 @@ namespace libChess
 			}
 		}
 		
+		
+		// todo  da rimuovere????
 		return _ml->findNextBestMove();
 	}
 }

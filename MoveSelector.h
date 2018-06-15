@@ -90,37 +90,45 @@ namespace libChess
 				generateQuietMoves,
 				iterateQuietMoves,
 				iterateBadCaptureMoves,
-				finishedNormalStage,
+				//finishedNormalStage,
 
 				getTTevasion,
 				generateCaptureEvasionMoves,
 				iterateCaptureEvasionMoves,
 				generateQuietEvasionMoves,
 				iterateQuietEvasionMoves,
-				finishedEvasionStage,
+				//finishedEvasionStage,
 
 				getQsearchTT,
 				generateQuiescentMoves,
 				iterateQuiescentMoves,
-				finishedQuiescentStage,
+				//finishedQuiescentStage,
 
 				getProbCutTT,
 				generateProbCutCaptures,
 				iterateProbCutCaptures,
-				finishedProbCutStage,
+				//finishedProbCutStage,
 
 				getQsearchTTquiet,
 				generateQuiescentCaptures,
 				iterateQuiescentCaptures,
 				generateQuietCheks,
 				iterateQuietChecks,
-				finishedQuiescentQuietStage,
+				//finishedQuiescentQuietStage,
 
 			}_stagedGeneratorState;
 	};
 	
-	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr), _stagedGeneratorState( getTT )
+	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr)
 	{	
+		if( pos.isInCheck() )
+		{
+			_stagedGeneratorState = getTTevasion;
+		}
+		else
+		{
+			_stagedGeneratorState = getTT;
+		}
 	}
 	
 	MoveSelector::~MoveSelector()
