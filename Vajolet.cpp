@@ -48,7 +48,7 @@ static void init(void)
 	\version 1.0
 	\date 08/11/2013
 */
-unsigned long long perft(libChess::Position& pos, unsigned int depth)
+/*unsigned long long perft(libChess::Position& pos, unsigned int depth)
 {
 	unsigned long long tot = 0;
 	libChess::MoveSelector ms( pos );
@@ -65,9 +65,9 @@ unsigned long long perft(libChess::Position& pos, unsigned int depth)
 	}
 	return tot;
 
-}
+}*/
 
-unsigned long long divide(libChess::Position& pos, unsigned int depth)
+/*unsigned long long divide(libChess::Position& pos, unsigned int depth)
 {
 
 	if (depth == 0) {
@@ -88,7 +88,7 @@ unsigned long long divide(libChess::Position& pos, unsigned int depth)
 	}
 	return tot;
 
-}
+}*/
 
 
 
@@ -97,7 +97,7 @@ int main(void)
 	setIoBuffers();	
 	init();
 	
-	libChess::Position pos;
+	/*libChess::Position pos;
 	pos.setupFromFen();
 	int i = 1;
 	while(true)
@@ -107,7 +107,7 @@ int main(void)
 		tot = perft(pos,i++);
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		std::cout<<(tot)<<" " <<(end-start) <<"ms "<<((end-start) !=0 ? (tot/(end-start)): 0 )<<" mps "<< std::endl;
-	}
+	}*/
 	
 	
 	
