@@ -33,16 +33,6 @@ namespace libChess
 			|| baseTypes::BitMap::areSquaresAligned( from, to, kingSquare );	// or if the move is along the pinning direction
 	}
 	
-	/*! \brief check whether a king move is legal or not
-	*
-	*	return false whether the destination square is attacked from an opponent piece, considering the king move too.
-	*	return true otherwise
-	*/
-	inline bool MoveGenerator::_checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
-	{
-		return !( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitMap( baseTypes::King ) ).isIntersecting( opponent ) );
-	}
-	
 	/*! \brief generate the moves of a piece type and add it to the movelist
 	*
 
@@ -128,7 +118,7 @@ namespace libChess
 		*/
 		for( const auto& to : moveBitMap )
 		{
-			if( _checkKingAllowedMove( pos, to, occupiedSquares, opponent ) )
+			if( checkKingAllowedMove( pos, to, occupiedSquares, opponent ) )
 			{
 				// todo fare funzione comune??
 				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )

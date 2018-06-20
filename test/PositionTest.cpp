@@ -15,8 +15,11 @@
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
 
+#include <fstream>
 #include "gtest/gtest.h"
+#include "./../tSquare.h"
 #include "./../Position.h"
+#include "./../MoveGenerator.h"
 
 
 
@@ -251,6 +254,155 @@ namespace {
 	
 		
 	}
+    
+    
+    TEST(Position, isMoveLegal1)
+    {
+        Position p;
+        p.setupFromFen();
+        libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+		libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( p, ml );
+        
+        
+        // todo add en passant
+        // todo add en promotions
+        // todo add en castles
+        for( auto from: baseTypes::tSquareRange() )
+        {
+            for( auto to: baseTypes::tSquareRange() )
+            {
+                Move m( from, to );
+                 if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
+                {
+					if( !p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_TRUE( p.isMoveLegal( m ) );
+                }
+                else
+                {
+					if( p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_FALSE( p.isMoveLegal( m ) );
+                }
+            }
+        }
+    }
+	
+	TEST(Position, isMoveLegal2)
+    {
+        Position p;
+        p.setupFromFen();
+		p.doMove( Move( baseTypes::E2, baseTypes::E4 ) );
+        libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+		libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( p, ml );
+        
+        
+        // todo add en passant
+        // todo add en promotions
+        // todo add en castles
+        for( auto from: baseTypes::tSquareRange() )
+        {
+            for( auto to: baseTypes::tSquareRange() )
+            {
+                Move m( from, to );
+                if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
+                {
+					if( !p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_TRUE( p.isMoveLegal( m ) );
+                }
+                else
+                {
+					if( p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_FALSE( p.isMoveLegal( m ) );
+                }
+            }
+        }
+    }
+	
+	TEST(Position, isMoveLegal3)
+    {
+        Position p;
+        p.setupFromFen();
+		p.doMove( Move( baseTypes::E2, baseTypes::E4 ) );
+		p.doMove( Move( baseTypes::D7, baseTypes::D5 ) );
+        libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+		libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( p, ml );
+        
+        
+        // todo add en passant
+        // todo add en promotions
+        // todo add en castles
+        for( auto from: baseTypes::tSquareRange() )
+        {
+            for( auto to: baseTypes::tSquareRange() )
+            {
+                Move m( from, to );
+                
+                if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
+                {
+					if( !p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_TRUE( p.isMoveLegal( m ) );
+                }
+                else
+                {
+					if( p.isMoveLegal( m ) )std::cout<< m.to_string() << std::endl;
+                    ASSERT_FALSE( p.isMoveLegal( m ) );
+                }
+            }
+        }
+    }
+	
+	TEST(Position, isMoveLegal4)
+	{
+		
+		std::ifstream infile("perft.txt");
+		
+		ASSERT_FALSE(infile.fail());
+		
+		Position pos;
+		
+		std::string line;
+		
+		while (std::getline(infile, line))
+		{
+			std::size_t found = line.find_first_of(",");
+			std::string fen = line.substr(0, found);
+			pos.setupFromFen( fen ); 
+			
+			libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+			libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
+
+			// todo add en passant
+			// todo add en promotions
+			// todo add en castles
+			for( auto from: baseTypes::tSquareRange() )
+			{
+				for( auto to: baseTypes::tSquareRange() )
+				{
+					Move m( from, to );
+					
+					if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
+					{
+						if( !pos.isMoveLegal( m ) )
+						{
+							std::cout<< pos.display() <<std::endl;
+							std::cout<< m.to_string() << std::endl;
+						}
+						ASSERT_TRUE( pos.isMoveLegal( m ) );
+					}
+					else
+					{
+						if( pos.isMoveLegal( m ) )
+						{
+							std::cout<< pos.display() <<std::endl;
+							std::cout<< m.to_string() << std::endl;
+						}
+						ASSERT_FALSE( pos.isMoveLegal( m ) );
+					}
+				}
+			}
+
+		}
+	}
+    
 	
 	
 }

@@ -60,8 +60,9 @@ namespace libChess
 		static const baseTypes::BitMap& getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap& getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
-		static const baseTypes::BitMap& getRookPseudoMoves( const baseTypes::tSquare& from);
-		static const baseTypes::BitMap& getBishopPseudoMoves( const baseTypes::tSquare& from);
+		static const baseTypes::BitMap& getRookPseudoMoves( const baseTypes::tSquare& from );
+		static const baseTypes::BitMap& getBishopPseudoMoves( const baseTypes::tSquare& from );
+        static const baseTypes::BitMap getQueenPseudoMoves( const baseTypes::tSquare& from );
 		
 		static const baseTypes::BitMap getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& target );
@@ -208,6 +209,16 @@ namespace libChess
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopPseudoMoves( const baseTypes::tSquare& from)
 	{
 		return *( _magicMovesBindices [ from ]  );
+	}
+    
+    /*	\brief return the bitmap with the queen moves from the from square with an open board
+		\author Marco Belli
+		\version 1.0
+		\date 20/06/2018
+	*/
+    inline const baseTypes::BitMap BitMapMoveGenerator::getQueenPseudoMoves( const baseTypes::tSquare& from)
+	{
+		return getBishopPseudoMoves( from ) + getRookPseudoMoves( from );
 	}
 	
 	/*	\brief return the bitmap with all the pawn push moves for the selectoed color with the given occupation

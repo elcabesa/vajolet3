@@ -1892,25 +1892,29 @@ namespace libChess
 				return false;
 			}
 		}*/
-/*
+
 		//en passant impossibile
-*/		if( m.isEnPassantMove() && ( !isPawn(piece) || ( m.getTo() != st.getEpSquare() ) ) )
+		if( m.isEnPassantMove() && ( !isPawn(piece) || ( m.getTo() != st.getEpSquare() ) ) )
 		{
 			return false;
 		}
 
-/*		
-// todo readd all this code
+		//en passant impossibile
+		if( !m.isEnPassantMove()  && isPawn(piece) && ( m.getTo() == st.getEpSquare() ) )
+		{
+			return false;
+		}
+
 
 
 		switch(piece)
 		{
-			case Position::whiteKing:
-			case Position::blackKing:
-			{
+			case baseTypes::whiteKing:
+			case baseTypes::blackKing:
+
 				if( m.isCastleMove() )
 				{
-					int color = s.nextMove?1:0;
+					/*int color = s.nextMove?1:0;
 					if(!(s.castleRights &  bitSet((tSquare)((((int)m.bit.from-(int)m.bit.to)>0)+2*color)))
 						|| (Movegen::getCastlePath(color,((int)m.bit.from-(int)m.bit.to)>0) & bitBoard[occupiedSquares])
 					)
@@ -1933,91 +1937,73 @@ namespace libChess
 								return false;
 							}
 						}
-					}
+					}*/
 				}
-				else{
-					if(!(Movegen::attackFrom<Position::whiteKing>((tSquare)m.bit.from) &bitSet((tSquare)m.bit.to)) || (bitSet((tSquare)m.bit.to)&Us[Pieces]))
+				else
+				{
+					// valid move
+					// todo is faster only to control that distance between from and to is lessa than 2?
+					if( !( BitMapMoveGenerator::getKingMoves( m.getFrom() ).isSquareSet( m.getTo() ) ) /*|| getOurBitMap().isSquareSet( m.getTo() )*/ ) /*già calcolato*/
 					{
 						return false;
 					}
-					//king moves should not leave king in check
-					if((getAttackersTo((tSquare)m.bit.to,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces]))
+					// king moves should not leave king in check
+					if( !MoveGenerator::checkKingAllowedMove( *this, m.getTo(), getOccupationBitMap(), getTheirBitMap() ) )
 					{
 						return false;
 					}
 				}
-
-
-
-
-
-			}
 				break;
 
-			case Position::whiteRooks:
-			case Position::blackRooks:
-				assert(m.bit.from<squareNumber);
-				if(!(Movegen::getRookPseudoAttack((tSquare)m.bit.from) & bitSet((tSquare)m.bit.to)) || !(Movegen::attackFrom<Position::whiteRooks>((tSquare)m.bit.from,bitBoard[occupiedSquares])& bitSet((tSquare)m.bit.to)))
-				{
-					return false;
-				}
+			case baseTypes::whiteRooks:
+			case baseTypes::blackRooks:
+                return 
+                    ( BitMapMoveGenerator::getRookPseudoMoves( m.getFrom() ).isSquareSet( m.getTo() ) ) 
+                    && ( BitMapMoveGenerator::getRookMoves( m.getFrom(), getOccupationBitMap() ).isSquareSet( m.getTo() ) );
 				break;
 
-			case Position::whiteQueens:
-			case Position::blackQueens:
-				assert(m.bit.from<squareNumber);
-				if(
-					!(
-						(Movegen::getBishopPseudoAttack((tSquare)m.bit.from) | Movegen::getRookPseudoAttack((tSquare)m.bit.from))
-						& bitSet((tSquare)m.bit.to)
+			case baseTypes::whiteQueens:
+			case baseTypes::blackQueens:
+				return 
+                    ( BitMapMoveGenerator::getQueenPseudoMoves( m.getFrom() ).isSquareSet( m.getTo() ) ) 
+                    && ( BitMapMoveGenerator::getQueenMoves( m.getFrom(), getOccupationBitMap() ).isSquareSet( m.getTo() ) );
+				break;
+
+			case baseTypes::whiteBishops:
+			case baseTypes::blackBishops:
+                return 
+                    ( BitMapMoveGenerator::getBishopPseudoMoves( m.getFrom() ).isSquareSet( m.getTo() ) ) 
+                    && ( BitMapMoveGenerator::getBishopMoves( m.getFrom(), getOccupationBitMap() ).isSquareSet( m.getTo() ) );
+				break;
+
+			case baseTypes::whiteKnights:
+			case baseTypes::blackKnights:
+				return BitMapMoveGenerator::getKnightMoves( m.getFrom() ).isSquareSet( m.getTo() );
+                
+
+			case baseTypes::whitePawns:
+                if( 
+                    // not valid pawn push
+                    ( m.getFrom() + MoveGenerator::pawnPush(baseTypes::whiteTurn) != m.getTo() || getOccupationBitMap().isSquareSet( m.getTo() ) )
+                    // not valid pawn double push
+                    && ( 
+						m.getFrom() + MoveGenerator::pawnDoublePush( baseTypes::whiteTurn ) != m.getTo() 
+						|| baseTypes::getRank( m.getFrom() ) != baseTypes::two
+						|| getOccupationBitMap().isSquareSet( m.getTo() )
+						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::whiteTurn) ) 
 					)
-					||
-					!(
-						(
-
-							Movegen::attackFrom<Position::whiteBishops>((tSquare)m.bit.from,bitBoard[occupiedSquares])
-							| Movegen::attackFrom<Position::whiteRooks>((tSquare)m.bit.from,bitBoard[occupiedSquares])
-						)
-						& bitSet((tSquare)m.bit.to)
-					)
-				)
-				{
-					return false;
-				}
-				break;
-
-			case Position::whiteBishops:
-			case Position::blackBishops:
-				if(!(Movegen::getBishopPseudoAttack((tSquare)m.bit.from) & bitSet((tSquare)m.bit.to)) || !(Movegen::attackFrom<Position::whiteBishops>((tSquare)m.bit.from,bitBoard[occupiedSquares])& bitSet((tSquare)m.bit.to)))
-				{
-					return false;
-				}
-				break;
-
-			case Position::whiteKnights:
-			case Position::blackKnights:
-				if(!(Movegen::attackFrom<Position::whiteKnights>((tSquare)m.bit.from)& bitSet((tSquare)m.bit.to)))
-				{
-					return false;
-				}
-
-				break;
-
-			case Position::whitePawns:
-
-				if(
-					// not valid pawn push
-					(m.bit.from+pawnPush(s.nextMove)!= m.bit.to || (bitSet((tSquare)m.bit.to)&bitBoard[occupiedSquares]))
-					// not valid pawn double push
-					&& ((m.bit.from+2*pawnPush(s.nextMove)!= m.bit.to) || (RANKS[m.bit.from]!=1) || ((bitSet((tSquare)m.bit.to) | bitSet((tSquare)(m.bit.to-8)))&bitBoard[occupiedSquares]))
 					// not valid pawn attack
-					&& (!(Movegen::attackFrom<Position::whitePawns>((tSquare)m.bit.from)&bitSet((tSquare)m.bit.to)) || !((bitSet((tSquare)m.bit.to)) &(Them[Pieces]|bitSet(s.epSquare))))
-				){
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::white ) & ( getTheirBitMap() + st.getEpSquare() ) ).isSquareSet( m.getTo() ) )
+                )
+                {
+                    return false;
+                }
+
+				if( !m.isPromotionMove() && ( baseTypes::getRank( m.getFrom() ) == baseTypes::seven ) )
+				{
 					return false;
 				}
-				if(RANKS[m.bit.from]==6 && m.bit.flags!=Move::fpromotion){
-					return false;
-
+/*
 				}
 				if( m.isEnPassantMove() ){
 
@@ -2031,24 +2017,32 @@ namespace libChess
 					return false;
 					}
 				}
-
+*/
 				break;
-			case Position::blackPawns:
-				if(
-					// not valid pawn push
-					(m.bit.from+pawnPush(s.nextMove)!= m.bit.to || (bitSet((tSquare)m.bit.to)&bitBoard[occupiedSquares]))
-					// not valid pawn double push
-					&& ((m.bit.from+2*pawnPush(s.nextMove)!= m.bit.to) || (RANKS[m.bit.from]!=6) || ((bitSet((tSquare)m.bit.to) | bitSet((tSquare)(m.bit.to+8)))&bitBoard[occupiedSquares]))
+			case baseTypes::blackPawns:
+				if( 
+                    // not valid pawn push
+                    ( m.getFrom() + MoveGenerator::pawnPush(baseTypes::blackTurn) != m.getTo() || getOccupationBitMap().isSquareSet( m.getTo() ) )
+                    // not valid pawn double push
+                    && (
+						m.getFrom() + MoveGenerator::pawnDoublePush(baseTypes::blackTurn) != m.getTo()
+						|| baseTypes::getRank( m.getFrom() ) != baseTypes::seven
+						|| getOccupationBitMap().isSquareSet( m.getTo() )
+						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::blackTurn) )
+					)
 					// not valid pawn attack
-					&& (!(Movegen::attackFrom<Position::blackPawns>((tSquare)m.bit.from)&bitSet((tSquare)m.bit.to)) || !((bitSet((tSquare)m.bit.to)) &(Them[Position::Pieces]| bitSet(s.epSquare))))
-				){
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::black ) & ( getTheirBitMap() + st.getEpSquare() ) ).isSquareSet( m.getTo() ) )
+                )
+                {
+                    return false;
+                }
+				
+				if( !m.isPromotionMove() && ( baseTypes::getRank( m.getFrom() ) == baseTypes::two ) )
+				{
 					return false;
 				}
+/*				
 
-				if(RANKS[m.bit.from]==1 && m.bit.flags!=Move::fpromotion){
-					return false;
-
-				}
 				if( m.isEnPassantMove() ){
 					bitMap captureSquare = FILEMASK[s.epSquare] & RANKMASK[m.bit.from];
 					bitMap occ = bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet(s.epSquare)^captureSquare;
@@ -2060,13 +2054,12 @@ namespace libChess
 					return false;
 					}
 				}
+                */
 				break;
 			default:
 				return false;
 
 		}
-
-*/
 		return true;
 	}
 }
