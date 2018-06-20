@@ -77,8 +77,6 @@ namespace libChess
 			friend BitMap operator <<( BitMap lhs, const unsigned int shift ){ return lhs <<= shift; }
 			friend BitMap operator >>( BitMap lhs, const unsigned int shift ){ return lhs >>= shift; }
 			
-
-			
 			friend BitMap operator~( BitMap lhs ){ lhs._b = ~lhs._b; return lhs; }
 			
 			/*****************************************************************

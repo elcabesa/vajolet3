@@ -93,28 +93,46 @@ namespace libChess
 		/*****************************************************************
 		*	static methods
 		******************************************************************/
-		static void _initHelper( baseTypes::BitMap * const b, std::list<std::pair<int,int>> directions );
+		static void _initHelper( baseTypes::BitMap * const b, const std::list<std::pair<int,int>> directions );
 		static baseTypes::BitMap _mapLinearOccToBitmap( const baseTypes::BitMap& moves, const baseTypes::BitMap& linOcc );
-		static baseTypes::BitMap _generateMoveBitMapHelper( baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement);
-		static baseTypes::BitMap _generateRookMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
-		static baseTypes::BitMap _generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
+		static baseTypes::BitMap _generateMoveBitMapHelper( const baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement);
+		static baseTypes::BitMap _generateRookMoveBitMap( const baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
+		static baseTypes::BitMap _generateBishopMoveBitMap( const baseTypes::tSquare sq,  const baseTypes::BitMap& occ );
 		
+		// helper methods used to populate the magic tables
+		template <baseTypes::BitMap& (*get)( const baseTypes::tSquare, const baseTypes::BitMap&), baseTypes::BitMap (*gen)( baseTypes::tSquare,  const baseTypes::BitMap& )>
+		static void _initializeMagic( const baseTypes::BitMap (&bitMask)[ baseTypes::squareNumber ] );
 		static baseTypes::BitMap& _getBishopMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );
 		static baseTypes::BitMap& _getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy );		
 	};
 	
+	/*	\brief return the bitmap with the king moves from the from square
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getKingMoves( const baseTypes::tSquare& from )
 	{
 		assert(from < baseTypes::squareNumber);
 		return _kingMoveBitmap[ from ];
 	}
 	
+	/*	\brief return the bitmap with the knight moves from the from square
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getKnightMoves( const baseTypes::tSquare& from )
 	{
 		assert(from < baseTypes::squareNumber);
 		return _knightMoveBitmap[ from ];
 	}
 	
+	/*	\brief return the bitmap with the pawns attacks from the from square from the point of view ot the selected color
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getPawnAttack( const baseTypes::tSquare& from, const baseTypes::tColor color )
 	{
 		assert(from < baseTypes::squareNumber);
@@ -122,47 +140,101 @@ namespace libChess
 		return _pawnsAttackBitmap[ color ][ from ];
 	}
 	
+	/*	\brief return the const bitmap with the rooks moves from the from square with the given board occupancy
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/	
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
 	{
 		return _getRookMoves( from, occupancy );
 	}
+	
+	/*	\brief return the const bitmap with the bishop moves from the from square with the given board occupancy
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/	
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
 	{
 		return _getBishopMoves( from, occupancy );
 	}
+	
+	/*	\brief return the bitmap with the queen moves from the from square with the given board occupancy
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/	
 	inline const baseTypes::BitMap BitMapMoveGenerator::getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy )
 	{
 		return _getRookMoves( from, occupancy ) + _getBishopMoves( from, occupancy );
 	}
 	
+	/*	\brief return the reference bitmap with the bishop moves from the from square with the given board occupancy ( used in inizialization phase)
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/	
 	inline baseTypes::BitMap& BitMapMoveGenerator::_getBishopMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy )
 	{
 		return *( _magicMovesBindices [ sq ] + ( ( ( occupancy & _magicMovesBmask[ sq ] ).getInternalRepresentation() * _magicMovesBmagics[ sq ] ) >> _magicMovesBshift[ sq ] ) );
 	}
+	
+	/*	\brief return the reference bitmap with the rooks moves from the from square with the given board occupancy ( used in inizialization phase)
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/	
 	inline baseTypes::BitMap& BitMapMoveGenerator::_getRookMoves( const baseTypes::tSquare sq, const baseTypes::BitMap& occupancy )
 	{
 		return *( _magicMovesRindices [ sq ] + ( ( ( occupancy & _magicMovesRmask[ sq ] ).getInternalRepresentation() * _magicMovesRmagics[ sq ] ) >> _magicMovesRshift[ sq ] ) );
 	}
 	
+	/*	\brief return the bitmap with the rooks moves from the from square with an open board
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getRookPseudoMoves( const baseTypes::tSquare& from)
 	{
 		return *( _magicMovesRindices [ from ]  );
 	}
+	
+	/*	\brief return the bitmap with the bishop moves from the from square with an open board
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap& BitMapMoveGenerator::getBishopPseudoMoves( const baseTypes::tSquare& from)
 	{
 		return *( _magicMovesBindices [ from ]  );
 	}
 	
+	/*	\brief return the bitmap with all the pawn push moves for the selectoed color with the given occupation
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& occupancy )
 	{
 		return ( ( turn == baseTypes::whiteTurn ) ? (b << 8) : (b >> 8) ) & ~occupancy ;
 	}
 	
+	/*	\brief return the bitmap with all the pawn left captures for the selectoed color with the given occupation
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& target )
 	{
 		return ( ( turn == baseTypes::whiteTurn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) << 7 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) >> 9 ) ) & target;	
 	}
 	
+	/*	\brief return the bitmap with all the pawn right captures for the selectoed color with the given occupation
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& target )
 	{
 		return ( ( turn == baseTypes::whiteTurn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	

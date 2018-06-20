@@ -39,66 +39,90 @@
 
 namespace libChess
 {
+	/*	\brief init the magic bitmap move generator
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
 	void BitMapMoveGenerator::init(void)
 	{
-		// KING attacks;
-		const std::list<std::pair<int,int>> kDirections = { {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1} };
-		_initHelper( _kingMoveBitmap, kDirections );
+		/*********************************************
+		* Define the list of pieces bitboard to be filled , and the move associated with each piece
+		**********************************************/
+		struct initializer{
+			baseTypes::BitMap (&piece)[ baseTypes::squareNumber ];	// array of bitmap to be filled
+			const std::list<std::pair<int,int>> moves;				// list of piece moves
+		};
 		
-		// KNIGHT attacks;
-		const std::list<std::pair<int,int>> nDirections = { {-2,1}, {-2,-1}, {2,1}, {2,-1}, {1,2}, {1,-2}, {-1,2}, {-1,-2} };
-		_initHelper( _knightMoveBitmap, nDirections );
-		
-		// PAWNS attacks
-		const std::list<std::pair<int,int>> wpDirections = { {-1,1}, {1,1} };
-		_initHelper( _pawnsAttackBitmap[ baseTypes::white ], wpDirections );
-		const std::list<std::pair<int,int>> bpDirections = { {-1,-1}, {1,-1} };
-		_initHelper( _pawnsAttackBitmap[ baseTypes::black ], bpDirections );
-	
-		
-		
-		// BISHOP attacks
-		for ( const auto square : baseTypes::tSquareRange() )
+		const std::list<struct initializer> initializerList =
 		{
-			baseTypes::BitMap mask = _magicMovesBmask[ square ];
-			
-			const int maxOcc = 1 << mask.bitCnt();
-			
-			for( int linearOcc = 0; linearOcc < maxOcc; ++linearOcc )
-			{
-				baseTypes::BitMap occ = _mapLinearOccToBitmap( mask, baseTypes::BitMap( linearOcc ) );
-				baseTypes::BitMap& moves = _getBishopMoves( square, occ );
-				moves = _generateBishopMoveBitMap( square, occ );
-			}
+			{ _kingMoveBitmap,   { {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1} } }, 	// king
+			{ _knightMoveBitmap, { {-2,1}, {-2,-1}, {2,1}, {2,-1}, {1,2}, {1,-2}, {-1,2}, {-1,-2} } },	// knight
+			{ _pawnsAttackBitmap[ baseTypes::white ], { {-1,1}, {1,1} } },								// white pawn capture
+			{ _pawnsAttackBitmap[ baseTypes::black ], { {-1,-1}, {1,-1} } }								// black pawn capture
+		};
+		
+		/*********************************************
+		* initialize the standard bitboards
+		**********************************************/
+		for( const auto& it: initializerList )
+		{
+			_initHelper( it.piece, it.moves );
 		}
 		
-		// ROOK attacks
-		for ( const auto square : baseTypes::tSquareRange() )
-		{
-			baseTypes::BitMap mask = _magicMovesRmask[ square ];
-			
-			const int maxOcc = 1 << mask.bitCnt();
-			
-			for( int linearOcc = 0; linearOcc < maxOcc; ++linearOcc )
-			{
-				baseTypes::BitMap occ = _mapLinearOccToBitmap( mask, baseTypes::BitMap( linearOcc ) );
-				baseTypes::BitMap& moves = _getRookMoves( square, occ );
-				moves = _generateRookMoveBitMap( square, occ );
-			}
-		}
-		
+		/*********************************************
+		* initialize the magic bitboards
+		**********************************************/
+		_initializeMagic<_getBishopMoves,_generateBishopMoveBitMap>(_magicMovesBmask);
+		_initializeMagic<_getRookMoves,_generateRookMoveBitMap>(_magicMovesRmask);
 	}
 	
-	baseTypes::BitMap BitMapMoveGenerator::_mapLinearOccToBitmap( const baseTypes::BitMap& moves, const baseTypes::BitMap& linOcc )
+	/*	\brief helper function to populate the magic bibtboards
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
+	template <baseTypes::BitMap& (*get)( const baseTypes::tSquare, const baseTypes::BitMap&), baseTypes::BitMap (*gen)( baseTypes::tSquare,  const baseTypes::BitMap& )>
+	void BitMapMoveGenerator::_initializeMagic( const baseTypes::BitMap (&bitMask)[ baseTypes::squareNumber ] )
 	{
-		// map a a linear occupancy on the relevant bits of moves BitMap.
-		
+		// populate every square
+		for ( const auto square : baseTypes::tSquareRange() )
+		{
+			// get the mask
+			baseTypes::BitMap mask = bitMask[ square ];
+			
+			// iterate all the possibile configuration of the occupancy
+			const int maxOcc = 1 << mask.bitCnt();
+			for( int linearOcc = 0; linearOcc < maxOcc; ++linearOcc )
+			{
+				baseTypes::BitMap occ = _mapLinearOccToBitmap( mask, baseTypes::BitMap( linearOcc ) );
+				// get the index of the bitmap to populate...
+				baseTypes::BitMap& moves = get( square, occ );
+				// ... and populate it
+				moves = gen( square, occ );
+			}
+		}
+	}
+	
+	
+	/*	\brief helper function that map a linear occupation to the mask to generate a real board occupation
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
+	baseTypes::BitMap BitMapMoveGenerator::_mapLinearOccToBitmap( const baseTypes::BitMap& mask, const baseTypes::BitMap& linOcc )
+	{
+
 		baseTypes::BitMap occ(0);
 		baseTypes::tSquare i = baseTypes::A1;
-		for( const auto sq : moves )
+		
+		// for every bit of the mask ...
+		for( const auto sq : mask )
 		{
+			// ... if the relevant bit of the linear occupancy is set
 			if( linOcc.isSquareSet( i ) )
 			{
+				// set the equivalente bit of the mask
 				occ += sq;
 			}
 			++i;
@@ -106,7 +130,12 @@ namespace libChess
 		return occ;
 	}
 	
-	baseTypes::BitMap BitMapMoveGenerator::_generateMoveBitMapHelper( baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement)
+	/*	\brief helper function that map a linear occupation to the mask to generate a real board occupation
+		\author Marco Belli
+		\version 1.0
+		\date 15/06/2018
+	*/
+	baseTypes::BitMap BitMapMoveGenerator::_generateMoveBitMapHelper( const baseTypes::tSquare sq, const baseTypes::BitMap& occ, const int fileIncrement, const int rankIncrement)
 	{
 		baseTypes::BitMap moves(0);
 		const baseTypes::tFile file = getFile( sq );
@@ -132,7 +161,7 @@ namespace libChess
 		
 	}
 	
-	baseTypes::BitMap BitMapMoveGenerator::_generateRookMoveBitMap( baseTypes::tSquare sq, const baseTypes::BitMap& occ )
+	baseTypes::BitMap BitMapMoveGenerator::_generateRookMoveBitMap( const baseTypes::tSquare sq, const baseTypes::BitMap& occ )
 	{
 		baseTypes::BitMap moves(0);
 		
@@ -144,7 +173,7 @@ namespace libChess
 		return moves;
 	}
 	
-	baseTypes::BitMap BitMapMoveGenerator::_generateBishopMoveBitMap( baseTypes::tSquare sq,  const baseTypes::BitMap& occ )
+	baseTypes::BitMap BitMapMoveGenerator::_generateBishopMoveBitMap( const baseTypes::tSquare sq,  const baseTypes::BitMap& occ )
 	{
 		baseTypes::BitMap moves(0);
 		
@@ -156,7 +185,7 @@ namespace libChess
 		return moves;
 	}
 
-	void BitMapMoveGenerator::_initHelper( baseTypes::BitMap * const b, std::list<std::pair<int,int>> directions )
+	void BitMapMoveGenerator::_initHelper( baseTypes::BitMap * const b, const std::list<std::pair<int,int>> directions )
 	{
 		for ( const auto square : baseTypes::tSquareRange() )
 		{
