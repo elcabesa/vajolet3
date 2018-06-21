@@ -1993,7 +1993,7 @@ namespace libChess
 						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::whiteTurn) ) 
 					)
 					// not valid pawn attack
-					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::white ) & ( getTheirBitMap() + st.getEpSquare() ) ).isSquareSet( m.getTo() ) )
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::white ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
                 )
                 {
                     return false;
@@ -2031,7 +2031,7 @@ namespace libChess
 						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::blackTurn) )
 					)
 					// not valid pawn attack
-					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::black ) & ( getTheirBitMap() + st.getEpSquare() ) ).isSquareSet( m.getTo() ) )
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::black ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
                 )
                 {
                     return false;
