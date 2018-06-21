@@ -81,14 +81,12 @@ namespace libChess
 		static bool isPawnDoublePush( const baseTypes::tSquare from, const baseTypes::tSquare to );
 		
 		template< genType mgType > static void generateMoves( const Position& pos, MoveList< maxMovePerPosition >& ml );
-		
-		static bool checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent );
-	
+        
 	private:
 		static bool _checkAllowedMove( const baseTypes::tSquare from, const baseTypes::tSquare to, const baseTypes::tSquare kingSquare, const GameState& st );
 		
 		template< baseTypes::bitboardIndex pieceType, genType mgType > static void _generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml );
-		template< MoveGenerator::genType mgType > static void _generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml );
+		template< MoveGenerator::genType mgType > static void _generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& target, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml );
 		template< MoveGenerator::genType mgType > static void _generateCastleMove( const Position& pos, const GameState& st,  const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml );
@@ -138,10 +136,10 @@ namespace libChess
 	*	return false whether the destination square is attacked from an opponent piece, considering the king move too.
 	*	return true otherwise
 	*/
-	inline bool MoveGenerator::checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
+	/*inline bool MoveGenerator::checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
 	{
 		return !( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitMap( baseTypes::King ) ).isIntersecting( opponent ) );
-	}
+	}*/
 	
 	
 	

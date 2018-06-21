@@ -103,7 +103,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const baseTypes::BitMap& opponent, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& target, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
@@ -118,7 +118,7 @@ namespace libChess
 		*/
 		for( const auto& to : moveBitMap )
 		{
-			if( checkKingAllowedMove( pos, to, occupiedSquares, opponent ) )
+			if( pos.checkKingAllowedMove( to) )
 			{
 				// todo fare funzione comune??
 				if( mgType != MoveGenerator::quietChecksMg || pos.moveGivesCheck( m ) )
@@ -347,7 +347,7 @@ namespace libChess
 		//------------------------------------------------------
 		
 		baseTypes::bitboardIndex piece = pos.getMyPiece( baseTypes::King );
-		_generateKingMoves< mgType >( pos, kingSquare, occupiedSquares, kingTarget, opponent, ml );
+		_generateKingMoves< mgType >( pos, kingSquare, kingTarget, ml );
 		
 		//-----------------------------------------------------------------------------------------------
 		// if the king is in check from 2 enemy, it can only run away, we should not search any other move

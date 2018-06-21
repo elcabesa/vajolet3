@@ -1872,7 +1872,7 @@ namespace libChess
 		
 		
 		// promozione impossibile!!
-		if ( m.isPromotionMove() && ( ( baseTypes::getRank( m.getFrom() ) != ( st.getTurn() ? baseTypes::seven : baseTypes::two ) ) || !baseTypes::isPawn( piece ) ) )
+		if ( m.isPromotionMove() && ( ( baseTypes::getRank( m.getFrom() ) != ( st.getTurn() == baseTypes::whiteTurn ? baseTypes::seven : baseTypes::two ) ) || !baseTypes::isPawn( piece ) ) )
 		{
 			return false;
 		}
@@ -1948,7 +1948,7 @@ namespace libChess
 						return false;
 					}
 					// king moves should not leave king in check
-					if( !MoveGenerator::checkKingAllowedMove( *this, m.getTo(), getOccupationBitMap(), getTheirBitMap() ) )
+					if( !checkKingAllowedMove( m.getTo() ) )
 					{
 						return false;
 					}
@@ -1982,79 +1982,58 @@ namespace libChess
                 
 
 			case baseTypes::whitePawns:
+            case baseTypes::blackPawns:  
+            {
+                baseTypes::eTurn turn = ( piece == baseTypes::whitePawns ? baseTypes::whiteTurn : baseTypes::blackTurn );
+                baseTypes::tRank relativeSecondRank = ( piece == baseTypes::whitePawns ? baseTypes::two : baseTypes::seven );
+                baseTypes::tRank relativeSeventhRank = ( piece == baseTypes::whitePawns ? baseTypes::seven : baseTypes::two );
+                baseTypes::tColor color = ( piece == baseTypes::whitePawns ? baseTypes::white : baseTypes::black );
+                baseTypes::tSquare direction = ( piece == baseTypes::whitePawns ? baseTypes::sud : baseTypes::north );
+                
                 if( 
                     // not valid pawn push
-                    ( m.getFrom() + MoveGenerator::pawnPush(baseTypes::whiteTurn) != m.getTo() || getOccupationBitMap().isSquareSet( m.getTo() ) )
+                    ( m.getFrom() + MoveGenerator::pawnPush( turn ) != m.getTo() || getOccupationBitMap().isSquareSet( m.getTo() ) )
                     // not valid pawn double push
                     && ( 
-						m.getFrom() + MoveGenerator::pawnDoublePush( baseTypes::whiteTurn ) != m.getTo() 
-						|| baseTypes::getRank( m.getFrom() ) != baseTypes::two
+						m.getFrom() + MoveGenerator::pawnDoublePush( turn ) != m.getTo() 
+						|| baseTypes::getRank( m.getFrom() ) != relativeSecondRank
 						|| getOccupationBitMap().isSquareSet( m.getTo() )
-						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::whiteTurn) ) 
+						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush( turn ) ) 
 					)
 					// not valid pawn attack
-					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::white ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), color ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
                 )
                 {
                     return false;
                 }
 
-				if( !m.isPromotionMove() && ( baseTypes::getRank( m.getFrom() ) == baseTypes::seven ) )
+                // sevent rank moves must be promotions
+				if( !m.isPromotionMove() && ( baseTypes::getRank( m.getFrom() ) == relativeSeventhRank ) )
 				{
 					return false;
 				}
-/*
-				}
-				if( m.isEnPassantMove() ){
-
-					bitMap captureSquare= FILEMASK[s.epSquare] & RANKMASK[m.bit.from];
-					bitMap occ= bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet(s.epSquare)^captureSquare;
-					tSquare kingSquare=getSquareOfThePiece((bitboardIndex)(whiteKing+s.nextMove));
-					assert(kingSquare<squareNumber);
-					if((Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Them[Position::Queens] | Them[Position::Rooks]))|
-								(Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Them[Position::Queens] | Them[Position::Bishops])))
-					{
-					return false;
-					}
-				}
-*/
-				break;
-			case baseTypes::blackPawns:
-				if( 
-                    // not valid pawn push
-                    ( m.getFrom() + MoveGenerator::pawnPush(baseTypes::blackTurn) != m.getTo() || getOccupationBitMap().isSquareSet( m.getTo() ) )
-                    // not valid pawn double push
-                    && (
-						m.getFrom() + MoveGenerator::pawnDoublePush(baseTypes::blackTurn) != m.getTo()
-						|| baseTypes::getRank( m.getFrom() ) != baseTypes::seven
-						|| getOccupationBitMap().isSquareSet( m.getTo() )
-						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush(baseTypes::blackTurn) )
-					)
-					// not valid pawn attack
-					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), baseTypes::black ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
-                )
+                
+                // en passant moves must not leave the king in check
+				if( m.isEnPassantMove() )
                 {
-                    return false;
-                }
-				
-				if( !m.isPromotionMove() && ( baseTypes::getRank( m.getFrom() ) == baseTypes::two ) )
-				{
-					return false;
+					const baseTypes::tSquare captureSquare = st.getEpSquare() + direction;
+                    const baseTypes::BitMap occ = ( ( getOccupationBitMap() ^ m.getFrom() ) ^ st.getEpSquare() ) ^ captureSquare;
+                    const baseTypes::tSquare kingSquare = getSquareOfMyKing();
+                    
+                    if( 
+                        (
+                            /* test for horizontal/vertical discovery*/
+                            ( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & getTheirQRSlidingBitMap() )
+                            +
+                            /* test for diagonal discovery*/
+                            ( BitMapMoveGenerator::getBishopMoves( kingSquare, occ ) & getTheirQBSlidingBitMap() ) 
+                        ).isEmpty()
+                    )
+                    {
+                        return false;
+                    }
 				}
-/*				
-
-				if( m.isEnPassantMove() ){
-					bitMap captureSquare = FILEMASK[s.epSquare] & RANKMASK[m.bit.from];
-					bitMap occ = bitBoard[occupiedSquares]^bitSet((tSquare)m.bit.from)^bitSet(s.epSquare)^captureSquare;
-					tSquare kingSquare = getSquareOfThePiece((bitboardIndex)(whiteKing+s.nextMove));
-					assert(kingSquare<squareNumber);
-					if((Movegen::attackFrom<Position::whiteRooks>(kingSquare, occ) & (Them[Queens] | Them[Rooks]))|
-								(Movegen::attackFrom<Position::whiteBishops>(kingSquare, occ) & (Them[Queens] | Them[Bishops])))
-					{
-					return false;
-					}
-				}
-                */
+            }
 				break;
 			default:
 				return false;
@@ -2062,4 +2041,13 @@ namespace libChess
 		}
 		return true;
 	}
+    
+    /*! \brief check whether a king move is legal or not
+	*
+	*	return false whether the destination square is attacked from an opponent piece, considering the king move too.
+	*/
+    bool Position::checkKingAllowedMove( const baseTypes::tSquare to/*, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent*/ ) const
+    {
+        return !( getAttackersTo( to, getOccupationBitMap() & ~getOurBitMap( baseTypes::King ) ).isIntersecting( getTheirBitMap() ) );
+    }
 }

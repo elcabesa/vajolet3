@@ -102,6 +102,7 @@ namespace libChess
 		
 		bool isInCheck( void ) const;
 		bool isMoveLegal( const Move& m ) const;
+        bool checkKingAllowedMove( const baseTypes::tSquare to/*, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent*/ ) const;
 		
 		
 	
