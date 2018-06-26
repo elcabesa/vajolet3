@@ -254,6 +254,28 @@ namespace {
 	
 		
 	}
+    
+    void testIsLegal( libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition >& ml, const Move& m, const Position& pos)
+    {
+        if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
+        {
+            if( !pos.isMoveLegal( m ) )
+            {
+                std::cout<< pos.display() <<std::endl;
+                std::cout<< m.to_string(true) << std::endl;
+            }
+            ASSERT_TRUE( pos.isMoveLegal( m ) );
+        }
+        else
+        {
+            if( pos.isMoveLegal( m ) )
+            {
+                std::cout<< pos.display() <<std::endl;
+                std::cout<< m.to_string(true) << std::endl;
+            }
+            ASSERT_FALSE( pos.isMoveLegal( m ) );
+        }
+    }
 
 	TEST(Position, isMoveLegal)
 	{
@@ -275,55 +297,22 @@ namespace {
 			libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
 			libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
 
-			// todo add en passant
-			// todo add en castles
 			for( auto from: baseTypes::tSquareRange() )
 			{
 				for( auto to: baseTypes::tSquareRange() )
 				{
-					Move m( from, to );
 					
-					if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
-					{
-						if( !pos.isMoveLegal( m ) )
-						{
-							std::cout<< pos.display() <<std::endl;
-							std::cout<< m.to_string() << std::endl;
-						}
-						ASSERT_TRUE( pos.isMoveLegal( m ) );
-					}
-					else
-					{
-						if( pos.isMoveLegal( m ) )
-						{
-							std::cout<< pos.display() <<std::endl;
-							std::cout<< m.to_string() << std::endl;
-						}
-						ASSERT_FALSE( pos.isMoveLegal( m ) );
-                    }
+                    testIsLegal( ml, Move( from, to ), pos);
                     
-                    Move m2( from, to, Move::fpromotion);
+                    testIsLegal( ml, Move( from, to, Move::fenpassant ), pos);
+                    
+                    testIsLegal( ml, Move( from, to, Move::fcastle ), pos);
+
+                    Move m( from, to, Move::fpromotion);
                     for( int i = Move::promQueen; i <= Move::promKnight; ++i )
                     {
-                        m2.setPromotion( Move::epromotion( i ) );
-                        if( std::find( ml.begin(), ml.end(), m2 ) != ml.end() )
-                        {
-                            if( !pos.isMoveLegal( m2 ) )
-                            {
-                                std::cout<< pos.display() <<std::endl;
-                                std::cout<< m2.to_string() << std::endl;
-                            }
-                            ASSERT_TRUE( pos.isMoveLegal( m2 ) );
-                        }
-                        else
-                        {
-                            if( pos.isMoveLegal( m2 ) )
-                            {
-                                std::cout<< pos.display() <<std::endl;
-                                std::cout<< m2.to_string() << std::endl;
-                            }
-                            ASSERT_FALSE( pos.isMoveLegal( m2 ) );
-                        }
+                        m.setPromotion( Move::epromotion( i ) );
+                        testIsLegal( ml, m, pos);
                     }
 
 				}

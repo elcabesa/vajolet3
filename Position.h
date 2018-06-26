@@ -77,6 +77,7 @@ namespace libChess
 		baseTypes::tSquare getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const;
 		
 		std::string getCastleRightsString( const GameState& st, const bool chess960 ) const;
+        unsigned int getNumberOfLegalMoves( void ) const;
 		
 		/*****************************************************************
 		*	Methods

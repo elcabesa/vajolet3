@@ -130,19 +130,6 @@ namespace libChess
 	{
 		return (std::abs( from - to ) == 16 );
 	}
-	
-	/*! \brief check whether a king move is legal or not
-	*
-	*	return false whether the destination square is attacked from an opponent piece, considering the king move too.
-	*	return true otherwise
-	*/
-	/*inline bool MoveGenerator::checkKingAllowedMove( const Position& pos, const baseTypes::tSquare to, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& opponent )
-	{
-		return !( pos.getAttackersTo( to, occupiedSquares & ~pos.getOurBitMap( baseTypes::King ) ).isIntersecting( opponent ) );
-	}*/
-	
-	
-	
 }
 
 

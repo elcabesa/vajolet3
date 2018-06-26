@@ -18,6 +18,7 @@
 #include <fstream>
 #include "gtest/gtest.h"
 #include "./../MoveGenerator.h"
+#include "./../MoveSelector.h"
 #include "./../Position.h"
 
 
@@ -28,7 +29,7 @@ using namespace libChess;
 
 namespace {
 	
-	unsigned long long perft(libChess::Position& pos, unsigned int depth)
+	unsigned long long perft(Position& pos, unsigned int depth)
 	{
 	/*
 		if (depth == 0) {
@@ -36,14 +37,15 @@ namespace {
 		}
 	*/
 		unsigned long long tot = 0;
-		libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
-		libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
-		if (depth == 1) {
-			
-			return ml.size();
-		}
 		
-		for( auto& m: ml )
+		if (depth == 1)
+        {	
+			return pos.getNumberOfLegalMoves();
+		}
+        
+        libChess::MoveSelector ms( pos );
+        libChess::Move m;
+        while( Move::NOMOVE != ( m = ms.getNextMove() ) )
 		{
 			pos.doMove(m);
 			tot += perft( pos, depth - 1);

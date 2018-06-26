@@ -21,6 +21,7 @@
 #include "Position.h"
 #include "BitMapMoveGenerator.h"
 #include "MoveGenerator.h"
+#include "MoveList.h"
 
 
 // todo cercare funzioni comuni
@@ -1830,7 +1831,9 @@ namespace libChess
 		}
 
 		//casa di destinazione occupata da un nostro pezzo
-		if( getOurBitMap().isSquareSet( m.getTo() ) )
+		if( 
+            getOurBitMap().isSquareSet( m.getTo() ) 
+            && !m.isCastleMove() )
 		{
 			return false;
 		}
@@ -1883,21 +1886,21 @@ namespace libChess
 			return false;
 		}*/
 
-		//arrocco impossibile
-/*		//todo riscrivere in base al chess960 chess frc??
-		if( m.isCastleMove() )
-		{
-			if( !isKing( piece ) || (FILES[m.bit.from]!=FILES[E1]) || (abs(m.bit.from-m.bit.to)!=2 ) || (RANKS[m.bit.from]!=RANKS[A1] && RANKS[m.bit.from]!=RANKS[A8]))
-			{
-				return false;
-			}
-		}*/
-
 		//en passant impossibile
 		if( m.isEnPassantMove() && ( !isPawn(piece) || ( m.getTo() != st.getEpSquare() ) ) )
 		{
 			return false;
 		}
+        
+        // malformed move
+        if( 
+            m.isCastleMove() 
+            &&!isKing( piece ) 
+        )
+        {
+            return false;
+        }
+
 
 		//en passant impossibile
 		if( !m.isEnPassantMove()  && isPawn(piece) && ( m.getTo() == st.getEpSquare() ) )
@@ -1914,30 +1917,36 @@ namespace libChess
 
 				if( m.isCastleMove() )
 				{
-					/*int color = s.nextMove?1:0;
-					if(!(s.castleRights &  bitSet((tSquare)((((int)m.bit.from-(int)m.bit.to)>0)+2*color)))
-						|| (Movegen::getCastlePath(color,((int)m.bit.from-(int)m.bit.to)>0) & bitBoard[occupiedSquares])
-					)
-					{
-						return false;
-					}
-					if(m.bit.to>m.bit.from)
-					{
-						for(tSquare x=(tSquare)m.bit.from;x<=(tSquare)m.bit.to ;x++){
-							if(getAttackersTo(x,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces])
-							{
-								return false;
-							}
-						}
-					}else{
-						for(tSquare x=(tSquare)m.bit.to;x<=(tSquare)m.bit.from ;x++)
-						{
-							if(getAttackersTo(x,bitBoard[occupiedSquares] & ~Us[King]) & Them[Pieces])
-							{
-								return false;
-							}
-						}
-					}*/
+                    
+                    const baseTypes::tColor color = ( st.getTurn() == baseTypes::whiteTurn ) ? baseTypes::white : baseTypes::black;
+                    const baseTypes::eCastle castleType = ( m.getFrom() < m.getTo() ) ? baseTypes::wCastleOO : baseTypes::wCastleOOO;
+                    const bool isKingSideCastle = m.getFrom() < m.getTo();
+                    
+
+                    
+                    if( !st.hasCastleRight( castleType, color ) || ( getCastleOccupancyPath( color, isKingSideCastle ).isIntersecting( getOccupationBitMap() ) ) )
+                    {
+                        return false;
+                    }
+
+                    const baseTypes::tSquare rookSq = getCastleRookInvolved( color, isKingSideCastle );
+                    
+                    // malformed move
+                    if ( rookSq != m.getTo() )
+                    {
+                        return false;
+                    }
+
+                    /*
+                    check whether the castling is deined by a check in the castle path
+                    */
+                    for( const auto sq: getKingCastlePath( color, isKingSideCastle ) )
+                    {
+                        if( getAttackersTo( sq, ( getOccupationBitMap() ^ rookSq ) ^ m.getFrom() ).isIntersecting( getTheirBitMap() ) )
+                        {
+                            return false;
+                        }
+                    }
 				}
 				else
 				{
@@ -2001,7 +2010,7 @@ namespace libChess
 						|| getOccupationBitMap().isSquareSet( m.getFrom() + MoveGenerator::pawnPush( turn ) ) 
 					)
 					// not valid pawn attack
-					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), color ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap(st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
+					&& !( ( BitMapMoveGenerator::getPawnAttack( m.getFrom(), color ) & ( getTheirBitMap() + ( (st.getEpSquare() != baseTypes::squareNone) ? baseTypes::BitMap::getBitmapFromSquare( st.getEpSquare() ) : baseTypes::BitMap(0) ) ) ).isSquareSet( m.getTo() ) )
                 )
                 {
                     return false;
@@ -2021,7 +2030,7 @@ namespace libChess
                     const baseTypes::tSquare kingSquare = getSquareOfMyKing();
                     
                     if( 
-                        (
+                        !(
                             /* test for horizontal/vertical discovery*/
                             ( BitMapMoveGenerator::getRookMoves( kingSquare, occ ) & getTheirQRSlidingBitMap() )
                             +
@@ -2050,4 +2059,11 @@ namespace libChess
     {
         return !( getAttackersTo( to, getOccupationBitMap() & ~getOurBitMap( baseTypes::King ) ).isIntersecting( getTheirBitMap() ) );
     }
+    
+    unsigned int Position::getNumberOfLegalMoves( void ) const
+	{
+		MoveList< MoveGenerator::maxMovePerPosition > ml;
+		MoveGenerator::generateMoves< MoveGenerator::allMg >( *this, ml );
+		return ml.size();
+	}
 }

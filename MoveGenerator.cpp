@@ -246,13 +246,13 @@ namespace libChess
 	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
 	{
 		/*
-		check wheter the king has the castle right adn the paths are free
+		check wheter the king has the castle right and the paths are free
 		*/
 		if( st.hasCastleRight( castleType, color ) && !( pos.getCastleOccupancyPath( color, isKingSideCastle ).isIntersecting( pos.getOccupationBitMap() ) ) )
 		{
 			const baseTypes::tSquare rookSq = pos.getCastleRookInvolved( color, isKingSideCastle );
 			/*
-			check whether the castling is deined by a check in the castle path
+			check whether the castling is denied by a check in the castle path
 			*/
 			for( auto sq: pos.getKingCastlePath( color, isKingSideCastle ) )
 			{

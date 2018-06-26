@@ -18,6 +18,7 @@
 #include <fstream>
 #include "gtest/gtest.h"
 #include "./../MoveGenerator.h"
+#include "./../MoveSelector.h"
 #include "./../Position.h"
 
 
@@ -121,7 +122,7 @@ static const std::vector<positions> perftPos ={
 	{"r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", {46ull, 2079ull, 89890ull, 3894594ull, 164075551ull, 6923051137ull }}
 	
 };
-	unsigned long long perft(libChess::Position& pos, unsigned int depth)
+	unsigned long long perft(Position& pos, unsigned int depth)
 	{
 	/*
 		if (depth == 0) {
@@ -129,14 +130,15 @@ static const std::vector<positions> perftPos ={
 		}
 	*/
 		unsigned long long tot = 0;
-		libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
-		libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
-		if (depth == 1) {
-			
-			return ml.size();
-		}
 		
-		for( auto& m: ml )
+		if (depth == 1)
+        {	
+			return pos.getNumberOfLegalMoves();
+		}
+        
+        libChess::MoveSelector ms( pos );
+        libChess::Move m;
+        while( Move::NOMOVE != ( m = ms.getNextMove() ) )
 		{
 			pos.doMove(m);
 			tot += perft( pos, depth - 1);

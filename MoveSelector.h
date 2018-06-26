@@ -65,7 +65,6 @@ namespace libChess
 			*	methods
 			******************************************************************/
 			// todo rimuovere
-			unsigned int getNumberOfLegalMoves( void );
 			const Move& getNextMove();
 			/*****************************************************************
 			*	static methods
@@ -119,7 +118,7 @@ namespace libChess
 			}_stagedGeneratorState;
 	};
 	
-	MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr)
+	inline MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr)
 	{	
 		if( pos.isInCheck() )
 		{
@@ -131,7 +130,7 @@ namespace libChess
 		}
 	}
 	
-	MoveSelector::~MoveSelector()
+	inline MoveSelector::~MoveSelector()
 	{
 		delete _ml;
 	}

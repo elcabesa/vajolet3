@@ -43,53 +43,33 @@ static void init(void)
 	libChess::BitMapMoveGenerator::init();
 }
 
-/*! \brief calculate the perft result
-	\author Marco Belli
-	\version 1.0
-	\date 08/11/2013
+
+
+static unsigned long long perft(libChess::Position& pos, unsigned int depth)
+{
+/*
+    if (depth == 0) {
+        return 1;
+    }
 */
-/*unsigned long long perft(libChess::Position& pos, unsigned int depth)
-{
-	unsigned long long tot = 0;
-	libChess::MoveSelector ms( pos );
-	if (depth == 1)
-	{
-		return ms.getNumberOfLegalMoves();
-	}
-	libChess::Move m;
-	while( libChess::Move::NOMOVE != ( m = ms.getNextMove() ) )
-	{	
-		pos.doMove(m);
-		tot += perft( pos, depth - 1);
-		pos.undoMove();
-	}
-	return tot;
+    unsigned long long tot = 0;
+    
+    if (depth == 1)
+    {	
+        return pos.getNumberOfLegalMoves();
+    }
+    
+    libChess::MoveSelector ms( pos );
+    libChess::Move m;
+    while( libChess::Move::NOMOVE != ( m = ms.getNextMove() ) )
+    {
+        pos.doMove(m);
+        tot += perft( pos, depth - 1);
+        pos.undoMove();
+    }
+    return tot;
 
-}*/
-
-/*unsigned long long divide(libChess::Position& pos, unsigned int depth)
-{
-
-	if (depth == 0) {
-		return 1;
-	}
-
-	unsigned long long tot = 0;
-	libChess::MoveSelector ms( pos );
-
-	libChess::Move m;
-	while( libChess::Move::NOMOVE != ( m = ms.getNextMove() ) )
-	{
-		pos.doMove(m);
-		unsigned long long int n = perft( pos, depth - 1);
-		tot += n;
-		pos.undoMove();
-		std::cout<<m.to_string()<<": "<<n<<std::endl;
-	}
-	return tot;
-
-}*/
-
+}
 
 
 int main(void)
@@ -97,17 +77,30 @@ int main(void)
 	setIoBuffers();	
 	init();
 	
-	/*libChess::Position pos;
-	pos.setupFromFen();
+	libChess::Position pos;
+    pos.setupFromFen();
+    /*//pos.setupFromFen("r2n3r/1bNk2pp/6P1/pP3p2/3pPqnP/1P1P1p1R/2P3B1/Q1B1bKN1 b - e3 0 1");
+	//pos.setupFromFen("rn1q1bnr/3kppp1/2pp3p/pp6/1P2b3/2PQ1N1P/P2PPPB1/RNB1K2R w KQ - 0 1");
+    std::cout<<pos.display()<<std::endl;
+    libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
+    for( auto m : ml )
+    {
+        std::cout<<m.to_string(true)<<std::endl;
+    }
+    std::cout<<"move is valid " <<pos.isMoveLegal(libChess::Move(libChess::baseTypes::D4, libChess::baseTypes::E3, libChess::Move::fenpassant))<<std::endl;*/
+    
+    
+    
 	int i = 1;
 	while(true)
 	{
 		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		long long int tot = 0;
-		tot = perft(pos,i++);
+		tot = perft(pos,/*i++*/6);
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		std::cout<<(tot)<<" " <<(end-start) <<"ms "<<((end-start) !=0 ? (tot/(end-start)): 0 )<<" mps "<< std::endl;
-	}*/
+	}
 	
 	
 	

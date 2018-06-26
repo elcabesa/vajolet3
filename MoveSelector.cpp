@@ -19,14 +19,7 @@
 #include "MoveSelector.h"
 
 namespace libChess
-{
-	unsigned int MoveSelector::getNumberOfLegalMoves( void )
-	{
-		MoveList< MoveGenerator::maxMovePerPosition > ml;
-		MoveGenerator::generateMoves< MoveGenerator::allMg >( _pos, ml );
-		return ml.size();
-	}
-	
+{	
 	const Move& MoveSelector::getNextMove()
 	{
 		while(true)
