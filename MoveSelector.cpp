@@ -17,9 +17,24 @@
 */
 
 #include "MoveSelector.h"
+#include "MoveGenerator.h"
 
 namespace libChess
 {	
+    inline void MoveSelector::_goToNextState()
+    {
+        _stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+    }
+    
+    inline void MoveSelector::_scoreCaptures()
+    {
+        // todo check whether to change begin of array from begin to actualPosition (inside the list class)
+        for( auto & m : *_ml )
+        {
+            m.setScore( _pos.getMvvLvaScore( m ) );
+        }
+    }
+    
 	const Move& MoveSelector::getNextMove()
 	{
 		while(true)
@@ -27,32 +42,30 @@ namespace libChess
 			switch( _stagedGeneratorState )
 			{
 				case generateCaptureMoves:
-					_ml = new MoveList< MoveGenerator::maxMovePerPosition >;
+					_ml = new MoveList< maxMovePerPosition >;
 					MoveGenerator::generateMoves< MoveGenerator::captureMg >( _pos, *_ml );
 					_ml->ignoreMove( _ttMove );
+                    
+                    _scoreCaptures();
 
-					// todo readd this line
-					//scoreCaptureMoves();
-
-					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					_goToNextState();
 					break;
 				case generateCaptureEvasionMoves:
-					_ml = new MoveList< MoveGenerator::maxMovePerPosition >;
+					_ml = new MoveList< maxMovePerPosition >;
 					MoveGenerator::generateMoves< MoveGenerator::captureEvasionMg >( _pos, *_ml );
 					_ml->ignoreMove( _ttMove );
 
 					// todo readd killer moves
-					// todo readd this line
-					//scoreCaptureMoves();
+					_scoreCaptures();
 
-					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					_goToNextState();
 					break;
 				case generateQuietMoves:
 					_ml->reset();
 					MoveGenerator::generateMoves< MoveGenerator::quietMg >( _pos, *_ml );
 					_ml->ignoreMove( _ttMove );
-					
-					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+                    
+					_goToNextState();
 					
 					break;
 				case generateQuietEvasionMoves:
@@ -63,7 +76,7 @@ namespace libChess
 
 					//todo readd this line
 					//scoreQuietEvasion();
-					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					_goToNextState();
 				break;
 				
 				case iterateCaptureEvasionMoves:
@@ -74,7 +87,7 @@ namespace libChess
 					}
 					else
 					{
-						_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+						_goToNextState();
 					}
 					break;
 				case iterateGoodCaptureMoves:
@@ -95,7 +108,7 @@ namespace libChess
 					break;
 				case getTT:
 				case getTTevasion:
-					_stagedGeneratorState = ( eStagedGeneratorState )( _stagedGeneratorState + 1 );
+					_goToNextState();
 
 					if( _pos.isMoveLegal( _ttMove ) )
 					{

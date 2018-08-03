@@ -39,7 +39,6 @@
 
 #include "Position.h"
 #include "MoveList.h"
-#include "MoveGenerator.h"
 
 namespace libChess
 {
@@ -47,6 +46,8 @@ namespace libChess
 	class MoveSelector
 	{
 		public:
+            static const unsigned int maxMovePerPosition = 250;
+            static const unsigned int maxBadMovePerPosition = 32;
 			/*****************************************************************
 			*	constructors
 			******************************************************************/
@@ -77,7 +78,7 @@ namespace libChess
 			const Position& _pos;
 			const Move& _ttMove;
 			// todo is possibile to allocate it only if necessary?
-			MoveList< MoveGenerator::maxMovePerPosition > *_ml;
+			MoveList< maxMovePerPosition > *_ml;
 			
 			enum eStagedGeneratorState
 			{
@@ -116,6 +117,9 @@ namespace libChess
 				//finishedQuiescentQuietStage,
 
 			}_stagedGeneratorState;
+            
+            void _goToNextState();
+            void _scoreCaptures();
 	};
 	
 	inline MoveSelector::MoveSelector( const Position& pos, const Move& ttMove ):_pos(pos), _ttMove(ttMove), _ml(nullptr)
@@ -134,6 +138,7 @@ namespace libChess
 	{
 		delete _ml;
 	}
+    
 }
 
 #endif /* MOVESELECTOR_H_ */

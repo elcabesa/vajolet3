@@ -37,7 +37,7 @@ namespace libChess
 	*
 
 	*/
-	template< baseTypes::bitboardIndex pieceType, MoveGenerator::genType mgType > inline void MoveGenerator::_generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< baseTypes::bitboardIndex pieceType, MoveGenerator::genType mgType > inline void MoveGenerator::_generatePieceMoves( const Position& pos, const baseTypes::bitboardIndex piece, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& target, const GameState& st, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
@@ -103,7 +103,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& target, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateKingMoves( const Position& pos, const baseTypes::tSquare kingSquare, const baseTypes::BitMap& target, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
@@ -134,7 +134,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const Position& pos, const GameState& st, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		
@@ -161,7 +161,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& st, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_insertPromotionPawn( const baseTypes::BitMap& movesBitmap, const baseTypes::tSquare delta, const baseTypes::tSquare kingSquare, const GameState& st, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		Move m(Move::NOMOVE);
 		m.setFlag(Move::fpromotion);
@@ -194,7 +194,7 @@ namespace libChess
 	*
 
 	*/
-	inline void MoveGenerator::_generateEnPassantMoves( const Position& pos, const GameState& st, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	inline void MoveGenerator::_generateEnPassantMoves( const Position& pos, const GameState& st, const baseTypes::BitMap& occupiedSquares, const baseTypes::BitMap& nonPromotingPawns, const baseTypes::tSquare kingSquare, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		/*
 		if en passant square is iset
@@ -243,7 +243,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		/*
 		check wheter the king has the castle right and the paths are free
@@ -279,7 +279,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > void MoveGenerator::generateMoves( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > void MoveGenerator::generateMoves( const Position& pos, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		// initialize constants
 		const GameState& st = pos.getActualStateConst();
@@ -480,7 +480,7 @@ namespace libChess
 	*
 
 	*/
-	template<> void MoveGenerator::generateMoves< MoveGenerator::allMg >( const Position& pos, MoveList< MoveGenerator::maxMovePerPosition >& ml )
+	template<> void MoveGenerator::generateMoves< MoveGenerator::allMg >( const Position& pos, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		/* if in check generate evasion */
 		if( pos.isInCheck() )

@@ -21,6 +21,7 @@
 #include "Position.h"
 #include "BitMapMoveGenerator.h"
 #include "MoveGenerator.h"
+#include "MoveSelector.h"
 #include "MoveList.h"
 
 
@@ -2062,7 +2063,7 @@ namespace libChess
     
     unsigned int Position::getNumberOfLegalMoves( void ) const
 	{
-		MoveList< MoveGenerator::maxMovePerPosition > ml;
+		MoveList< MoveSelector::maxMovePerPosition > ml;
 		MoveGenerator::generateMoves< MoveGenerator::allMg >( *this, ml );
 		return ml.size();
 	}

@@ -255,7 +255,7 @@ namespace {
 		
 	}
     
-    void testIsLegal( libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition >& ml, const Move& m, const Position& pos)
+    void testIsLegal( libChess::MoveList< libChess::MoveSelector::maxMovePerPosition >& ml, const Move& m, const Position& pos)
     {
         if( std::find( ml.begin(), ml.end(), m ) != ml.end() )
         {
@@ -294,7 +294,7 @@ namespace {
 			std::string fen = line.substr(0, found);
 			pos.setupFromFen( fen ); 
 			
-			libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+			libChess::MoveList< libChess::MoveSelector::maxMovePerPosition > ml;
 			libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
 
 			for( auto from: baseTypes::tSquareRange() )

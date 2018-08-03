@@ -82,7 +82,7 @@ int main(void)
     /*//pos.setupFromFen("r2n3r/1bNk2pp/6P1/pP3p2/3pPqnP/1P1P1p1R/2P3B1/Q1B1bKN1 b - e3 0 1");
 	//pos.setupFromFen("rn1q1bnr/3kppp1/2pp3p/pp6/1P2b3/2PQ1N1P/P2PPPB1/RNB1K2R w KQ - 0 1");
     std::cout<<pos.display()<<std::endl;
-    libChess::MoveList< libChess::MoveGenerator::maxMovePerPosition > ml;
+    libChess::MoveList< libChess::MoveSelector::maxMovePerPosition > ml;
 	libChess::MoveGenerator::generateMoves< libChess::MoveGenerator::allMg >( pos, ml );
     for( auto m : ml )
     {
@@ -92,12 +92,12 @@ int main(void)
     
     
     
-	int i = 1;
+	int i = 0;
 	while(true)
 	{
 		long long int start = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		long long int tot = 0;
-		tot = perft(pos,/*i++*/6);
+		tot = perft(pos,6);
 		long long int end = std::chrono::duration_cast<std::chrono::milliseconds >(std::chrono::steady_clock::now().time_since_epoch()).count();
 		std::cout<<(tot)<<" " <<(end-start) <<"ms "<<((end-start) !=0 ? (tot/(end-start)): 0 )<<" mps "<< std::endl;
 	}
