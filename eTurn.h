@@ -57,7 +57,7 @@ namespace libChess
 			return !t;
 		}
 		
-		/*	\brief return true if it's white turn
+		/*	\brief return true if it's black turn
 			\author Marco Belli
 			\version 1.0
 			\date 17/08/2017
@@ -65,6 +65,11 @@ namespace libChess
 		inline bool isBlackTurn( const eTurn t )
 		{
 			return t;
+		}
+		
+		inline bitboardIndex getPiece(const eTurn t, const bitboardIndex b)
+		{
+			return (bitboardIndex)(t + b);
 		}
 	}
 

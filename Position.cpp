@@ -1225,7 +1225,7 @@ namespace libChess
 			}
 			if( m.isPromotionMove() )
 			{
-				baseTypes::bitboardIndex promotedPiece = (baseTypes::bitboardIndex)( turn + baseTypes::Queens + m.getPromotionType() );
+				baseTypes::bitboardIndex promotedPiece = baseTypes::getPiece( turn, baseTypes::Queens + m.getPromotionType() );
 				assert ( promotedPiece < baseTypes::bitboardNumber );
 				_removePiece( piece, to );
 				_addPiece( promotedPiece, to );
@@ -1460,7 +1460,7 @@ namespace libChess
 		if( m.isPromotionMove() )
 		{
 			// to square is check 
-			if( st.getCheckingSquare( (baseTypes::bitboardIndex)( turn + baseTypes::Queens + m.getPromotionType() ) ).isSquareSet( to ) )
+			if( st.getCheckingSquare( baseTypes::getPiece( turn, baseTypes::Queens + m.getPromotionType() ) ).isSquareSet( to ) )
 			{
 				return true;
 			}
