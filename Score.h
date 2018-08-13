@@ -22,8 +22,8 @@
 
 namespace libChess
 {
-	typedef int simdScore __attribute__ ((vector_size (16)));
-	typedef signed int Score;					/*!< score saved as a single signed int value*/
+	using simdScore = int __attribute__ ((vector_size (16)));
+	using  Score = signed int;	/*!< score saved as a single signed int value*/
 	
 }
 
