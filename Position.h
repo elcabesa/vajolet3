@@ -265,11 +265,11 @@ namespace libChess
 
 	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const
 	{
-		return in + getActualStateConst().getTurn();
+		return in + getBiboardIndexOffset( getActualStateConst().getTurn() );
 	}
 	inline baseTypes::bitboardIndex Position::getEnemyPiece(const baseTypes::bitboardIndex in) const
 	{
-		return in + baseTypes::separationBitmap - getActualStateConst().getTurn();
+		return in + getBiboardIndexOffset( getSwitchedTurn( getActualStateConst().getTurn() ) );
 	}
 	
 	inline unsigned int Position::_calcCRPIndex( const baseTypes::tColor color, const bool kingSide )

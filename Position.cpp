@@ -126,8 +126,8 @@ namespace libChess
 	{
 		const baseTypes::eTurn turn = getActualStateConst().getTurn();
 		
-		_us = _bitBoard.begin() + (int)turn ;
-		_them = _bitBoard.begin() + (int)getSwitchedTurn( turn );
+		_us = _bitBoard.begin() + getBiboardIndexOffset( turn ) ;
+		_them = _bitBoard.begin() + getBiboardIndexOffset( getSwitchedTurn( turn ) );
 	}
 	
 	inline void Position::_swapUsThem()

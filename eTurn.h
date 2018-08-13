@@ -34,7 +34,7 @@ namespace libChess
 		enum eTurn
 		{
 			whiteTurn = 0,
-			blackTurn = (int)blackKing - (int)whiteKing
+			blackTurn = 1
 		};
 		
 		/*	\brief return the switched turn
@@ -67,10 +67,24 @@ namespace libChess
 			return t;
 		}
 		
+		/*	\brief return the offset in bitboard based on turn
+			\author Marco Belli
+			\version 1.0
+			\date 13/08/2018
+		*/
+		inline bitboardIndex getBiboardIndexOffset( const eTurn t )
+		{
+			return (bitboardIndex)( baseTypes::separationBitmap * t );
+		}
+		
 		inline bitboardIndex getPiece(const eTurn t, const bitboardIndex b)
 		{
-			return (bitboardIndex)(t + b);
+			return (bitboardIndex)(getBiboardIndexOffset( t ) + b);
 		}
+		
+		
+		
+		
 	}
 
 }
