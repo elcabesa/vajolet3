@@ -486,6 +486,25 @@ namespace {
 		ASSERT_EQ( blackTurn, getSwitchedTurn(whiteTurn) );
 	}
 	
+	TEST(eTurn, isWhiteTurn)
+	{
+		ASSERT_FALSE( isWhiteTurn(blackTurn) );
+		ASSERT_TRUE( isWhiteTurn(whiteTurn) );
+	}
+	
+	TEST(eTurn, isBlackTurn)
+	{
+		ASSERT_TRUE( isBlackTurn(blackTurn) );
+		ASSERT_FALSE( isBlackTurn(whiteTurn) );
+	}
+	
+	TEST(eTurn, getPiece)
+	{
+		ASSERT_EQ( bitboardIndex::whiteKnights, getPiece( whiteTurn, Knights) );
+		ASSERT_EQ( bitboardIndex::blackRooks, getPiece( blackTurn, Rooks) );
+	}
+	
+	
 	TEST(eCastle, assign)
 	{
 		eCastle x = noCastleRights;
