@@ -228,7 +228,7 @@ namespace libChess
 	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupAdvance( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& occupancy )
 	{
-		return ( ( turn == baseTypes::whiteTurn ) ? (b << 8) : (b >> 8) ) & ~occupancy ;
+		return ( isWhiteTurn( turn ) ? (b << 8) : (b >> 8) ) & ~occupancy ;
 	}
 	
 	/*	\brief return the bitmap with all the pawn left captures for the selectoed color with the given occupation
@@ -238,7 +238,7 @@ namespace libChess
 	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureLeft( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& target )
 	{
-		return ( ( turn == baseTypes::whiteTurn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) << 7 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) >> 9 ) ) & target;	
+		return ( isWhiteTurn( turn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) << 7 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::A1) ) ) >> 9 ) ) & target;	
 	}
 	
 	/*	\brief return the bitmap with all the pawn right captures for the selectoed color with the given occupation
@@ -248,7 +248,7 @@ namespace libChess
 	*/
 	inline const baseTypes::BitMap BitMapMoveGenerator::getPawnGroupCaptureRight( const baseTypes::BitMap& b, const baseTypes::eTurn turn, const baseTypes::BitMap& target )
 	{
-		return ( ( turn == baseTypes::whiteTurn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	
+		return ( isWhiteTurn( turn ) ? ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) << 9 ) : ( ( b & ( ~baseTypes::BitMap::getFileMask(baseTypes::H1) ) ) >> 7 ) ) & target;	
 	}
 	
 }

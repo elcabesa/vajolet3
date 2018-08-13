@@ -215,11 +215,11 @@ namespace libChess
 	}
 	inline baseTypes::tSquare Position::getSquareOfMyKing() const
 	{
-		return _kingsSquare[ getActualStateConst().getTurn() == baseTypes::whiteTurn ? baseTypes::white : baseTypes::black ];
+		return _kingsSquare[ baseTypes::isWhiteTurn( getActualStateConst().getTurn() ) ? baseTypes::white : baseTypes::black ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfEnemyKing() const
 	{
-		return _kingsSquare[ getActualStateConst().getTurn() == baseTypes::blackTurn ? baseTypes::white : baseTypes::black ];
+		return _kingsSquare[ baseTypes::isBlackTurn( getActualStateConst().getTurn() ) ? baseTypes::white : baseTypes::black ];
 	}
 	
 	inline const baseTypes::BitMap& Position::getOurBitMap( const baseTypes::bitboardIndex piece )const
@@ -255,12 +255,12 @@ namespace libChess
 	
 	inline bool Position::isWhiteTurn(void) const
 	{
-		return getActualStateConst().getTurn() == baseTypes::whiteTurn;
+		return baseTypes::isWhiteTurn( getActualStateConst().getTurn() );
 	}
 	
 	inline bool Position::isBlackTurn(void) const
 	{
-		return getActualStateConst().getTurn() == baseTypes::blackTurn;
+		return baseTypes::isBlackTurn( getActualStateConst().getTurn() );;
 	}
 
 	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const

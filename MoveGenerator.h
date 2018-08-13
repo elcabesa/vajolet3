@@ -101,22 +101,22 @@ namespace libChess
 	 */
 	inline baseTypes::tSquare MoveGenerator::pawnPush( const baseTypes::eTurn turn )
 	{
-		return turn ? baseTypes::sud : baseTypes::north;
+		return isBlackTurn( turn ) ? baseTypes::sud : baseTypes::north;
 	}
 	
 	inline baseTypes::tSquare MoveGenerator::pawnDoublePush( const baseTypes::eTurn turn )
 	{
-		return turn ? 2 * baseTypes::sud : 2 * baseTypes::north;
+		return isBlackTurn( turn ) ? 2 * baseTypes::sud : 2 * baseTypes::north;
 	}
 	
 	inline baseTypes::tSquare MoveGenerator::pawnLeftCapture( const baseTypes::eTurn turn )
 	{
-		return turn ? baseTypes::sud + baseTypes::ovest : baseTypes::north + baseTypes::ovest;
+		return isBlackTurn( turn ) ? baseTypes::sud + baseTypes::ovest : baseTypes::north + baseTypes::ovest;
 	}
 	
 	inline baseTypes::tSquare MoveGenerator::pawnRightCapture( const baseTypes::eTurn turn )
 	{
-		return turn ? baseTypes::sud + baseTypes::east : baseTypes::north + baseTypes::east;
+		return isBlackTurn( turn ) ? baseTypes::sud + baseTypes::east : baseTypes::north + baseTypes::east;
 	}
 	
 	inline bool MoveGenerator::isPawnPush( const baseTypes::tSquare from, const baseTypes::tSquare to )

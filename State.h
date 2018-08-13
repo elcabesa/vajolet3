@@ -250,7 +250,7 @@ namespace libChess
 	
 	inline void GameState::changeTurn()
 	{
-		_turn = (baseTypes::eTurn)( baseTypes::blackTurn - _turn );
+		_turn = baseTypes::getSwitchedTurn( _turn );
 		_key.changeSide();
 	}
 	
@@ -411,7 +411,7 @@ namespace libChess
 	
 	inline unsigned int GameState::getFullMoveCounter(void) const
 	{
-		return 1 + (getPliesCnt() - int( getTurn() == baseTypes::blackTurn ) ) / 2;
+		return 1 + (getPliesCnt() - int( isBlackTurn( getTurn() ) ) ) / 2;
 	}
 	
 	inline std::string GameState::getEpSquareString(void) const

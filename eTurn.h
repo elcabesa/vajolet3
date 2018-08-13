@@ -46,6 +46,26 @@ namespace libChess
 		{
 			return ( eTurn )( blackTurn - t );
 		}
+		
+		/*	\brief return true if it's white turn
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		inline bool isWhiteTurn( const eTurn t )
+		{
+			return !t;
+		}
+		
+		/*	\brief return true if it's white turn
+			\author Marco Belli
+			\version 1.0
+			\date 17/08/2017
+		*/
+		inline bool isBlackTurn( const eTurn t )
+		{
+			return t;
+		}
 	}
 
 }

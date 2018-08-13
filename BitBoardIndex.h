@@ -144,6 +144,7 @@ namespace libChess
 		{
 			return  ( piece != occupiedSquares ) && ( piece != whitePieces ) && ( piece != separationBitmap ) && ( piece != blackPieces );
 		}
+				
 		
 		/*! \brief tell if the piece is a pawn
 			\author Marco Belli
