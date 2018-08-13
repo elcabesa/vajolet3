@@ -17,6 +17,8 @@
 
 #include "gtest/gtest.h"
 #include "./../BitBoardIndex.h"
+#include "./../eCastle.h"
+#include "./../eTurn.h"
 
 using namespace libChess::baseTypes;
 

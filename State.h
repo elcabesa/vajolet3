@@ -23,6 +23,7 @@
 #include "HashKeys.h"
 #include "Score.h"
 #include "Move.h"
+#include "eTurn.h"
 
 namespace libChess
 {

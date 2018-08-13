@@ -25,6 +25,7 @@
 //---------------------------------
 #include "tSquare.h"
 #include "BitBoardIndex.h"
+#include "eCastle.h"
 
 namespace libChess
 {

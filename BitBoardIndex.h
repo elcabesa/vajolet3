@@ -247,50 +247,9 @@ namespace libChess
 			\version 1.0
 			\date 17/08/2017
 		*/
-		template class baseTypeRange<bitboardIndex, bitboardIndex::occupiedSquares, bitboardIndex::blackPieces>;
-		using bitboardIndexRange = baseTypeRange<bitboardIndex, bitboardIndex::occupiedSquares, bitboardIndex::blackPieces>;
-		
-		/*	\brief enum for turn, also used as offset to access bitmap by index
-			\author Marco Belli
-			\version 1.0
-			\date 17/08/2017
-		*/
-		enum eTurn
-		{
-			whiteTurn = 0,
-			blackTurn = (int)blackKing - (int)whiteKing
-		};
-		
-		/*	\brief return the switched turn
-			\author Marco Belli
-			\version 1.0
-			\date 17/08/2017
-		*/
-		inline eTurn getSwitchedTurn( const eTurn t )
-		{
-			return ( eTurn )( blackTurn - t );
-		}
+		template class baseTypeRange<bitboardIndex, occupiedSquares, blackPieces>;
+		using bitboardIndexRange = baseTypeRange<bitboardIndex, occupiedSquares, blackPieces>;
 
-		/*	\brief enum with the castle rights definitions
-			\author Marco Belli
-			\version 1.0
-			\date 17/08/2017
-		*/
-		enum eCastle	// castleRights
-		{
-			noCastleRights = 0,
-			wCastleOO=1,
-			wCastleOOO=2,
-			bCastleOO=4,
-			bCastleOOO=8,
-		};
-		
-		inline void addCastleRightTo( eCastle& cr, const eCastle r )
-		{
-			cr = (eCastle)( cr | r ) ;
-		}
-		
-		inline eCastle operator|( const eCastle rhs, const eCastle lhs ){ return eCastle( (int)rhs | (int)lhs ); }
 	}
 
 }

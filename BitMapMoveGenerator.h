@@ -40,7 +40,7 @@
 #include <list>
 #include <utility>
 #include "BitMap.h"
-#include "BitBoardIndex.h"
+#include "eTurn.h"
 
 namespace libChess
 {
