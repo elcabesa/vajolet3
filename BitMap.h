@@ -21,6 +21,7 @@
 
 #include <assert.h>
 #include "tSquare.h"
+#include "eTurn.h"
 
 namespace libChess
 {	
@@ -215,7 +216,7 @@ namespace libChess
 				\version 1.0
 				\date 17/08/2017
 			*/
-			static BitMap getColorBitMap(const tColor c);
+			static BitMap getColorBitMap(const eTurn c);
 			
 			/*	\brief get a bitmap with the squares between 2 squares
 				\author Marco Belli
@@ -245,7 +246,7 @@ namespace libChess
 		
 			static BitMap _RANKMASK[ tSquare::squareNumber ];
 			static BitMap _FILEMASK[ tSquare::squareNumber ];
-			static BitMap _SQUARECOLOR[ tColor::colorNumber ];
+			static BitMap _SQUARECOLOR[ eTurn::turnNumber ];
 			static BitMap _SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
 			static BitMap _LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 			
@@ -333,7 +334,7 @@ namespace libChess
 			return (_FILEMASK[ n ]);
 		}
 		
-		inline BitMap BitMap::getColorBitMap(const tColor c)
+		inline BitMap BitMap::getColorBitMap(const eTurn c)
 		{
 			return _SQUARECOLOR[ c ];
 		}

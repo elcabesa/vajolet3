@@ -99,7 +99,7 @@ namespace {
 		
 		for( const auto& it : testList )
 		{
-			const BitMap k = BitMapMoveGenerator::getPawnAttack( it.first, tColor::white );
+			const BitMap k = BitMapMoveGenerator::getPawnAttack( it.first, eTurn::whiteTurn );
 			const BitMap ref = createBitMap(it.second);
 			ASSERT_EQ( ref, k );
 		}
@@ -122,7 +122,7 @@ namespace {
 		
 		for( const auto& it : testList )
 		{
-			const BitMap k = BitMapMoveGenerator::getPawnAttack( it.first, tColor::black );
+			const BitMap k = BitMapMoveGenerator::getPawnAttack( it.first, eTurn::blackTurn );
 			const BitMap ref = createBitMap(it.second);
 			ASSERT_EQ( ref, k );
 		}

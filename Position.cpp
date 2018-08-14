@@ -851,18 +851,18 @@ namespace libChess
 		}
 		
 		baseTypes::eCastle cr;
-		baseTypes::tColor color;
+		baseTypes::eTurn color;
 		const bool kingSide = Move::isKingsideCastle( ksq, rsq );
 		
 		if ( kingRank == baseTypes::one ) 
 		{
-			color = baseTypes::white;
+			color = baseTypes::whiteTurn;
 			cr = ( ksq < rsq ) ? baseTypes::wCastleOO : baseTypes::wCastleOOO;
 			
 		}
 		else
 		{
-			color = baseTypes::black;
+			color = baseTypes::blackTurn;
 			cr = ( ksq < rsq ) ? baseTypes::bCastleOO : baseTypes::bCastleOOO;
 		}
 		
@@ -874,7 +874,7 @@ namespace libChess
 		return false;
 	}
 	
-	bool Position::_setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare)
+	bool Position::_setupCastlePath(const baseTypes::eTurn color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare)
 	{
 		assert( baseTypes::isKing( getPieceAt( KingSquare ) ) );
 		assert( baseTypes::isRook( getPieceAt( RookSquare ) ) );
@@ -885,7 +885,7 @@ namespace libChess
 		baseTypes::tSquare kingTo;
 		
 		// todo rincontrollare tutto
-		if( color == baseTypes::white )
+		if( color == baseTypes::whiteTurn )
 		{
 			if( kingSide )
 			{
@@ -989,9 +989,9 @@ namespace libChess
 		
 		baseTypes::BitMap res = 
 				// white pawns attack
-				( BitMapMoveGenerator::getPawnAttack( to, baseTypes::black ) & getBitmap( baseTypes::whitePawns ) )
+				( BitMapMoveGenerator::getPawnAttack( to, baseTypes::blackTurn ) & getBitmap( baseTypes::whitePawns ) )
 				// black pawns attack
-				+ ( BitMapMoveGenerator::getPawnAttack( to, baseTypes::white ) & getBitmap( baseTypes::blackPawns ) )
+				+ ( BitMapMoveGenerator::getPawnAttack( to, baseTypes::whiteTurn ) & getBitmap( baseTypes::blackPawns ) )
 				// knights attack
 				+ ( BitMapMoveGenerator::getKnightMoves( to ) & ( getBitmap( baseTypes::whiteKnights ) + getBitmap( baseTypes::blackKnights ) ) )
 				// king attack
@@ -1025,7 +1025,7 @@ namespace libChess
 		const baseTypes::tSquare OppKingSquare = getSquareOfEnemyKing();
 
 		const baseTypes::BitMap& occupancy = getOccupationBitMap();
-		const baseTypes::tColor color = isBlackTurn() ?  baseTypes::white : baseTypes::black;
+		const baseTypes::eTurn color = getSwitchedTurn( st.getTurn() );
 
 		st.setCheckingSquare( getMyPiece( baseTypes::King ), baseTypes::BitMap(0) );
 		st.setCheckingSquare( getMyPiece( baseTypes::Rooks ), BitMapMoveGenerator::getRookMoves( OppKingSquare, occupancy ) );
@@ -1125,7 +1125,7 @@ namespace libChess
 		if( m.isCastleMove() )
 		{
 			const bool kingSide = Move::isKingsideCastle( from, to );
-			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( baseTypes::isBlackTurn( turn ) ) , kingSide);
+			const unsigned int index = _calcCRPIndex( turn, kingSide);
 			
 			const baseTypes::tSquare rFrom = to;
 			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
@@ -1218,7 +1218,7 @@ namespace libChess
 			if(
 					MoveGenerator::isPawnDoublePush( from, to )
 					// todo cambiare e metterci solo posizioen di pedoni accanto a to.. inutile generare tutti gli attachi per sapere se c'è un pedone
-					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( turn ), ( baseTypes::isWhiteTurn( turn ) ? baseTypes::white : baseTypes::black ) ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
+					&& ( BitMapMoveGenerator::getPawnAttack( from + MoveGenerator::pawnPush( turn ), turn ).isIntersecting( getTheirBitMap( baseTypes::Pawns ) ) )
 			)
 			{
 				st.addEpSquare( (baseTypes::tSquare)( from + MoveGenerator::pawnPush( turn ) ) );
@@ -1312,7 +1312,7 @@ namespace libChess
 			
 			const bool kingSide = Move::isKingsideCastle( from, to );
 			
-			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( baseTypes::isWhiteTurn( turn ) ) , kingSide);
+			const unsigned int index = _calcCRPIndex( getSwitchedTurn( turn ) , kingSide );
 			
 			const baseTypes::tSquare rFrom = to;
 			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
@@ -1487,7 +1487,7 @@ namespace libChess
 		{
 			const bool kingSide = Move::isKingsideCastle( from, to );
 			
-			const unsigned int index = _calcCRPIndex( (baseTypes::tColor)( baseTypes::isBlackTurn( turn ) ) , kingSide);
+			const unsigned int index = _calcCRPIndex( turn , kingSide );
 			
 			const baseTypes::tSquare rFrom = to;
 			const baseTypes::tSquare rTo = _castleRookFinalSquare[index];
@@ -1567,16 +1567,16 @@ namespace libChess
 		struct sCastle
 		{
 			baseTypes::eCastle castleType;
-			baseTypes::tColor color;
+			baseTypes::eTurn color;
 			bool kingSide;
 			std::string normalString;
 		};
 		
 		std::list<sCastle> cl = { 
-			{ baseTypes::wCastleOO, baseTypes::white, true, "K" },
-			{ baseTypes::wCastleOOO, baseTypes::white, false, "Q" },
-			{ baseTypes::bCastleOO, baseTypes::black, true, "k" },
-			{ baseTypes::bCastleOOO, baseTypes::black, false, "q" }
+			{ baseTypes::wCastleOO, baseTypes::whiteTurn, true, "K" },
+			{ baseTypes::wCastleOOO, baseTypes::whiteTurn, false, "Q" },
+			{ baseTypes::bCastleOO, baseTypes::blackTurn, true, "k" },
+			{ baseTypes::bCastleOOO, baseTypes::blackTurn, false, "q" }
 		};
 		
 		for( auto& cr : cl )
@@ -1587,7 +1587,7 @@ namespace libChess
 				{
 					baseTypes::tSquare rSq = getCastleRookInvolved( cr.color, cr.kingSide );
 					std::string castleRight = baseTypes::to_string( baseTypes::getFile( rSq ) );
-					if( cr.color == baseTypes::white)
+					if( cr.color == baseTypes::whiteTurn)
 					{
 						for ( auto& c: castleRight )
 						{
@@ -1920,7 +1920,7 @@ namespace libChess
 				if( m.isCastleMove() )
 				{
                     
-                    const baseTypes::tColor color = ( baseTypes::isWhiteTurn( st.getTurn() ) ) ? baseTypes::white : baseTypes::black;
+                    const baseTypes::eTurn color = st.getTurn();
                     const baseTypes::eCastle castleType = ( m.getFrom() < m.getTo() ) ? baseTypes::wCastleOO : baseTypes::wCastleOOO;
                     const bool isKingSideCastle = m.getFrom() < m.getTo();
                     
@@ -1998,7 +1998,7 @@ namespace libChess
                 baseTypes::eTurn turn = ( piece == baseTypes::whitePawns ? baseTypes::whiteTurn : baseTypes::blackTurn );
                 baseTypes::tRank relativeSecondRank = ( piece == baseTypes::whitePawns ? baseTypes::two : baseTypes::seven );
                 baseTypes::tRank relativeSeventhRank = ( piece == baseTypes::whitePawns ? baseTypes::seven : baseTypes::two );
-                baseTypes::tColor color = ( piece == baseTypes::whitePawns ? baseTypes::white : baseTypes::black );
+                baseTypes::eTurn color = ( piece == baseTypes::whitePawns ? baseTypes::whiteTurn : baseTypes::blackTurn );
                 baseTypes::tSquare direction = ( piece == baseTypes::whitePawns ? baseTypes::sud : baseTypes::north );
                 
                 if( 

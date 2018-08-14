@@ -56,7 +56,7 @@ namespace libChess
 		
 		static const baseTypes::BitMap& getKingMoves( const baseTypes::tSquare& from );
 		static const baseTypes::BitMap& getKnightMoves( const baseTypes::tSquare& from );
-		static const baseTypes::BitMap& getPawnAttack( const baseTypes::tSquare& from, const baseTypes::tColor color );
+		static const baseTypes::BitMap& getPawnAttack( const baseTypes::tSquare& from, const baseTypes::eTurn color );
 		static const baseTypes::BitMap& getRookMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap& getBishopMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
 		static const baseTypes::BitMap getQueenMoves( const baseTypes::tSquare& from, const baseTypes::BitMap& occupancy );
@@ -76,7 +76,7 @@ namespace libChess
 		******************************************************************/
 		static baseTypes::BitMap _knightMoveBitmap[ baseTypes::squareNumber ];
 		static baseTypes::BitMap _kingMoveBitmap[ baseTypes::squareNumber ];
-		static baseTypes::BitMap _pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ];
+		static baseTypes::BitMap _pawnsAttackBitmap[ baseTypes::turnNumber ][ baseTypes::squareNumber ];
 		
 		static const unsigned int _magicMovesRshift[ baseTypes::squareNumber ];
 		static const uint64_t _magicMovesRmagics[ baseTypes::squareNumber ];
@@ -134,7 +134,7 @@ namespace libChess
 		\version 1.0
 		\date 15/06/2018
 	*/
-	inline const baseTypes::BitMap& BitMapMoveGenerator::getPawnAttack( const baseTypes::tSquare& from, const baseTypes::tColor color )
+	inline const baseTypes::BitMap& BitMapMoveGenerator::getPawnAttack( const baseTypes::tSquare& from, const baseTypes::eTurn color )
 	{
 		assert(from < baseTypes::squareNumber);
 		assert(color < baseTypes::colorNumber);

@@ -202,7 +202,7 @@ namespace libChess
 		if( st.hasEpSquareSet() )
 		{
 			const baseTypes::tSquare epSquare = st.getEpSquare();
-			const baseTypes::tColor color = pos.isBlackTurn() ? baseTypes::white : baseTypes::black;
+			const baseTypes::eTurn color = getSwitchedTurn( pos.getActualStateConst().getTurn() );
 			const baseTypes::BitMap epAttackerBitMap = nonPromotingPawns & BitMapMoveGenerator::getPawnAttack( epSquare, color );
 			
 			/*
@@ -243,7 +243,7 @@ namespace libChess
 	*
 
 	*/
-	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::tColor color, const baseTypes::tSquare kingSquare, MoveList< MoveSelector::maxMovePerPosition >& ml )
+	template< MoveGenerator::genType mgType > inline void MoveGenerator::_generateCastleMove( const Position& pos, const GameState& st, const baseTypes::eCastle castleType, const bool isKingSideCastle, const baseTypes::eTurn color, const baseTypes::tSquare kingSquare, MoveList< MoveSelector::maxMovePerPosition >& ml )
 	{
 		/*
 		check wheter the king has the castle right and the paths are free
@@ -464,14 +464,12 @@ namespace libChess
 		if( mgType != MoveGenerator::allEvasionMg && mgType != MoveGenerator::captureEvasionMg && mgType != MoveGenerator::quietEvasionMg && mgType!= MoveGenerator::captureMg)
 		{
 			if( checkers.isEmpty() )
-			{
-				const baseTypes::tColor color = pos.isBlackTurn() ?  baseTypes::black : baseTypes::white;
-				
+			{				
 				// kingSquare
-				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOO, true, color, kingSquare, ml );
+				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOO, true, turn, kingSquare, ml );
 				
 				// queenSquare
-				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOOO, false, color, kingSquare, ml );
+				_generateCastleMove< mgType >( pos, st, baseTypes::wCastleOOO, false, turn, kingSquare, ml );
 			}	
 		}
 	}

@@ -80,7 +80,7 @@ namespace libChess
 		/*****************************************************************
 		*	other methods
 		******************************************************************/
-		bool hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color = baseTypes::white ) const;
+		bool hasCastleRight( const baseTypes::eCastle cr, const baseTypes::eTurn color = baseTypes::whiteTurn ) const;
 		bool hasEpSquareSet(void)const;
 		bool isDiscoveryCheckers( baseTypes::tSquare sq ) const;
 		
@@ -429,7 +429,7 @@ namespace libChess
 		return s;
 	}
 
-	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr, const baseTypes::tColor color ) const
+	inline bool GameState::hasCastleRight( const baseTypes::eCastle cr, const baseTypes::eTurn color ) const
 	{
 		return (_castleRights & ( cr << ( 2 * color ) ) );
 	}

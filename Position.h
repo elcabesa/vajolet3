@@ -72,9 +72,9 @@ namespace libChess
 		
 		const std::string getFen(void) const;
 		const std::string getSymmetricFen(void) const;
-		const baseTypes::BitMap& getKingCastlePath( const baseTypes::tColor color, const bool kingSide ) const;
-		const baseTypes::BitMap& getCastleOccupancyPath( const baseTypes::tColor color, const bool kingSide ) const;
-		baseTypes::tSquare getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const;
+		const baseTypes::BitMap& getKingCastlePath( const baseTypes::eTurn color, const bool kingSide ) const;
+		const baseTypes::BitMap& getCastleOccupancyPath( const baseTypes::eTurn color, const bool kingSide ) const;
+		baseTypes::tSquare getCastleRookInvolved( const baseTypes::eTurn color, const bool kingSide ) const;
 		
 		std::string getCastleRightsString( const GameState& st, const bool chess960 ) const;
         unsigned int getNumberOfLegalMoves( void ) const;
@@ -155,8 +155,8 @@ namespace libChess
 		bool _setupCastleRight(const baseTypes::tSquare rsq);
 		bool _tryAddCastleRight( const baseTypes::eCastle cr, const baseTypes::tSquare ksq, const baseTypes::tSquare rsq );
 		
-		bool _setupCastlePath(const baseTypes::tColor color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare);
-		static unsigned int _calcCRPIndex( const baseTypes::tColor color, const bool kingSide );
+		bool _setupCastlePath(const baseTypes::eTurn color, const bool kingSide, const baseTypes::tSquare KingSquare, const baseTypes::tSquare RookSquare);
+		static unsigned int _calcCRPIndex( const baseTypes::eTurn color, const bool kingSide );
 		
 		void _setKingsSquare(void);
 		
@@ -207,19 +207,19 @@ namespace libChess
 	
 	inline baseTypes::tSquare Position::getSquareOfWhiteKing() const
 	{
-		return _kingsSquare[ baseTypes::white ];
+		return _kingsSquare[ baseTypes::whiteTurn ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfBlackKing() const
 	{
-		return _kingsSquare[ baseTypes::black ];
+		return _kingsSquare[ baseTypes::blackTurn ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfMyKing() const
 	{
-		return _kingsSquare[ baseTypes::isWhiteTurn( getActualStateConst().getTurn() ) ? baseTypes::white : baseTypes::black ];
+		return _kingsSquare[ getActualStateConst().getTurn() ];
 	}
 	inline baseTypes::tSquare Position::getSquareOfEnemyKing() const
 	{
-		return _kingsSquare[ baseTypes::isBlackTurn( getActualStateConst().getTurn() ) ? baseTypes::white : baseTypes::black ];
+		return _kingsSquare[ getSwitchedTurn( getActualStateConst().getTurn() ) ];
 	}
 	
 	inline const baseTypes::BitMap& Position::getOurBitMap( const baseTypes::bitboardIndex piece )const
@@ -272,22 +272,22 @@ namespace libChess
 		return in + getBiboardIndexOffset( getSwitchedTurn( getActualStateConst().getTurn() ) );
 	}
 	
-	inline unsigned int Position::_calcCRPIndex( const baseTypes::tColor color, const bool kingSide )
+	inline unsigned int Position::_calcCRPIndex( const baseTypes::eTurn color, const bool kingSide )
 	{
 		return ( color * 2 ) + kingSide;
 	}
 	
-	inline const baseTypes::BitMap& Position::getKingCastlePath( const baseTypes::tColor color, const bool kingSide ) const
+	inline const baseTypes::BitMap& Position::getKingCastlePath( const baseTypes::eTurn color, const bool kingSide ) const
 	{
 		return _castleKingPath[ _calcCRPIndex( color, kingSide ) ];
 	}
 	
-	inline const baseTypes::BitMap& Position::getCastleOccupancyPath( const baseTypes::tColor color, const bool kingSide ) const
+	inline const baseTypes::BitMap& Position::getCastleOccupancyPath( const baseTypes::eTurn color, const bool kingSide ) const
 	{
 		return _castleOccupancyPath[ _calcCRPIndex( color, kingSide ) ];
 	}
 	
-	inline baseTypes::tSquare Position::getCastleRookInvolved( const baseTypes::tColor color, const bool kingSide ) const
+	inline baseTypes::tSquare Position::getCastleRookInvolved( const baseTypes::eTurn color, const bool kingSide ) const
 	{
 		return _castleRookInvolved[ _calcCRPIndex( color, kingSide ) ];
 	}
@@ -322,8 +322,8 @@ namespace libChess
 	
 	inline void Position::_setKingsSquare(void)
 	{ 
-		_kingsSquare[ baseTypes::white ] = getBitmap(baseTypes::whiteKing).firstOne();
-		_kingsSquare[ baseTypes::black ] = getBitmap(baseTypes::blackKing).firstOne();
+		_kingsSquare[ baseTypes::whiteTurn ] = getBitmap(baseTypes::whiteKing).firstOne();
+		_kingsSquare[ baseTypes::blackTurn ] = getBitmap(baseTypes::blackKing).firstOne();
 		
 	}
 }

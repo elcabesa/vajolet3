@@ -58,8 +58,8 @@ namespace libChess
 		{
 			{ _kingMoveBitmap,   { {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1} } }, 	// king
 			{ _knightMoveBitmap, { {-2,1}, {-2,-1}, {2,1}, {2,-1}, {1,2}, {1,-2}, {-1,2}, {-1,-2} } },	// knight
-			{ _pawnsAttackBitmap[ baseTypes::white ], { {-1,1}, {1,1} } },								// white pawn capture
-			{ _pawnsAttackBitmap[ baseTypes::black ], { {-1,-1}, {1,-1} } }								// black pawn capture
+			{ _pawnsAttackBitmap[ baseTypes::whiteTurn ], { {-1,1}, {1,1} } },							// white pawn capture
+			{ _pawnsAttackBitmap[ baseTypes::blackTurn ], { {-1,-1}, {1,-1} } }							// black pawn capture
 		};
 		
 		/*********************************************
@@ -205,7 +205,7 @@ namespace libChess
 	
 	baseTypes::BitMap BitMapMoveGenerator::_kingMoveBitmap[ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
 	baseTypes::BitMap BitMapMoveGenerator::_knightMoveBitmap[ baseTypes::squareNumber ] = { baseTypes::BitMap(0) };
-	baseTypes::BitMap BitMapMoveGenerator::_pawnsAttackBitmap[ baseTypes::colorNumber ][ baseTypes::squareNumber ] = { { baseTypes::BitMap(0) } };
+	baseTypes::BitMap BitMapMoveGenerator::_pawnsAttackBitmap[ baseTypes::turnNumber ][ baseTypes::squareNumber ] = { { baseTypes::BitMap(0) } };
 	
 	const unsigned int BitMapMoveGenerator::_magicMovesRshift[ baseTypes::squareNumber ] = 
 	{

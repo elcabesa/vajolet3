@@ -290,7 +290,7 @@ namespace libChess
 		
 		BitMap BitMap::_RANKMASK[ tSquare::squareNumber ];			//!< bitmask of a rank given a square on the rank
 		BitMap BitMap::_FILEMASK[ tSquare::squareNumber ];			//!< bitmask of a file given a square on the rank
-		BitMap BitMap::_SQUARECOLOR[ tColor::colorNumber ] = { BitMap(0ull), BitMap(0ull) };
+		BitMap BitMap::_SQUARECOLOR[ eTurn::turnNumber ] = { BitMap(0ull), BitMap(0ull) };
 		BitMap BitMap::_SQUARES_BETWEEN[ tSquare::squareNumber ][ tSquare::squareNumber ];
 		BitMap BitMap::_LINES[ tSquare::squareNumber ][ tSquare::squareNumber ];
 	}

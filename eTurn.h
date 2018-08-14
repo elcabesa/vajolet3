@@ -20,6 +20,7 @@
 #define ETURN_H_
 
 #include "BitBoardIndex.h"
+#include "tSquare.h"
 
 namespace libChess
 {
@@ -34,7 +35,8 @@ namespace libChess
 		enum eTurn
 		{
 			whiteTurn = 0,
-			blackTurn = 1
+			blackTurn = 1,
+			turnNumber = 2
 		};
 		
 		/*	\brief return the switched turn
@@ -80,6 +82,13 @@ namespace libChess
 		inline bitboardIndex getPiece(const eTurn t, const bitboardIndex b)
 		{
 			return (bitboardIndex)(getBiboardIndexOffset( t ) + b);
+		}
+		
+		static inline eTurn getColor(const tSquare n)
+		{
+			extern eTurn SQUARE_COLOR[ tSquare::squareNumber ];
+			assert( n < tSquare::squareNumber );
+			return SQUARE_COLOR[ n ];
 		}
 		
 		

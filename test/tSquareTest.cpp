@@ -17,6 +17,7 @@
 
 #include "gtest/gtest.h"
 #include "./../tSquare.h"
+#include "./../eTurn.h"
 
 using namespace libChess;
 
@@ -765,37 +766,37 @@ namespace {
 		baseTypes::tSquare t = baseTypes::tSquare::A2;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::A);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::two);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::whiteTurn);
 
 		t = baseTypes::tSquare::F6;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::F);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::six);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::blackTurn);
 			
 		t = baseTypes::tSquare::G8;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::G);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::eight);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::whiteTurn);
 		
 		t = baseTypes::tSquare::D4;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::D);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::four);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::blackTurn);
 		
 		t = baseTypes::tSquare::D5;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::D);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::five);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::whiteTurn);
 		
 		t = baseTypes::tSquare::E4;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::E);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::four);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::white);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::whiteTurn);
 		
 		t = baseTypes::tSquare::E5;
 		ASSERT_EQ(getFile(t),baseTypes::tFile::E);
 		ASSERT_EQ(getRank(t),baseTypes::tRank::five);
-		ASSERT_EQ(getColor(t),baseTypes::tColor::black);
+		ASSERT_EQ(getColor(t),baseTypes::eTurn::blackTurn);
 		
 		
 	}
@@ -838,13 +839,13 @@ namespace {
 		ASSERT_EQ( distance( baseTypes::tSquare::D4, baseTypes::tSquare::E4 ), 1u );
 	}
 	
-	TEST(tColor, assign)
+	TEST(eTurn, assign)
 	{
-		baseTypes::tColor c = baseTypes::tColor::white;
-		ASSERT_EQ(baseTypes::tColor::white, c);
+		baseTypes::eTurn c = baseTypes::eTurn::whiteTurn;
+		ASSERT_EQ(baseTypes::eTurn::whiteTurn, c);
 		
-		c = baseTypes::tColor::black;
-		ASSERT_EQ(baseTypes::tColor::black, c);
+		c = baseTypes::eTurn::blackTurn;
+		ASSERT_EQ(baseTypes::eTurn::blackTurn, c);
 	}
 	
 }

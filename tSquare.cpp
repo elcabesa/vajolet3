@@ -16,13 +16,14 @@
     along with Vajolet.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "tSquare.h"
+#include "eTurn.h"
 
 namespace libChess
 {
 	namespace baseTypes
 	{
 	unsigned int SQUARE_DISTANCE[ tSquare::squareNumber ][ tSquare::squareNumber ];
-	tColor SQUARE_COLOR[ tSquare::squareNumber ];
+	eTurn SQUARE_COLOR[ tSquare::squareNumber ];
 
 	void inittSquare(void)
 	{
@@ -42,7 +43,7 @@ namespace libChess
 		{
 			auto file = getFile(square);
 			auto rank = getRank(square);
-			SQUARE_COLOR[ square ] = (tColor)( ( file + rank + 1 ) % 2 );
+			SQUARE_COLOR[ square ] = (eTurn)( ( file + rank + 1 ) % 2 );
 			
 		}
 		

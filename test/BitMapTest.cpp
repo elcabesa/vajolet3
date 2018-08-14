@@ -255,8 +255,8 @@ namespace {
 	
 	TEST(BitMap, getColorBitMap)
 	{	
-		ASSERT_EQ( BitMap::getColorBitMap(tColor::black), BitMap(0xAA55AA55AA55AA55ull) );
-		ASSERT_EQ( BitMap::getColorBitMap(tColor::white), BitMap(0x55AA55AA55AA55AAull) );
+		ASSERT_EQ( BitMap::getColorBitMap(eTurn::blackTurn), BitMap(0xAA55AA55AA55AA55ull) );
+		ASSERT_EQ( BitMap::getColorBitMap(eTurn::whiteTurn), BitMap(0x55AA55AA55AA55AAull) );
 		
 	}
 	
