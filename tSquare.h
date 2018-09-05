@@ -298,39 +298,6 @@ namespace libChess
 		return (SQUARE_DISTANCE[ s1 ][ s2 ]);
 	}
 
-	//-----------------------------------------------------
-	// tSquare
-	//-----------------------------------------------------
-
-	/*	\brief enum rapresenting a square color
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	/*enum tColor : unsigned int
-	{
-		white = 0,
-		black = 1,
-		colorNumber = 2
-	};*/
-
-	/*	\brief get color of a square
-		\author Marco Belli
-		\version 1.0
-		\date 17/08/2017
-	*/
-	/*static inline tColor getColor(const tSquare n)
-	{
-		extern tColor SQUARE_COLOR[ tSquare::squareNumber ];
-		assert( n < tSquare::squareNumber );
-		return SQUARE_COLOR[ n ];
-	}*/
-
-	/*	\brief initTsquares help data
-		\author Marco Belli
-		\version 1.0
-		\date 18/08/2017
-	*/
 	void inittSquare(void);
 	}
 
