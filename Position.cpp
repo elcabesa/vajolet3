@@ -42,9 +42,7 @@ namespace libChess
 	}
 	
 	Position::Position(const Position& other):_stateList(other._stateList), _squares(other._squares),_bitBoard(other._bitBoard), _castleRightsMask(other._castleRightsMask), _castleKingPath(other._castleKingPath), _castleOccupancyPath(other._castleOccupancyPath), _castleRookInvolved(other._castleRookInvolved), _castleKingFinalSquare(other._castleKingFinalSquare), _castleRookFinalSquare(other._castleRookFinalSquare), _kingsSquare(other._kingsSquare)
-	{
-		_actualState = _stateList.rbegin();
-		
+	{		
 		_setUsThem();
 		
 	}
@@ -55,8 +53,6 @@ namespace libChess
 			return *this;
 
 		_stateList = other._stateList;
-		_actualState = _stateList.rbegin();
-		
 		
 		_squares = other._squares;
 		_bitBoard = other._bitBoard;
@@ -80,8 +76,6 @@ namespace libChess
 	{
 		_stateList.clear();
 		_stateList.emplace_back(GameState());
-		_actualState = _stateList.rbegin();
-		
 	}
 	
 	
@@ -101,14 +95,12 @@ namespace libChess
 	inline GameState& Position::_pushState(void)
 	{
 		_stateList.emplace_back( getActualStateConst() );
-		_actualState = _stateList.rbegin();
 		return _getActualState();
 	}
 	
 	inline void Position::_popState(void)
 	{
 		_stateList.pop_back();
-		_actualState = _stateList.rbegin();
 	}
 	
 	const GameState& Position::getState(unsigned int n)const

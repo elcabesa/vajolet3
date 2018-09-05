@@ -113,7 +113,6 @@ namespace libChess
 		*	Members
 		******************************************************************/
 		std::vector<GameState> _stateList;
-		std::vector<GameState>::reverse_iterator _actualState;
 		std::array< baseTypes::bitboardIndex, baseTypes::squareNumber > _squares; // board square rapresentation to speed up, it contain pieces indexed by square
 		std::array< baseTypes::BitMap, baseTypes::bitboardNumber > _bitBoard;     // bitboards indexed by baseTypes::bitboardIndex enum
 		std::array< baseTypes::BitMap, baseTypes::bitboardNumber >::iterator _us,_them;	/*!< pointer to our & their pieces bitboard*/
@@ -172,12 +171,12 @@ namespace libChess
 	
 	inline const GameState& Position::getActualStateConst(void)const
 	{
-		return *_actualState;
+		return _stateList.back();
 	}
 	
 	inline GameState& Position::_getActualState(void)
 	{
-		return *_actualState;
+		return _stateList.back();
 	}
 	
 	inline const baseTypes::BitMap& Position::getOccupationBitMap() const
