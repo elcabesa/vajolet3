@@ -247,21 +247,21 @@ namespace {
 		ASSERT_EQ(count, 0u);
 	}
 	
-	TEST(bitboardIndex, getMyPiecesFromPiece)
+	TEST(bitboardIndex, getMyPiecesIndex)
 	{
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteKing ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteQueens ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteRooks ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteBishops ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whiteKnights ) );
-		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesFromPiece( bitboardIndex::whitePawns ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whiteKing ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whiteQueens ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whiteRooks ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whiteBishops ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whiteKnights ) );
+		ASSERT_EQ( bitboardIndex::whitePieces, getMyPiecesIndex( bitboardIndex::whitePawns ) );
 		
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackKing ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackQueens ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackRooks ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackBishops ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackKnights ) );
-		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesFromPiece( bitboardIndex::blackPawns ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackKing ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackQueens ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackRooks ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackBishops ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackKnights ) );
+		ASSERT_EQ( bitboardIndex::blackPieces, getMyPiecesIndex( bitboardIndex::blackPawns ) );
 
 	}
 	

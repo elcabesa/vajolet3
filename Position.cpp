@@ -132,7 +132,7 @@ namespace libChess
 		assert( s < baseTypes::squareNumber );
 		assert( piece < baseTypes::bitboardNumber );
 		
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesIndex(piece);
 		// todo check if it's fast enough
 		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
@@ -159,7 +159,7 @@ namespace libChess
 		// do_move() and then replace it in undo_move() we will put it at the end of
 		// the list and not in its original place, it means index[] and pieceList[]
 		// are not guaranteed to be invariant to a do_move() + undo_move() sequence.
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesIndex(piece);
 		
 		const baseTypes::BitMap b = baseTypes::BitMap::getBitmapFromSquare(s);
 
@@ -179,7 +179,7 @@ namespace libChess
 		assert( _squares[from] != baseTypes::empty );
 		assert( _squares[to] == baseTypes::empty );
 		
-		const baseTypes::bitboardIndex MyPieces = getMyPiecesFromPiece(piece);
+		const baseTypes::bitboardIndex MyPieces = getMyPiecesIndex(piece);
 		
 		const baseTypes::BitMap fromTo = baseTypes::BitMap::getBitmapFromSquare( from ) ^ to;
 		
@@ -1158,14 +1158,14 @@ namespace libChess
 		{	// do capture
 			if( capturedPiece != baseTypes::empty )
 			{
-				if( baseTypes::isPawn(capturedPiece) )
+				if( isPawn(capturedPiece) )
 				{
 
 					if( m.isEnPassantMove() )
 					{
 						captureSquare -= MoveGenerator::pawnPush( turn );
 					}
-					assert( captureSquare < baseTypes::squareNumber );
+					assert( captureSquare < squareNumber );
 					st.pawnKeyRemovePiece( capturedPiece, captureSquare );
 				}
 				/*
@@ -1204,7 +1204,7 @@ namespace libChess
 		st.clearCastleRight( _castleRightsMask[ from ] | _castleRightsMask[ to ] );
 
 
-		if( baseTypes::isPawn( piece ) )
+		if( isPawn( piece ) )
 		{
 			// double push en passant management
 			if(
@@ -1618,7 +1618,7 @@ namespace libChess
 		check turn
 		*************************************************/
 		//TODO da togliere se semplifico eturn
-		if( !baseTypes::isWhiteTurn( st.getTurn() ) && !baseTypes::isBlackTurn( st.getTurn() ) )
+		if( !isWhiteTurn() && !isBlackTurn() )
 		{
 			return false;
 		}
@@ -1743,7 +1743,7 @@ namespace libChess
 		/*************************************************
 		us, them verification
 		*************************************************/
-		if( baseTypes::isWhiteTurn( st.getTurn() ) )
+		if( isWhiteTurn() )
 		{
 			if( getOurBitMap() != getBitmap( baseTypes::whitePieces ) )
 			{
@@ -1869,7 +1869,7 @@ namespace libChess
 		
 		
 		// promozione impossibile!!
-		if ( m.isPromotionMove() && ( ( baseTypes::getRank( m.getFrom() ) != ( baseTypes::isWhiteTurn( st.getTurn() ) ? baseTypes::seven : baseTypes::two ) ) || !baseTypes::isPawn( piece ) ) )
+		if ( m.isPromotionMove() && ( ( baseTypes::getRank( m.getFrom() ) != ( isWhiteTurn() ? baseTypes::seven : baseTypes::two ) ) || !isPawn( piece ) ) )
 		{
 			return false;
 		}

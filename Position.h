@@ -259,7 +259,7 @@ namespace libChess
 	
 	inline bool Position::isBlackTurn(void) const
 	{
-		return baseTypes::isBlackTurn( getActualStateConst().getTurn() );;
+		return baseTypes::isBlackTurn( getActualStateConst().getTurn() );
 	}
 
 	inline baseTypes::bitboardIndex Position::getMyPiece(const baseTypes::bitboardIndex in) const

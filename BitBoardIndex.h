@@ -135,7 +135,7 @@ namespace libChess
 			\version 1.0
 			\date 22/02/2018
 		*/
-		static inline bitboardIndex getMyPiecesFromPiece( const bitboardIndex& piece )
+		static inline bitboardIndex getMyPiecesIndex( const bitboardIndex& piece )
 		{
 			return bitboardIndex( piece & blackPieces );
 		}

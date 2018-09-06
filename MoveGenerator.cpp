@@ -388,8 +388,9 @@ namespace libChess
 		//------------------------------------------------------
 
 		// pawns bitmaps
-		const baseTypes::BitMap& thirdRankMask = baseTypes::BitMap::getRankMask( isWhiteTurn( turn ) ? baseTypes::A3 : baseTypes::A6 );
-		const baseTypes::BitMap& seventhRankMask = baseTypes::BitMap::getRankMask( isWhiteTurn( turn ) ? baseTypes::A7 : baseTypes::A2 );
+		bool whiteTurn = isWhiteTurn( turn );
+		const baseTypes::BitMap& thirdRankMask = baseTypes::BitMap::getRankMask( whiteTurn ? baseTypes::A3 : baseTypes::A6 );
+		const baseTypes::BitMap& seventhRankMask = baseTypes::BitMap::getRankMask( whiteTurn ? baseTypes::A7 : baseTypes::A2 );
 
 		const baseTypes::BitMap promotingPawns = pos.getOurBitMap( baseTypes::Pawns ) & seventhRankMask ;
 		const baseTypes::BitMap nonPromotingPawns = pos.getOurBitMap( baseTypes::Pawns ) ^ promotingPawns;
