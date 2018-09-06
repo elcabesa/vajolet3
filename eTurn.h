@@ -76,7 +76,7 @@ namespace libChess
 		*/
 		inline bitboardIndex getBiboardIndexOffset( const eTurn t )
 		{
-			return (bitboardIndex)( baseTypes::separationBitmap * t );
+			return (bitboardIndex)( baseTypes::blackPieces * t );
 		}
 		
 		inline bitboardIndex getPiece(const eTurn t, const bitboardIndex b)

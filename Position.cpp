@@ -375,11 +375,11 @@ namespace libChess
 					baseTypes::bitboardIndex symPiece = piece;
 					if( baseTypes::isBlackPiece( symPiece ) )
 					{
-						symPiece -= baseTypes::separationBitmap;
+						symPiece -= baseTypes::blackPieces;
 					}
 					else
 					{
-						symPiece += baseTypes::separationBitmap;
+						symPiece += baseTypes::blackPieces;
 					}
 					s += baseTypes::getPieceName( symPiece );
 				}

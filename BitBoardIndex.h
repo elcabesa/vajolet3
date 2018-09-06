@@ -33,35 +33,35 @@ namespace libChess
 		*/
 		enum bitboardIndex
 		{
-			occupiedSquares = 0,			//0		00000000
+			whitePieces = 0,				//0		00000000
 			whiteKing = 1,					//1		00000001
 			whiteQueens = 2,				//2		00000010
 			whiteRooks = 3,					//3		00000011
 			whiteBishops = 4,				//4		00000100
 			whiteKnights = 5,				//5		00000101
 			whitePawns = 6,					//6		00000110
-			whitePieces = 7,				//7		00000111
-
-			separationBitmap = 8,
+			unused = 7,						//7		00000111
+			
+			blackPieces = 8,				//8		00001000
 			blackKing = 9,					//9		00001001
 			blackQueens = 10,				//10	00001010
 			blackRooks = 11,				//11	00001011
 			blackBishops = 12,				//12	00001100
 			blackKnights = 13,				//13	00001101
 			blackPawns = 14,				//14	00001110
-			blackPieces = 15,				//15	00001111
+			occupiedSquares = 15,				//15	00001111
 
 			bitboardNumber = 16,
-
+			
+			Pieces = whitePieces,
 			King = whiteKing,
 			Queens,
 			Rooks,
 			Bishops,
 			Knights,
 			Pawns,
-			Pieces,
 
-			empty = occupiedSquares
+			empty = whitePieces
 
 		};
 		
@@ -72,10 +72,10 @@ namespace libChess
 		*/
 		static inline std::string getPieceName( const bitboardIndex in )
 		{
-			static std::string PIECE_NAMES_FEN[] = { " ","K","Q","R","B","N","P"," "," ","k","q","r","b","n","p"," " };
+			static std::string PIECE_NAMES_FEN[bitboardNumber] = { " ","K","Q","R","B","N","P"," "," ","k","q","r","b","n","p"," " };
 			
 			assert( in < bitboardNumber );
-			return std::string( PIECE_NAMES_FEN[ in ] );
+			return PIECE_NAMES_FEN[ in ];
 		}
 		
 		/*! \brief function that get UCI piece character from piece index
@@ -137,12 +137,12 @@ namespace libChess
 		*/
 		static inline bitboardIndex getMyPiecesFromPiece( const bitboardIndex& piece )
 		{
-			return  ( piece > separationBitmap ) ? blackPieces : whitePieces;
+			return bitboardIndex( piece & blackPieces );
 		}
 		
 		static inline bool isValidPiece( const bitboardIndex& piece )
 		{
-			return  ( piece != occupiedSquares ) && ( piece != whitePieces ) && ( piece != separationBitmap ) && ( piece != blackPieces );
+			return  ( piece != occupiedSquares ) && ( piece != whitePieces ) && ( piece != unused ) && ( piece != blackPieces );
 		}
 				
 		
@@ -213,7 +213,7 @@ namespace libChess
 		*/
 		static inline bool isBlackPiece( const bitboardIndex piece )
 		{
-			return ( piece & 8 ) ;
+			return ( piece & blackPieces ) ;
 		}
 		
 		/*! \brief tell if the piece is white
@@ -223,7 +223,7 @@ namespace libChess
 		*/
 		static inline bool isWhitePiece( const bitboardIndex  piece )
 		{
-			return ( piece < separationBitmap );
+			return ( piece < blackPieces );
 		}
 
 		/*	\brief operators for bitboardIndex
@@ -248,8 +248,8 @@ namespace libChess
 			\version 1.0
 			\date 17/08/2017
 		*/
-		template class baseTypeRange<bitboardIndex, occupiedSquares, blackPieces>;
-		using bitboardIndexRange = baseTypeRange<bitboardIndex, occupiedSquares, blackPieces>;
+		template class baseTypeRange<bitboardIndex, whitePieces, occupiedSquares>;
+		using bitboardIndexRange = baseTypeRange<bitboardIndex, whitePieces, occupiedSquares>;
 
 	}
 

@@ -64,7 +64,7 @@ namespace {
 		b = bitboardIndex::whitePieces;
 		ASSERT_STREQ( " ", getPieceName(b).c_str() );
 
-		b = bitboardIndex::separationBitmap;
+		b = bitboardIndex::unused;
 		ASSERT_STREQ( " ", getPieceName(b).c_str() );
 		
 		b = bitboardIndex::blackKing;
@@ -133,25 +133,25 @@ namespace {
 	TEST(bitboardIndex, Sum)
 	{
 		bitboardIndex f = bitboardIndex::whitePieces;
-		ASSERT_EQ( bitboardIndex::blackKing, f + 2 );
+		ASSERT_EQ( bitboardIndex::whiteQueens, f + 2 );
 	}
 	
 	TEST(bitboardIndex, Sub)
 	{
 		bitboardIndex f = bitboardIndex::whiteRooks;
-		ASSERT_EQ( bitboardIndex::occupiedSquares, f - 3 );
+		ASSERT_EQ( bitboardIndex::whitePieces, f - 3 );
 	}
 	
 	TEST(bitboardIndex, Sum2)
 	{
 		bitboardIndex f = bitboardIndex::whitePieces;
-		ASSERT_EQ( bitboardIndex::blackKing, f += 2 );
+		ASSERT_EQ( bitboardIndex::whiteQueens, f += 2 );
 	}
 	
 	TEST(bitboardIndex, Sub2)
 	{
 		bitboardIndex f = bitboardIndex::whiteRooks;
-		ASSERT_EQ( bitboardIndex::occupiedSquares, f -= 3 );
+		ASSERT_EQ( bitboardIndex::whitePieces, f -= 3 );
 	}
 	
 	TEST(bitboardIndex, iterate)
@@ -283,7 +283,7 @@ namespace {
 		
 		ASSERT_FALSE(isValidPiece( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isValidPiece( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isValidPiece( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isValidPiece( bitboardIndex::unused ) );
 		ASSERT_FALSE(isValidPiece( bitboardIndex::blackPieces ) );
 
 	}
@@ -306,7 +306,7 @@ namespace {
 		
 		ASSERT_FALSE(isPawn( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isPawn( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isPawn( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isPawn( bitboardIndex::unused ) );
 		ASSERT_FALSE(isPawn( bitboardIndex::blackPieces ) );
 
 	}
@@ -329,7 +329,7 @@ namespace {
 		
 		ASSERT_FALSE(isKing( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isKing( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isKing( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isKing( bitboardIndex::unused ) );
 		ASSERT_FALSE(isKing( bitboardIndex::blackPieces ) );
 
 	}
@@ -352,7 +352,7 @@ namespace {
 		
 		ASSERT_FALSE(isQueen( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isQueen( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isQueen( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isQueen( bitboardIndex::unused ) );
 		ASSERT_FALSE(isQueen( bitboardIndex::blackPieces ) );
 
 	}
@@ -375,7 +375,7 @@ namespace {
 		
 		ASSERT_FALSE(isRook( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isRook( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isRook( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isRook( bitboardIndex::unused ) );
 		ASSERT_FALSE(isRook( bitboardIndex::blackPieces ) );
 
 	}
@@ -398,7 +398,7 @@ namespace {
 		
 		ASSERT_FALSE(isBishop( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isBishop( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isBishop( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isBishop( bitboardIndex::unused ) );
 		ASSERT_FALSE(isBishop( bitboardIndex::blackPieces ) );
 
 	}
@@ -421,7 +421,7 @@ namespace {
 		
 		ASSERT_FALSE(isKnight( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isKnight( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isKnight( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isKnight( bitboardIndex::unused ) );
 		ASSERT_FALSE(isKnight( bitboardIndex::blackPieces ) );
 
 	}
@@ -442,9 +442,9 @@ namespace {
 		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackKnights ) );
 		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackPawns ) );
 		
-		ASSERT_FALSE(isBlackPiece( bitboardIndex::occupiedSquares ) );
+		ASSERT_TRUE(isBlackPiece( bitboardIndex::occupiedSquares ) );
 		ASSERT_FALSE(isBlackPiece( bitboardIndex::whitePieces ) );
-		ASSERT_TRUE(isBlackPiece( bitboardIndex::separationBitmap ) );
+		ASSERT_FALSE(isBlackPiece( bitboardIndex::unused ) );
 		ASSERT_TRUE(isBlackPiece( bitboardIndex::blackPieces ) );
 
 	}
@@ -465,9 +465,9 @@ namespace {
 		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackKnights ) );
 		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackPawns ) );
 		
-		ASSERT_TRUE(isWhitePiece( bitboardIndex::occupiedSquares ) );
+		ASSERT_FALSE(isWhitePiece( bitboardIndex::occupiedSquares ) );
 		ASSERT_TRUE(isWhitePiece( bitboardIndex::whitePieces ) );
-		ASSERT_FALSE(isWhitePiece( bitboardIndex::separationBitmap ) );
+		ASSERT_TRUE(isWhitePiece( bitboardIndex::unused ) );
 		ASSERT_FALSE(isWhitePiece( bitboardIndex::blackPieces ) );
 
 	}
